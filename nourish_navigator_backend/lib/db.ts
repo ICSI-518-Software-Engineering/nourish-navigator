@@ -1,21 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 
-const prisma = new PrismaClient().$extends({
-  query: {
-    user: {
-      async create({ args, query }) {
-        args.data.password = bcrypt.hashSync(args.data.password);
-        return query(args);
-      },
-      async update({ args, query }) {
-        if (args.data.password) {
-          args.data.password = bcrypt.hashSync(args.data.password.toString());
-        }
-        return query(args);
-      },
-    },
-  },
-});
+export default () => {
+  const db = process.env.DATABASE_URL as string;
 
-export default prisma;
+  mongoose
+    .connect(db)
+    .then(() => console.log(`Connected to mongo db database...`));
+};

@@ -8,9 +8,9 @@ const HomePage: React.FC<HomePageProps> = (props) => {
     <>
       <MaxWidthContainer>
         <div className="py-20 mx-auto text-center flex flex-col items-center max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-200 sm:text-6xl">
             One stop solution for{" "}
-            <span className="text-teal-600">meal planning</span>.
+            <span className="text-teal-300">meal planning</span>.
           </h1>
           <p className="mt-6 text-lg max-w-prose text-muted-foreground">
             Welcome to Nourish Navigator. Every meal plan is generated based on

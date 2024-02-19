@@ -3,22 +3,36 @@
 import AuthLayout from "@/components/AuthLayout";
 import CustomInput from "@/components/CustomInput";
 // import { Icons } from '@/components/Icons'
+import { useSignUpService } from "@/api/auth";
+import { isHttpError } from "@/api/http";
 import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-
-// import { toast } from 'sonner'
+import { SignUpFormDataType, signUpSchema } from "../dataAndTypes";
+import { loginUser } from "../utils";
 
 const SignUpPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<{ email: string; password: string; confirmPassword: string }>({
-    // resolver: zodResolver(),
+    setError,
+  } = useForm<SignUpFormDataType>({
+    resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = () => {
-    // signIn({ email, password })
+  const { mutate: mutateSignUp, isPending } = useSignUpService();
+
+  const onSubmit = (data: SignUpFormDataType) => {
+    mutateSignUp(data, {
+      onSuccess: loginUser,
+      onError: (e) => {
+        if (isHttpError(e)) {
+          setError("email", { message: e.response?.data });
+        }
+      },
+    });
   };
 
   return (
@@ -29,6 +43,13 @@ const SignUpPage: React.FC = () => {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
+          <CustomInput
+            id="name"
+            errors={errors}
+            label="Name"
+            register={register}
+          />
+
           <CustomInput
             id="email"
             errors={errors}
@@ -53,11 +74,9 @@ const SignUpPage: React.FC = () => {
             type="password"
           />
 
-          {/* Sign In Button */}
-          <Button>
-            {/* {isLoading && (
-                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  )} */}
+          {/* Sign Up Button */}
+          <Button disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign up
           </Button>
         </div>

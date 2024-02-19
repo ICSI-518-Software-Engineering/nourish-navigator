@@ -71,7 +71,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var lodash_1 = require("lodash");
 var zod_1 = require("zod");
 var userModel_1 = __importStar(require("../models/userModel"));
 var router = (0, express_1.Router)();
@@ -95,7 +94,7 @@ router.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, newUserRec.save()];
             case 2:
                 _a.sent();
-                return [2 /*return*/, res.json((0, lodash_1.pick)(newUserRec, ["_id", "name", "email"]))];
+                return [2 /*return*/, res.send(newUserRec.generateAuthToken())];
             case 3:
                 ex_1 = _a.sent();
                 if (ex_1 instanceof zod_1.ZodError) {
@@ -124,7 +123,7 @@ router.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, v
                     return [2 /*return*/, res.status(400).send("User not found")];
                 }
                 if (!userRec.validatePassword(userData.password)) {
-                    return [2 /*return*/, res.status(400).send("Invalid Password")];
+                    return [2 /*return*/, res.status(400).send("Invalid Email / Password")];
                 }
                 return [2 /*return*/, res.send(userRec.generateAuthToken())];
             case 2:

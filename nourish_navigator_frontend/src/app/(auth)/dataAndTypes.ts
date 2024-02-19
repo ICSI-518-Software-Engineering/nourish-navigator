@@ -17,5 +17,12 @@ export const signUpSchema = signInSchema
     path: ["confirmPassword"],
   });
 
-export type signInFormDataType = z.infer<typeof signInSchema>;
-export type signUpFormDataType = z.infer<typeof signUpSchema>;
+export type UserSessionDetailsType = {
+  _id: string;
+  name: string;
+  email: string;
+  isAdmin: boolean;
+};
+
+export type SignInFormDataType = z.infer<typeof signInSchema>;
+export type SignUpFormDataType = z.infer<typeof signUpSchema>;

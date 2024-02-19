@@ -1,16 +1,25 @@
+"use client";
+
+import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MaxWidthContainer from "./MaxWidthContainer";
 import NavbarMobile from "./NavbarMobile";
+import UserMenu from "./UserMenu";
 import { buttonVariants } from "./ui/button";
 
-type NavbarProps = {};
+const Navbar: React.FC = () => {
+  const [mounted, setMounted] = useState<boolean>(false);
+  const user = getLoggedInUserDetails();
 
-const Navbar: React.FC<NavbarProps> = (props) => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
-      <header className="relative bg-white">
+    <div className="sticky z-50 top-0 inset-x-0 h-16">
+      <header className="relative">
         {/* Container */}
 
         <MaxWidthContainer>
@@ -23,11 +32,12 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               <div className="flex lg:ml-0">
                 <Link href="/">
                   <Image
-                    src="/assets/images/logo.png"
+                    src="/assets/images/logo_white.png"
                     alt="logo"
                     height={100}
                     width={130}
                     className="h-auto w-40"
+                    priority
                   />
                 </Link>
               </div>
@@ -37,27 +47,42 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             <NavItems />
           </div> */}
 
-              <div className="ml-auto flex items-center">
-                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <Link
-                    href="/sign-in"
-                    className={buttonVariants({
-                      variant: "ghost",
-                    })}
-                  >
-                    Sign in
-                  </Link>
+              {mounted && (
+                <div className="ml-auto flex items-center">
+                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                    {user ? null : (
+                      <Link
+                        href="/sign-in"
+                        className={buttonVariants({
+                          variant: "ghost",
+                        })}
+                      >
+                        Sign in
+                      </Link>
+                    )}
 
-                  <Link
-                    href="/sign-up"
-                    className={buttonVariants({
-                      variant: "ghost",
-                    })}
-                  >
-                    Create account
-                  </Link>
+                    {user ? null : (
+                      <span
+                        className="h-6 w-px bg-gray-200"
+                        aria-hidden="true"
+                      />
+                    )}
+
+                    {user ? (
+                      <UserMenu user={user} />
+                    ) : (
+                      <Link
+                        href="/sign-up"
+                        className={buttonVariants({
+                          variant: "ghost",
+                        })}
+                      >
+                        Create account
+                      </Link>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </MaxWidthContainer>

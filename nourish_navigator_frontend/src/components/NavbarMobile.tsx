@@ -17,7 +17,7 @@ const NavbarMobile = () => {
       {/* Menu Button */}
       <SheetTrigger className="items-center">
         <Menu
-          className="h-6 w-6 lg:hidden -m-2 mr-1 rounded-md text-gray-400 absolute right-3"
+          className="h-6 w-6 lg:hidden -m-2 mr-1 rounded-md text-gray-100 absolute right-3"
           aria-hidden="true"
         />
       </SheetTrigger>
@@ -30,20 +30,14 @@ const NavbarMobile = () => {
             <div className="space-y-6 py-6 pt-8">
               {/* Sign In Link */}
               <SheetClose asChild>
-                <Link
-                  href="/sign-in"
-                  className="-m-2 p-2 block font-medium text-gray-900"
-                >
+                <Link href="/sign-in" className="-m-2 p-2 block font-medium">
                   Sign in
                 </Link>
               </SheetClose>
 
               {/* Sign Up Link */}
               <SheetClose asChild>
-                <Link
-                  href="/sign-up"
-                  className="-m-2 block p-2 font-medium text-gray-900"
-                >
+                <Link href="/sign-up" className="-m-2 block p-2 font-medium">
                   Sign up
                 </Link>
               </SheetClose>

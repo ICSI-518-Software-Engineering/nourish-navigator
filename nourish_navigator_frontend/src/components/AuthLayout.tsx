@@ -1,6 +1,7 @@
 "use client";
 
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +14,8 @@ type AuthLayoutProps = {
   headerText: string;
   redirectionLinkText?: string;
   redirectionLinkUrl?: string;
+  disableAutoRedirect?: boolean;
+  className?: string;
 };
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
@@ -20,18 +23,23 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
   const isLoggedIn = getLoggedInUserDetails();
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && !props.disableAutoRedirect) {
       router.replace("/");
     }
-  }, [isLoggedIn, router]);
+  }, [isLoggedIn, props.disableAutoRedirect, router]);
 
-  if (isLoggedIn) {
+  if (isLoggedIn && !props.disableAutoRedirect) {
     return null;
   }
 
   return (
     <div className="container relative flex pt-20 flex-col items-center justify-center lg:px-0">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      <div
+        className={cn(
+          "mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]",
+          props.className
+        )}
+      >
         <div className="flex flex-col items-center space-y-2 text-center">
           <Image
             src="/assets/images/logo_no_text.png"
@@ -60,7 +68,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
           )}
         </div>
 
-        <div className="grid gap-6">{children}</div>
+        <div className="grid gap-6 pb-20">{children}</div>
       </div>
     </div>
   );

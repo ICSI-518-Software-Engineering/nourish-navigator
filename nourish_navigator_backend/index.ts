@@ -2,7 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { Express } from "express";
 import db from "./lib/db";
-import userRoutes from "./routes/userRoutes";
+import routes from "./routes";
 
 dotenv.config();
 
@@ -16,7 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 // Intiate db
 db();
 
-app.use("/auth", userRoutes);
+// Intialise all the routes
+routes(app);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

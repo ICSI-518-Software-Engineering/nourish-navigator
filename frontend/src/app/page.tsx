@@ -1,13 +1,12 @@
 "use client";
+
 import MaxWidthContainer from "@/components/MaxWidthContainer";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 import { getLoggedInUserDetails } from "./(auth)/utils";
 
-type HomePageProps = {};
-
-const HomePage: React.FC<HomePageProps> = (props) => {
+const HomePage: React.FC = () => {
   const user = getLoggedInUserDetails();
   return (
     <>

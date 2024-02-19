@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/components/theme-provider";
+import TanstackProvider from "@/lib/TanstackProvider";
+import ThemeProvider from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -33,10 +34,12 @@ export default function RootLayout({
         }}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <main className="relative flex flex-col">
-            <Navbar />
-            <div className="flex-grow flex-1">{children}</div>
-          </main>
+          <TanstackProvider>
+            <main className="relative flex flex-col">
+              <Navbar />
+              <div className="flex-grow flex-1">{children}</div>
+            </main>
+          </TanstackProvider>
         </ThemeProvider>
       </body>
     </html>

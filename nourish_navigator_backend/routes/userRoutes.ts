@@ -51,7 +51,7 @@ router.post("/sign-in", async (req: Request, res: Response) => {
     }
 
     if (!userRec.validatePassword(userData.password)) {
-      return res.status(400).send("Invalid Password");
+      return res.status(400).send("Invalid Email / Password");
     }
 
     return res.send(userRec.generateAuthToken());

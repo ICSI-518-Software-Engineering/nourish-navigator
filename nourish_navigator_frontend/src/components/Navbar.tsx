@@ -9,8 +9,8 @@ type NavbarProps = {};
 
 const Navbar: React.FC<NavbarProps> = (props) => {
   return (
-    <div className="bg-white sticky z-50 top-0 inset-x-0 h-16">
-      <header className="relative bg-white">
+    <div className="sticky z-50 top-0 inset-x-0 h-16">
+      <header className="relative">
         {/* Container */}
 
         <MaxWidthContainer>
@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               <div className="flex lg:ml-0">
                 <Link href="/">
                   <Image
-                    src="/assets/images/logo.png"
+                    src="/assets/images/logo_white.png"
                     alt="logo"
                     height={100}
                     width={130}

@@ -1,26 +1,35 @@
 "use client";
 
+import { useLoginService } from "@/api/auth";
+import { isHttpError } from "@/api/http";
 import AuthLayout from "@/components/AuthLayout";
 import CustomInput from "@/components/CustomInput";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { signInFormDataType, signInSchema } from "../dataAndTypes";
-
-const isLoading = false;
+import { SignInFormDataType, signInSchema } from "../dataAndTypes";
 
 const SignInPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signInFormDataType>({
+    setError,
+  } = useForm<SignInFormDataType>({
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = () => {
-    // signIn({ email, password })
+  const { mutate: mutateLogin, isPending } = useLoginService();
+
+  const onSubmit = (data: SignInFormDataType) => {
+    mutateLogin(data, {
+      onError: (e) => {
+        if (isHttpError(e)) {
+          setError("email", { message: e.response?.data });
+        }
+      },
+    });
   };
 
   return (
@@ -48,8 +57,8 @@ const SignInPage: React.FC = () => {
           />
 
           {/* Sign In Button */}
-          <Button>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign in
           </Button>
         </div>

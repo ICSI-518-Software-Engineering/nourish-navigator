@@ -124,7 +124,7 @@ router.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, v
                     return [2 /*return*/, res.status(400).send("User not found")];
                 }
                 if (!userRec.validatePassword(userData.password)) {
-                    return [2 /*return*/, res.status(400).send("Invalid Password")];
+                    return [2 /*return*/, res.status(400).send("Invalid Email / Password")];
                 }
                 return [2 /*return*/, res.send(userRec.generateAuthToken())];
             case 2:

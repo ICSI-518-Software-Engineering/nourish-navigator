@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import { pick } from "lodash";
 import { ZodError } from "zod";
 import User, {
   validateSignInRequest,
@@ -27,7 +26,7 @@ router.post("/sign-up", async (req: Request, res: Response) => {
 
     await newUserRec.save();
 
-    return res.json(pick(newUserRec, ["_id", "name", "email"]));
+    return res.send(newUserRec.generateAuthToken());
   } catch (ex) {
     if (ex instanceof ZodError) {
       return res.status(400).json(ex.issues[0].message);

@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { SignUpFormDataType, signUpSchema } from "../dataAndTypes";
+import { loginUser } from "../utils";
 
 const SignUpPage: React.FC = () => {
   const {
@@ -25,6 +26,7 @@ const SignUpPage: React.FC = () => {
 
   const onSubmit = (data: SignUpFormDataType) => {
     mutateSignUp(data, {
+      onSuccess: loginUser,
       onError: (e) => {
         if (isHttpError(e)) {
           setError("email", { message: e.response?.data });
@@ -72,8 +74,8 @@ const SignUpPage: React.FC = () => {
             type="password"
           />
 
-          {/* Sign In Button */}
-          <Button>
+          {/* Sign Up Button */}
+          <Button disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign up
           </Button>

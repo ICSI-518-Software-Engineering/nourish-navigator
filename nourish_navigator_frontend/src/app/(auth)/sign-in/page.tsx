@@ -7,10 +7,13 @@ import CustomInput from "@/components/CustomInput";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { SignInFormDataType, signInSchema } from "../dataAndTypes";
+import { loginUser } from "../utils";
 
 const SignInPage: React.FC = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -22,6 +25,11 @@ const SignInPage: React.FC = () => {
 
   const { mutate: mutateLogin, isPending } = useLoginService();
 
+  const handleLogin = (data: string) => {
+    loginUser(data);
+    router.replace("/");
+  };
+
   const onSubmit = (data: SignInFormDataType) => {
     mutateLogin(data, {
       onError: (e) => {
@@ -29,6 +37,7 @@ const SignInPage: React.FC = () => {
           setError("email", { message: e.response?.data });
         }
       },
+      onSuccess: handleLogin,
     });
   };
 

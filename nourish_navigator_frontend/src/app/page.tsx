@@ -5,6 +5,8 @@ import Link from "next/link";
 import React from "react";
 import { getLoggedInUserDetails } from "./(auth)/utils";
 
+import Dashboard from "@/components/Dashboard";
+
 type HomePageProps = {};
 
 const HomePage: React.FC<HomePageProps> = (props) => {
@@ -29,9 +31,15 @@ const HomePage: React.FC<HomePageProps> = (props) => {
               </Link>
               <Button variant="ghost">Update daily routine &rarr;</Button>
             </div>
+          
           )}
         </div>
       </MaxWidthContainer>
+      {user && (
+        <>
+          <Dashboard/>
+        </>
+      )}
     </>
   );
 };

@@ -1,9 +1,14 @@
+"use client";
 import MaxWidthContainer from "@/components/MaxWidthContainer";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 import React from "react";
+import { getLoggedInUserDetails } from "./(auth)/utils";
 
 type HomePageProps = {};
 
 const HomePage: React.FC<HomePageProps> = (props) => {
+  const user = getLoggedInUserDetails();
   return (
     <>
       <MaxWidthContainer>
@@ -13,19 +18,18 @@ const HomePage: React.FC<HomePageProps> = (props) => {
             <span className="text-teal-300">meal planning</span>.
           </h1>
           <p className="mt-6 text-lg max-w-prose text-muted-foreground">
-            Welcome to Nourish Navigator. Every meal plan is generated based on
-            the user goals.
+            Welcome to Nourish Navigator. Every meal plan generated is
+            completely based on your personal goals.
           </p>
-          {/* <div className='flex flex-col sm:flex-row gap-4 mt-6'>
-            <Link
-              href='/products'
-              className={buttonVariants()}>
-              Browse Trending
-            </Link>
-            <Button variant='ghost'>
-              Our quality promise &rarr;
-            </Button>
-          </div> */}
+          {/* These buttons should be visible only when user logged in */}
+          {user && (
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
+              <Link href="/products" className={buttonVariants()}>
+                Track your progress
+              </Link>
+              <Button variant="ghost">Update daily routine &rarr;</Button>
+            </div>
+          )}
         </div>
       </MaxWidthContainer>
     </>

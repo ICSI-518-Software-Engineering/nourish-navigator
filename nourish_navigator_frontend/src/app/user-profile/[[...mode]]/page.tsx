@@ -21,7 +21,7 @@ import { UserProfileFormDataType, userProfileSchema } from "../dataAndTypes";
 
 type UserProfilePageProps = {
   params: {
-    mode?: "edit" | "setup" | "";
+    mode?: ["edit" | "setup" | ""];
   };
 };
 
@@ -46,6 +46,12 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
     reset(settings?.formData);
   }, [reset, settings?.formData]);
 
+  useEffect(() => {
+    if (mode?.[0] === "setup" && settings?.apiData) {
+      return router.replace("/");
+    }
+  }, [mode, router, settings?.apiData]);
+
   const { mutate, isPending } = useUpdateUserProfileService();
 
   const onSubmit = (data: UserProfileFormDataType) => {
@@ -68,10 +74,13 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
 
   return (
     <AuthLayout
-      headerText={`${settings?.title} your user profile`}
+      headerText={settings.title}
       disableAutoRedirect
       className="sm:w-full"
-      isLoading={settings?.isLoading}
+      isLoading={
+        settings?.isLoading ||
+        Boolean(mode?.[0] === "setup" && settings?.apiData)
+      }
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div
@@ -255,7 +264,8 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
       isClickable: true,
       isLoading: isPending,
       btnLabel: "Save",
-      title: "Setup",
+      title: "Setup your profile",
+      apiData: data,
     };
   }
 
@@ -265,7 +275,8 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
       isClickable: false,
       isLoading: isPending,
       btnLabel: "Edit",
-      title: "View",
+      title: "Current profile",
+      apiData: data,
     };
   }
 
@@ -275,7 +286,8 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
       isClickable: true,
       isLoading: isPending,
       btnLabel: "Update",
-      title: "Update",
+      title: "Update your profile",
+      apiData: data,
     };
   }
 
@@ -284,6 +296,7 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
     isClickable: true,
     isLoading: isPending,
     btnLabel: "Save",
-    title: "Setup",
+    title: "Setup your profile",
+    apiData: data,
   };
 };

@@ -1,17 +1,34 @@
+"use client";
+
+import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { buttonVariants } from "./ui/button";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
   headerText: string;
-  redirectionLinkText: string;
-  redirectionLinkUrl: string;
+  redirectionLinkText?: string;
+  redirectionLinkUrl?: string;
 };
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
+  const router = useRouter();
+  const isLoggedIn = getLoggedInUserDetails();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/");
+    }
+  }, [isLoggedIn, router]);
+
+  if (isLoggedIn) {
+    return null;
+  }
+
   return (
     <div className="container relative flex pt-20 flex-col items-center justify-center lg:px-0">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -29,16 +46,18 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
           </h1>
 
           {/* Link to register Page */}
-          <Link
-            className={buttonVariants({
-              variant: "link",
-              className: "gap-1.5",
-            })}
-            href={props.redirectionLinkUrl}
-          >
-            {props.redirectionLinkText}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          {props.redirectionLinkUrl && (
+            <Link
+              className={buttonVariants({
+                variant: "link",
+                className: "gap-1.5",
+              })}
+              href={props.redirectionLinkUrl}
+            >
+              {props.redirectionLinkText}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
         </div>
 
         <div className="grid gap-6">{children}</div>

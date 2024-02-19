@@ -1,54 +1,55 @@
 "use client";
 
-import { useLoginService } from "@/api/auth";
-import { isHttpError } from "@/api/http";
 import AuthLayout from "@/components/AuthLayout";
 import CustomInput from "@/components/CustomInput";
+// import { Icons } from '@/components/Icons'
+import { useSignUpService } from "@/api/auth";
+import { isHttpError } from "@/api/http";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { SignInFormDataType, signInSchema } from "../dataAndTypes";
+import { SignUpFormDataType, signUpSchema } from "../dataAndTypes";
 import { loginUser } from "../utils";
 
-const SignInPage: React.FC = () => {
-  const router = useRouter();
+const SignUpPage: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<SignInFormDataType>({
-    resolver: zodResolver(signInSchema),
+  } = useForm<SignUpFormDataType>({
+    resolver: zodResolver(signUpSchema),
   });
 
-  const { mutate: mutateLogin, isPending } = useLoginService();
+  const { mutate: mutateSignUp, isPending } = useSignUpService();
 
-  const handleLogin = (data: string) => {
-    loginUser(data);
-    router.replace("/");
-  };
-
-  const onSubmit = (data: SignInFormDataType) => {
-    mutateLogin(data, {
+  const onSubmit = (data: SignUpFormDataType) => {
+    mutateSignUp(data, {
+      onSuccess: loginUser,
       onError: (e) => {
         if (isHttpError(e)) {
           setError("email", { message: e.response?.data });
         }
       },
-      onSuccess: handleLogin,
     });
   };
 
   return (
     <AuthLayout
-      headerText="Sign in to your account"
-      redirectionLinkText="Don't have an account?"
-      redirectionLinkUrl="/sign-up"
+      headerText="Sign up your account"
+      redirectionLinkText="Already have an account?"
+      redirectionLinkUrl="/sign-in"
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
+          <CustomInput
+            id="name"
+            errors={errors}
+            label="Name"
+            register={register}
+          />
+
           <CustomInput
             id="email"
             errors={errors}
@@ -65,10 +66,18 @@ const SignInPage: React.FC = () => {
             type="password"
           />
 
-          {/* Sign In Button */}
+          <CustomInput
+            id="confirmPassword"
+            errors={errors}
+            label="Confirm Password"
+            register={register}
+            type="password"
+          />
+
+          {/* Sign Up Button */}
           <Button disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Sign in
+            Sign up
           </Button>
         </div>
       </form>
@@ -76,4 +85,4 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
+export default SignUpPage;

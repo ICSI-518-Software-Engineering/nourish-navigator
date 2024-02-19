@@ -17,7 +17,7 @@ export const MongooseUserProfileSchema = new mongoose.Schema({
     type: String,
   },
   dietaryPreference: {
-    type: [String],
+    type: String,
   },
   cuisinePreferences: {
     type: [String],

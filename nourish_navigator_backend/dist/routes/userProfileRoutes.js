@@ -44,7 +44,7 @@ var zod_1 = require("zod");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
 var userProfileRoutes = (0, express_1.Router)();
-// Sign up api
+// profile setup api
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var reqBody, user, ex_1;
     return __generator(this, function (_a) {
@@ -69,6 +69,30 @@ userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaite
                 console.log(ex_1);
                 return [2 /*return*/, res.status(500).send("Unknown error occured.")];
             case 4: return [2 /*return*/];
+        }
+    });
+}); });
+// get profile api
+userProfileRoutes.get("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, ex_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                if (!req.params.userid)
+                    return [2 /*return*/, res.status(400).send("User id is missing")];
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid)];
+            case 1:
+                user = _a.sent();
+                return [2 /*return*/, res.send(user === null || user === void 0 ? void 0 : user.userProfile)];
+            case 2:
+                ex_2 = _a.sent();
+                if (ex_2 instanceof zod_1.ZodError) {
+                    return [2 /*return*/, res.status(400).json(ex_2.issues[0].message)];
+                }
+                console.log(ex_2);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 3: return [2 /*return*/];
         }
     });
 }); });

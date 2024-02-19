@@ -22,7 +22,7 @@ exports.MongooseUserProfileSchema = new mongoose_1.default.Schema({
         type: String,
     },
     dietaryPreference: {
-        type: [String],
+        type: String,
     },
     cuisinePreferences: {
         type: [String],

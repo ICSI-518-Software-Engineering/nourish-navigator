@@ -5,9 +5,9 @@ import { UserSessionDetailsType } from "./dataAndTypes";
 
 const TOKEN_KEY = "userToken";
 
-export const loginUser = (token: string) => {
+export const loginUser = (token: string, redirectUrl = "/") => {
   sessionStorage.setItem(TOKEN_KEY, token);
-  window.location.pathname = "/";
+  window.location.pathname = redirectUrl;
 };
 
 export const logoutUser = () => {

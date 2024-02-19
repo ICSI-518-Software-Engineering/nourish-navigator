@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { buttonVariants } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ type AuthLayoutProps = {
   redirectionLinkUrl?: string;
   disableAutoRedirect?: boolean;
   className?: string;
+  isLoading?: boolean;
 };
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
@@ -30,6 +32,10 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
 
   if (isLoggedIn && !props.disableAutoRedirect) {
     return null;
+  }
+
+  if (props.isLoading) {
+    return <Skeleton className="h-12 w-12 rounded-full mx-auto" />;
   }
 
   return (

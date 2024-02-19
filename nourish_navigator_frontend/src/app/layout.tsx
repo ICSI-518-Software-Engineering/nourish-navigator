@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/sonner";
 import TanstackProvider from "@/lib/TanstackProvider";
 import ThemeProvider, { theme } from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,7 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
+                <Toaster />
                 <main className="relative flex flex-col">
                   <Navbar />
                   <div className="flex-grow flex-1">{children}</div>

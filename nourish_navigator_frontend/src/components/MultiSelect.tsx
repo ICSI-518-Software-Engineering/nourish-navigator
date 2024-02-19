@@ -77,7 +77,7 @@ type MultiSelectBaseProps<T extends FieldValues> = {
   id: Path<T>;
 };
 
-const MultiSelectBase = <T extends FieldValues>({
+const MultiSelectBaseComp = <T extends FieldValues>({
   options,
   selected,
   onChange,
@@ -87,7 +87,7 @@ const MultiSelectBase = <T extends FieldValues>({
   const [open, setOpen] = React.useState(false);
 
   const handleUnselect = (item: string) => {
-    onChange(selected.filter((i) => i !== item));
+    onChange(selected?.filter((i) => i !== item));
   };
 
   return (
@@ -106,8 +106,8 @@ const MultiSelectBase = <T extends FieldValues>({
             )}
             onClick={() => setOpen((prev) => !prev)}
           >
-            <div className="flex gap-1 flex-wrap items-center mt-1">
-              {selected.map((item) => (
+            <div className="flex gap-1 flex-wrap items-center mt-[0.35rem]">
+              {selected?.map((item) => (
                 <Badge
                   variant="secondary"
                   key={item}
@@ -115,7 +115,7 @@ const MultiSelectBase = <T extends FieldValues>({
                   onClick={() => handleUnselect(item)}
                 >
                   {item}
-                  <button
+                  <div
                     className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -129,7 +129,7 @@ const MultiSelectBase = <T extends FieldValues>({
                     onClick={() => handleUnselect(item)}
                   >
                     <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </button>
+                  </div>
                 </Badge>
               ))}
             </div>
@@ -146,8 +146,8 @@ const MultiSelectBase = <T extends FieldValues>({
                   key={option.value}
                   onSelect={() => {
                     onChange(
-                      selected.includes(option.value)
-                        ? selected.filter((item) => item !== option.value)
+                      selected?.includes(option.value)
+                        ? selected?.filter((item) => item !== option.value)
                         : [...selected, option.value]
                     );
                     setOpen(true);
@@ -156,7 +156,7 @@ const MultiSelectBase = <T extends FieldValues>({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selected.includes(option.value)
+                      selected?.includes(option.value)
                         ? "opacity-100"
                         : "opacity-0"
                     )}
@@ -182,3 +182,5 @@ const MultiSelectBase = <T extends FieldValues>({
     </div>
   );
 };
+
+const MultiSelectBase = React.forwardRef(MultiSelectBaseComp);

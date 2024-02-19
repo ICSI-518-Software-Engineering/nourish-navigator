@@ -1,3 +1,4 @@
+import LoadingLayout from "@/components/LoadingLayout";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import TanstackProvider from "@/lib/TanstackProvider";
@@ -46,10 +47,12 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
                 <Toaster />
-                <main className="relative flex flex-col">
-                  <Navbar />
-                  <div className="flex-grow flex-1">{children}</div>
-                </main>
+                <LoadingLayout>
+                  <main className="relative flex flex-col">
+                    <Navbar />
+                    <div className="flex-grow flex-1">{children}</div>
+                  </main>
+                </LoadingLayout>
               </ThemeProvider>
             </MuiThemeProvider>
           </TanstackProvider>

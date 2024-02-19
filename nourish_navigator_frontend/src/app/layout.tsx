@@ -1,7 +1,9 @@
 import Navbar from "@/components/Navbar";
 import TanstackProvider from "@/lib/TanstackProvider";
-import ThemeProvider from "@/lib/ThemeProvider";
+import ThemeProvider, { theme } from "@/lib/ThemeProvider";
 import { cn } from "@/lib/utils";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -33,19 +35,23 @@ export default function RootLayout({
           backgroundAttachment: "fixed",
         }}
       >
-        <TanstackProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className="relative flex flex-col">
-              <Navbar />
-              <div className="flex-grow flex-1">{children}</div>
-            </main>
-          </ThemeProvider>
-        </TanstackProvider>
+        <AppRouterCacheProvider>
+          <TanstackProvider>
+            <MuiThemeProvider theme={theme}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <main className="relative flex flex-col">
+                  <Navbar />
+                  <div className="flex-grow flex-1">{children}</div>
+                </main>
+              </ThemeProvider>
+            </MuiThemeProvider>
+          </TanstackProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

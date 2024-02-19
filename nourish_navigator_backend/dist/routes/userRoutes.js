@@ -73,9 +73,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var zod_1 = require("zod");
 var userModel_1 = __importStar(require("../models/userModel"));
-var router = (0, express_1.Router)();
+var userRoutes = (0, express_1.Router)();
 // Sign up api
-router.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+userRoutes.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userData, userRec, newUserRec, ex_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -90,7 +90,7 @@ router.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, v
                 if (userRec) {
                     return [2 /*return*/, res.status(400).send("User already exists")];
                 }
-                newUserRec = new userModel_1.default(__assign({}, userData));
+                newUserRec = new userModel_1.default(__assign({ isAdmin: false }, userData));
                 return [4 /*yield*/, newUserRec.save()];
             case 2:
                 _a.sent();
@@ -107,7 +107,7 @@ router.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, v
     });
 }); });
 // Sign in api
-router.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+userRoutes.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userData, userRec, ex_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -137,4 +137,4 @@ router.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, v
         }
     });
 }); });
-exports.default = router;
+exports.default = userRoutes;

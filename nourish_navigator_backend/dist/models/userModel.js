@@ -58,7 +58,10 @@ var userSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    isAdmin: Boolean,
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
 });
 userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {
@@ -104,6 +107,7 @@ exports.signInSchema = zod_1.z.object({
 });
 exports.signUpSchema = exports.signInSchema.extend({
     name: zod_1.z.string({ required_error: "Name is required" }),
+    isAdmin: zod_1.z.boolean().optional(),
 });
 // Custom Validator
 var validateSignUpRequest = function (body) {

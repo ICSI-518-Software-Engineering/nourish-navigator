@@ -17,7 +17,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {
@@ -59,6 +62,7 @@ export const signInSchema = z.object({
 
 export const signUpSchema = signInSchema.extend({
   name: z.string({ required_error: "Name is required" }),
+  isAdmin: z.boolean().optional(),
 });
 
 export type SignUpSchema = z.infer<typeof signUpSchema>;

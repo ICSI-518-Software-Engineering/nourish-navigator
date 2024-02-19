@@ -1,12 +1,13 @@
 import { z } from "zod";
 
 export const userProfileSchema = z.object({
-  dob: z.date(),
-  height: z.string(),
-  weight: z.string(),
+  age: z.number(),
+  gender: z.string(),
+  height: z.number(),
+  weight: z.number(),
   dietaryPreference: z.string().optional(),
   cuisinePreferences: z.string().array().optional(),
-  medicalHistory: z.string().optional(),
+  medicalHistory: z.string().array().optional(),
   allergies: z.string().array().optional(),
 });
 

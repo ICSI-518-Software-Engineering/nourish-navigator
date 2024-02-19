@@ -6,6 +6,8 @@ import Link from "next/link";
 import React from "react";
 import { getLoggedInUserDetails } from "./(auth)/utils";
 
+import Dashboard from "@/components/Dashboard";
+
 const HomePage: React.FC = () => {
   const user = getLoggedInUserDetails();
   return (
@@ -31,6 +33,11 @@ const HomePage: React.FC = () => {
           )}
         </div>
       </MaxWidthContainer>
+      {user && (
+        <>
+          <Dashboard/>
+        </>
+      )}
     </>
   );
 };

@@ -1,10 +1,12 @@
 import { z } from "zod";
 
 export const userProfileSchema = z.object({
-  age: z.number(),
+  age: z
+    .string()
+    .refine((item) => Number(item), { message: "Age should be a number" }),
   gender: z.string(),
-  height: z.number(),
-  weight: z.number(),
+  height: z.string(),
+  weight: z.string(),
   dietaryPreference: z.string().optional(),
   cuisinePreferences: z.string().array().optional(),
   medicalHistory: z.string().array().optional(),

@@ -35,23 +35,41 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var zod_1 = require("zod");
+var userModel_1 = __importDefault(require("../models/userModel"));
+var userProfileModel_1 = require("../models/userProfileModel");
 var userProfileRoutes = (0, express_1.Router)();
 // Sign up api
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var reqBody, user, ex_1;
     return __generator(this, function (_a) {
-        try {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                reqBody = (0, userProfileModel_1.validateNewUserProfileRequest)(req.body);
+                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, {
+                        userProfile: reqBody,
+                    })];
+            case 1:
+                user = _a.sent();
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 2:
+                _a.sent();
+                return [2 /*return*/, res.send("User profile updated successfully")];
+            case 3:
+                ex_1 = _a.sent();
+                if (ex_1 instanceof zod_1.ZodError) {
+                    return [2 /*return*/, res.status(400).json(ex_1.issues[0].message)];
+                }
+                console.log(ex_1);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 4: return [2 /*return*/];
         }
-        catch (ex) {
-            if (ex instanceof zod_1.ZodError) {
-                return [2 /*return*/, res.status(400).json(ex.issues[0].message)];
-            }
-            console.log(ex);
-            return [2 /*return*/, res.status(500).send("Unknown error occured.")];
-        }
-        return [2 /*return*/];
     });
 }); });
 exports.default = userProfileRoutes;

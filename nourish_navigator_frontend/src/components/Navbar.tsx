@@ -18,7 +18,16 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="sticky z-50 top-0 inset-x-0 h-16">
+    <div
+      className="sticky z-50 top-0 inset-x-0 h-16"
+      style={{
+        background:
+          "linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),url(/assets/images/background1.jpg)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <header className="relative">
         {/* Container */}
 

@@ -21,7 +21,7 @@ type CustomInputProps<T extends FieldValues> = {
 
 const CustomInput = <T extends FieldValues>(props: CustomInputProps<T>) => {
   return (
-    <div className="grid gap-1 py-2">
+    <div className="grid gap-1 py-2 h-24">
       <Label htmlFor={props.id}>{props.label}</Label>
       <Input
         {...props.register?.(props.id)}

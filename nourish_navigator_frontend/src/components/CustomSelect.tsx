@@ -40,9 +40,9 @@ const CustomSelect = <T extends FieldValues>(props: CustomSelectProps<T>) => {
       control={props.control}
       rules={{ required: true }}
       render={({ field }) => (
-        <div className="grid gap-1 py-2">
+        <div className="grid gap-1 py-2 h-24">
           <Label>{props.label}</Label>
-          <Select>
+          <Select defaultValue={field.value} onValueChange={field.onChange}>
             <SelectTrigger>
               <SelectValue placeholder={props.placeholder} />
             </SelectTrigger>

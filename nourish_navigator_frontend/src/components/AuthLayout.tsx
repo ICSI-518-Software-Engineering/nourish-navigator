@@ -35,7 +35,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
   }
 
   if (props.isLoading) {
-    return <Skeleton className="h-12 w-12 rounded-full mx-auto" />;
+    return <Skeleton className="h-12 w-12 rounded-full mx-auto mt-10" />;
   }
 
   return (

@@ -8,6 +8,7 @@ export const signInSchema = z.object({
 export const signUpSchema = signInSchema
   .extend({
     name: z.string().min(1, { message: "Name is required" }),
+    isAdmin: z.boolean().optional(),
     confirmPassword: z
       .string()
       .min(1, { message: "Confirm password is required" }),

@@ -1,38 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -69,32 +35,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var zod_1 = require("zod");
-var userModel_1 = __importStar(require("../models/userModel"));
-var userRoutes = (0, express_1.Router)();
-// Sign up api
-userRoutes.post("/sign-up", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, userRec, newUserRec, ex_1;
+var userModel_1 = __importDefault(require("../models/userModel"));
+var userProfileModel_1 = require("../models/userProfileModel");
+var userProfileRoutes = (0, express_1.Router)();
+// profile setup api
+userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var reqBody, user, ex_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
-                userData = (0, userModel_1.validateSignUpRequest)(req.body);
-                return [4 /*yield*/, userModel_1.default.findOne({
-                        email: userData.email,
+                reqBody = (0, userProfileModel_1.validateNewUserProfileRequest)(req.body);
+                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, {
+                        userProfile: reqBody,
                     })];
             case 1:
-                userRec = _a.sent();
-                if (userRec) {
-                    return [2 /*return*/, res.status(400).send("User already exists")];
-                }
-                newUserRec = new userModel_1.default(__assign({ isAdmin: false }, userData));
-                return [4 /*yield*/, newUserRec.save()];
+                user = _a.sent();
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
             case 2:
                 _a.sent();
-                return [2 /*return*/, res.send(newUserRec.generateAuthToken())];
+                return [2 /*return*/, res.send("User profile updated successfully")];
             case 3:
                 ex_1 = _a.sent();
                 if (ex_1 instanceof zod_1.ZodError) {
@@ -106,26 +72,19 @@ userRoutes.post("/sign-up", function (req, res) { return __awaiter(void 0, void 
         }
     });
 }); });
-// Sign in api
-userRoutes.post("/sign-in", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, userRec, ex_2;
+// get profile api
+userProfileRoutes.get("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, ex_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                userData = (0, userModel_1.validateSignInRequest)(req.body);
-                return [4 /*yield*/, userModel_1.default.findOne({
-                        email: userData.email,
-                    })];
+                if (!req.params.userid)
+                    return [2 /*return*/, res.status(400).send("User id is missing")];
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid)];
             case 1:
-                userRec = _a.sent();
-                if (!userRec) {
-                    return [2 /*return*/, res.status(400).send("User not found")];
-                }
-                if (!userRec.validatePassword(userData.password)) {
-                    return [2 /*return*/, res.status(400).send("Invalid Email / Password")];
-                }
-                return [2 /*return*/, res.send(userRec.generateAuthToken())];
+                user = _a.sent();
+                return [2 /*return*/, res.send(user === null || user === void 0 ? void 0 : user.userProfile)];
             case 2:
                 ex_2 = _a.sent();
                 if (ex_2 instanceof zod_1.ZodError) {
@@ -137,4 +96,4 @@ userRoutes.post("/sign-in", function (req, res) { return __awaiter(void 0, void 
         }
     });
 }); });
-exports.default = userRoutes;
+exports.default = userProfileRoutes;

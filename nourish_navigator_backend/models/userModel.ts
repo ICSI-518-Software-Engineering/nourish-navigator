@@ -2,8 +2,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose, { CallbackError } from "mongoose";
 import { z } from "zod";
+import {
+  MongooseUserProfileSchema,
+  UserProfileRequestDataType,
+} from "./userProfileModel";
 
-const userSchema = new mongoose.Schema({
+export const MongooseUserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -17,11 +21,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  userProfile: MongooseUserProfileSchema,
 });
 
-userSchema.pre("save", async function (next) {
-  const thisObj = this as SignUpSchema;
+MongooseUserSchema.pre("save", async function (next) {
+  const thisObj = this as SignUpRequestDataType;
 
   if (!this.isModified("password")) {
     return next();
@@ -35,11 +43,11 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-userSchema.methods.validatePassword = function (password: string) {
+MongooseUserSchema.methods.validatePassword = function (password: string) {
   return bcrypt.compareSync(password, this.password);
 };
 
-userSchema.methods.generateAuthToken = function () {
+MongooseUserSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
       _id: this._id,
@@ -52,33 +60,36 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-export const signInSchema = z.object({
+export const signInZodSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email(),
   password: z.string({ required_error: "Password is required" }),
 });
 
-export const signUpSchema = signInSchema.extend({
+export const signUpZodSchema = signInZodSchema.extend({
   name: z.string({ required_error: "Name is required" }),
+  isAdmin: z.boolean().optional(),
 });
 
-export type SignUpSchema = z.infer<typeof signUpSchema>;
-export type SignInSchema = z.infer<typeof signInSchema>;
+export type SignUpRequestDataType = z.infer<typeof signUpZodSchema>;
+export type SignInRequestDataType = z.infer<typeof signInZodSchema>;
 
 // Custom Validator
-export const validateSignUpRequest = (body: SignUpSchema) => {
-  const res = signUpSchema.parse(body);
+export const validateSignUpRequest = (body: SignUpRequestDataType) => {
+  const res = signUpZodSchema.parse(body);
   return res;
 };
 
-export const validateSignInRequest = (body: SignInSchema) => {
-  const res = signInSchema.parse(body);
+export const validateSignInRequest = (body: SignInRequestDataType) => {
+  const res = signInZodSchema.parse(body);
   return res;
 };
 
 type UserModel = {
   generateAuthToken: () => string;
   validatePassword: (password: string) => boolean;
-} & SignUpSchema;
+} & SignUpRequestDataType;
 
-const User = mongoose.model<UserModel>("user", userSchema);
+const User = mongoose.model<
+  UserModel & { userProfile: UserProfileRequestDataType }
+>("user", MongooseUserSchema);
 export default User;

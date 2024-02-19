@@ -5,10 +5,10 @@ import User, {
   validateSignUpRequest,
 } from "../models/userModel";
 
-const router = Router();
+const userRoutes = Router();
 
 // Sign up api
-router.post("/sign-up", async (req: Request, res: Response) => {
+userRoutes.post("/sign-up", async (req: Request, res: Response) => {
   try {
     const userData = validateSignUpRequest(req.body);
 
@@ -21,6 +21,7 @@ router.post("/sign-up", async (req: Request, res: Response) => {
     }
 
     const newUserRec = new User({
+      isAdmin: false,
       ...userData,
     });
 
@@ -37,7 +38,7 @@ router.post("/sign-up", async (req: Request, res: Response) => {
 });
 
 // Sign in api
-router.post("/sign-in", async (req: Request, res: Response) => {
+userRoutes.post("/sign-in", async (req: Request, res: Response) => {
   try {
     const userData = validateSignInRequest(req.body);
 
@@ -63,4 +64,4 @@ router.post("/sign-in", async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+export default userRoutes;

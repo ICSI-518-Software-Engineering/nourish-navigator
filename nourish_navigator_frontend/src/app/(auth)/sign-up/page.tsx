@@ -25,14 +25,17 @@ const SignUpPage: React.FC = () => {
   const { mutate: mutateSignUp, isPending } = useSignUpService();
 
   const onSubmit = (data: SignUpFormDataType) => {
-    mutateSignUp(data, {
-      onSuccess: loginUser,
-      onError: (e) => {
-        if (isHttpError(e)) {
-          setError("email", { message: e.response?.data });
-        }
-      },
-    });
+    mutateSignUp(
+      { ...data, isAdmin: false },
+      {
+        onSuccess: (token) => loginUser(token, "/user-profile/setup"),
+        onError: (e) => {
+          if (isHttpError(e)) {
+            setError("email", { message: e.response?.data });
+          }
+        },
+      }
+    );
   };
 
   return (

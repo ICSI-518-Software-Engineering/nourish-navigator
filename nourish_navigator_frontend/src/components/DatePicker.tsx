@@ -38,14 +38,14 @@ const DatePicker = <T extends FieldValues>(props: DatePickerProps<T>) => {
       control={props.control}
       rules={{ required: true }}
       render={({ field }) => (
-        <>
+        <div className="grid gap-1 py-2">
           <Label htmlFor={props.id}>{props.label}</Label>
           <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant={"outline"}
+                variant="outline"
                 className={cn(
-                  "justify-start text-left font-normal py-5",
+                  "justify-start text-left font-normal bg-transparent dark:border-slate-500",
                   !field.value && "text-muted-foreground"
                 )}
               >
@@ -79,7 +79,7 @@ const DatePicker = <T extends FieldValues>(props: DatePickerProps<T>) => {
               {props.errors?.[props.id]?.message as string}
             </p>
           )}
-        </>
+        </div>
       )}
     />
   );

@@ -39,12 +39,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSignInRequest = exports.validateSignUpRequest = exports.signUpSchema = exports.signInSchema = void 0;
+exports.validateSignInRequest = exports.validateSignUpRequest = exports.signUpZodSchema = exports.signInZodSchema = exports.MongooseUserSchema = void 0;
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
-var userSchema = new mongoose_1.default.Schema({
+var userProfileModel_1 = require("./userProfileModel");
+exports.MongooseUserSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
         required: true,
@@ -58,9 +59,13 @@ var userSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
-    isAdmin: Boolean,
+    isAdmin: {
+        type: Boolean,
+        default: false,
+    },
+    userProfile: userProfileModel_1.MongooseUserProfileSchema,
 });
-userSchema.pre("save", function (next) {
+exports.MongooseUserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {
         var thisObj, _a, e_1;
         return __generator(this, function (_b) {
@@ -86,10 +91,10 @@ userSchema.pre("save", function (next) {
         });
     });
 });
-userSchema.methods.validatePassword = function (password) {
+exports.MongooseUserSchema.methods.validatePassword = function (password) {
     return bcryptjs_1.default.compareSync(password, this.password);
 };
-userSchema.methods.generateAuthToken = function () {
+exports.MongooseUserSchema.methods.generateAuthToken = function () {
     var token = jsonwebtoken_1.default.sign({
         _id: this._id,
         name: this.name,
@@ -98,23 +103,24 @@ userSchema.methods.generateAuthToken = function () {
     }, process.env.JWT_PRIVATE_KEY);
     return token;
 };
-exports.signInSchema = zod_1.z.object({
+exports.signInZodSchema = zod_1.z.object({
     email: zod_1.z.string({ required_error: "Email is required" }).email(),
     password: zod_1.z.string({ required_error: "Password is required" }),
 });
-exports.signUpSchema = exports.signInSchema.extend({
+exports.signUpZodSchema = exports.signInZodSchema.extend({
     name: zod_1.z.string({ required_error: "Name is required" }),
+    isAdmin: zod_1.z.boolean().optional(),
 });
 // Custom Validator
 var validateSignUpRequest = function (body) {
-    var res = exports.signUpSchema.parse(body);
+    var res = exports.signUpZodSchema.parse(body);
     return res;
 };
 exports.validateSignUpRequest = validateSignUpRequest;
 var validateSignInRequest = function (body) {
-    var res = exports.signInSchema.parse(body);
+    var res = exports.signInZodSchema.parse(body);
     return res;
 };
 exports.validateSignInRequest = validateSignInRequest;
-var User = mongoose_1.default.model("user", userSchema);
+var User = mongoose_1.default.model("user", exports.MongooseUserSchema);
 exports.default = User;

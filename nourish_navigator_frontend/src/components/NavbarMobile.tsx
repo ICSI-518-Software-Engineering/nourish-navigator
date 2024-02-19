@@ -1,10 +1,10 @@
 "use client";
 
+import { getLoggedInUserDetails, logoutUser } from "@/app/(auth)/utils";
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -12,6 +12,8 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 
 const NavbarMobile = () => {
+  const user = getLoggedInUserDetails();
+
   return (
     <Sheet>
       {/* Menu Button */}
@@ -26,23 +28,28 @@ const NavbarMobile = () => {
       <SheetContent className="w-2/5">
         <SheetHeader className="mt-4">
           <hr className="my-5 absolute inset-0 top-11" />
-          <SheetDescription>
-            <div className="space-y-6 py-6 pt-8">
-              {/* Sign In Link */}
-              <SheetClose asChild>
-                <Link href="/sign-in" className="-m-2 p-2 block font-medium">
-                  Sign in
-                </Link>
-              </SheetClose>
+          <div className="space-y-6 py-6 pt-8">
+            {/* Sign In Link */}
+            <SheetClose asChild>
+              <Link
+                href={user ? "/user-profile" : "/sign-in"}
+                className="-m-2 p-2 block font-medium"
+              >
+                {user ? "My Account" : "Sign in"}
+              </Link>
+            </SheetClose>
 
-              {/* Sign Up Link */}
-              <SheetClose asChild>
-                <Link href="/sign-up" className="-m-2 block p-2 font-medium">
-                  Sign up
-                </Link>
-              </SheetClose>
-            </div>
-          </SheetDescription>
+            {/* Sign Up Link */}
+            <SheetClose asChild>
+              <Link
+                href={user ? "" : "/sign-up"}
+                onClick={() => (user ? logoutUser() : null)}
+                className="-m-2 block p-2 font-medium"
+              >
+                {user ? "Logout" : "Sign up"}
+              </Link>
+            </SheetClose>
+          </div>
         </SheetHeader>
       </SheetContent>
     </Sheet>

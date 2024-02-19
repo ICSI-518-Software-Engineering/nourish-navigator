@@ -16,11 +16,12 @@ type CustomInputProps<T extends FieldValues> = {
   errors: FieldErrors<T>;
   label: string;
   type?: HTMLInputTypeAttribute;
+  description?: string;
 };
 
 const CustomInput = <T extends FieldValues>(props: CustomInputProps<T>) => {
   return (
-    <div className="grid gap-1 py-2">
+    <div className="grid gap-1 py-2 h-24">
       <Label htmlFor={props.id}>{props.label}</Label>
       <Input
         {...props.register?.(props.id)}
@@ -30,6 +31,11 @@ const CustomInput = <T extends FieldValues>(props: CustomInputProps<T>) => {
         placeholder={props.placeholder}
         type={props.type ?? "text"}
       />
+      {props.description && (
+        <p className={cn("text-[0.8rem] text-muted-foreground")}>
+          {props.description}
+        </p>
+      )}
       {props.errors?.[props.id] && (
         <p className="text-sm text-red-500">
           {props.errors?.[props.id]?.message as string}

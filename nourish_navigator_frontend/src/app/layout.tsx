@@ -27,7 +27,7 @@ export default function RootLayout({
         )}
         style={{
           background:
-            "linear-gradient(0deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)),url(/assets/images/background1.jpg);",
+            "linear-gradient(0deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)),url(/assets/images/background1.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundAttachment: "fixed",

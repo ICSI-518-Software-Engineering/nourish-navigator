@@ -96,4 +96,42 @@ userProfileRoutes.get("/profile/:userid", function (req, res) { return __awaiter
         }
     });
 }); });
+// get profile api
+userProfileRoutes.get("/profile/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users, ex_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, userModel_1.default.find({ isAdmin: false }, { password: false, isAdmin: false })];
+            case 1:
+                users = _a.sent();
+                return [2 /*return*/, res.send(users)];
+            case 2:
+                ex_3 = _a.sent();
+                console.log(ex_3);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+// delete profile api
+userProfileRoutes.delete("/profile/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, ex_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, userModel_1.default.findByIdAndDelete(req.params.userId)];
+            case 1:
+                user = _a.sent();
+                return [2 /*return*/, res.send("user deleted successfully")];
+            case 2:
+                ex_4 = _a.sent();
+                console.log(ex_4);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = userProfileRoutes;

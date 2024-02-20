@@ -28,7 +28,7 @@ const SignUpPage: React.FC = () => {
     mutateSignUp(
       { ...data, isAdmin: true },
       {
-        onSuccess: (token) => loginUser(token, "/user-profile/setup"),
+        onSuccess: (token) => loginUser(token, "/user-profiles"),
         onError: (e) => {
           if (isHttpError(e)) {
             setError("email", { message: e.response?.data });

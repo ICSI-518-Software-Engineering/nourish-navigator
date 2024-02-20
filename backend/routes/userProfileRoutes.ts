@@ -42,4 +42,29 @@ userProfileRoutes.get("/profile/:userid", async (req, res: Response) => {
   }
 });
 
+// get profile api
+userProfileRoutes.get("/profile/", async (req, res: Response) => {
+  try {
+    const users = await User.find(
+      { isAdmin: false },
+      { password: false, isAdmin: false }
+    );
+    return res.send(users);
+  } catch (ex) {
+    console.log(ex);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
+// delete profile api
+userProfileRoutes.delete("/profile/:userId", async (req, res: Response) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.userId);
+    return res.send("user deleted successfully");
+  } catch (ex) {
+    console.log(ex);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
 export default userProfileRoutes;

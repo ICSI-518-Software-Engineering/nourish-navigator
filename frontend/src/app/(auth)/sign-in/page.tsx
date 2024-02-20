@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { SignInFormDataType, signInSchema } from "../dataAndTypes";
-import { loginUser } from "../utils";
+import { decodeJWT, loginUser } from "../utils";
 
 const SignInPage: React.FC = () => {
   const router = useRouter();
@@ -26,8 +26,12 @@ const SignInPage: React.FC = () => {
   const { mutate: mutateLogin, isPending } = useLoginService();
 
   const handleLogin = (data: string) => {
-    loginUser(data);
-    router.replace("/");
+    const user = decodeJWT(data);
+    if (user.isAdmin) {
+      loginUser(data, "/user-profiles");
+    } else {
+      loginUser(data);
+    }
   };
 
   const onSubmit = (data: SignInFormDataType) => {

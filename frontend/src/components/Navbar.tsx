@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import MaxWidthContainer from "./MaxWidthContainer";
+import NavItems from "./NavItems";
 import NavbarMobile from "./NavbarMobile";
 import UserMenu from "./UserMenu";
 import { buttonVariants } from "./ui/button";
@@ -51,13 +52,14 @@ const Navbar: React.FC = () => {
                 </Link>
               </div>
 
-              {/* 
-          <div className='hidden z-50 lg:ml-8 lg:block lg:self-stretch'>
-            <NavItems />
-          </div> */}
-
               {mounted && (
-                <div className="ml-auto flex items-center">
+                <div className="ml-auto flex items-center gap-3">
+                  {user && (
+                    <div className="hidden z-50 lg:flex items-center gap-3">
+                      <NavItems />
+                    </div>
+                  )}
+
                   <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                     {user ? null : (
                       <Link

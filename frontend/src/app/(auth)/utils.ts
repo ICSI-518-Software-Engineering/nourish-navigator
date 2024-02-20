@@ -15,13 +15,17 @@ export const logoutUser = () => {
   window.location.pathname = "/";
 };
 
+export const decodeJWT = (token: string) => {
+  return jwtDecode<UserSessionDetailsType>(token);
+};
+
 export const getLoggedInUserDetails = () => {
   try {
     const token = sessionStorage.getItem(TOKEN_KEY);
     if (!token) {
       return null;
     }
-    return jwtDecode<UserSessionDetailsType>(token);
+    return decodeJWT(token);
   } catch (error) {
     return null;
   }

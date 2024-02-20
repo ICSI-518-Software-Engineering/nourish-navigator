@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import NavItems from "./NavItems";
 
 const NavbarMobile = () => {
   const user = getLoggedInUserDetails();
@@ -29,6 +30,8 @@ const NavbarMobile = () => {
         <SheetHeader className="mt-4">
           <hr className="my-5 absolute inset-0 top-11" />
           <div className="space-y-6 py-6 pt-8">
+            <NavItems mobile />
+
             {/* Sign In Link */}
             <SheetClose asChild>
               <Link

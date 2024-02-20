@@ -77,13 +77,10 @@ type MultiSelectBaseProps<T extends FieldValues> = {
   id: Path<T>;
 };
 
-const MultiSelectBaseComp = <T extends FieldValues>({
-  options,
-  selected,
-  onChange,
-  className,
-  ...props
-}: MultiSelectBaseProps<T>) => {
+const MultiSelectBaseComp = <T extends FieldValues>(
+  { options, selected, onChange, className, ...props }: MultiSelectBaseProps<T>,
+  _ref: unknown
+) => {
   const [open, setOpen] = React.useState(false);
 
   const handleUnselect = (item: string) => {

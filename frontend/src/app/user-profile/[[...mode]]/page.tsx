@@ -30,7 +30,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
 
   const settings = useGetDefaultValues(mode);
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -43,7 +42,9 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
   });
 
   useEffect(() => {
-    reset(settings?.formData);
+    if (settings?.formData) {
+      reset(settings?.formData);
+    }
   }, [reset, settings?.formData]);
 
   useEffect(() => {
@@ -248,12 +249,14 @@ const defaultData = {
   medicalHistory: [],
   cuisinePreferences: [],
   allergies: [],
+  dietaryPreference: "",
+  gender: "",
 };
 
 const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
   const isEditMode = mode?.[0] === "edit";
   const isSetupMode = mode?.[0] === "setup";
-  const isViewMode = !mode;
+  const isViewMode = mode === undefined;
 
   const { data, isPending } = useGetUserProfileService();
 

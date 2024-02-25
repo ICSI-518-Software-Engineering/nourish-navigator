@@ -13,6 +13,9 @@ type NavItemsProps = {
 
 const NavItems: React.FC<NavItemsProps> = (props) => {
   const user = getLoggedInUserDetails();
+
+  if (!user) return null;
+
   return navItems?.map((item) => {
     if (item.displayAccessor && !item.displayAccessor?.(user)) return;
     if (props.mobile) {

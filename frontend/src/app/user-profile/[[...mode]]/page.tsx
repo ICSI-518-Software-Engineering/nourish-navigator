@@ -37,7 +37,9 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
     control,
     reset,
   } = useForm<UserProfileFormDataType>({
-    resolver: zodResolver(userProfileSchema),
+    ...(settings?.btnLabel !== "Edit" && {
+      resolver: zodResolver(userProfileSchema),
+    }),
     defaultValues: settings?.formData ?? defaultData,
   });
 
@@ -256,7 +258,7 @@ const defaultData = {
 const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
   const isEditMode = mode?.[0] === "edit";
   const isSetupMode = mode?.[0] === "setup";
-  const isViewMode = mode === undefined;
+  const isViewMode = !mode;
 
   const { data, isPending } = useGetUserProfileService();
 

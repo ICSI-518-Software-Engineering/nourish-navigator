@@ -1,5 +1,7 @@
 "use client";
 
+import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -7,12 +9,22 @@ type LoadingLayoutProps = {
   children: React.ReactNode;
 };
 
+const authPages = new Set(["", "/", "/sign-in", "/sign-up", "/sign-up/admin"]);
+
 const LoadingLayout: React.FC<LoadingLayoutProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const pathname = usePathname();
+  const user = getLoggedInUserDetails();
+  const router = useRouter();
+
   useEffect(() => {
     setIsLoading(false);
-  }, []);
+
+    if (!user && !authPages.has(pathname)) {
+      router.replace("/");
+    }
+  }, [pathname, router, user]);
 
   if (isLoading) {
     return (

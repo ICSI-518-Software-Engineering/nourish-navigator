@@ -1,10 +1,9 @@
-"use client";
-
 import React from "react";
-import Dashboard from "@/components/Dashboard";
 
-const DashboardPage: React.FC = () => {
-  return <Dashboard/>
+type DashboardPageProps = {};
+
+const DashboardPage: React.FC<DashboardPageProps> = (props) => {
+  return <div>DashboardPage</div>;
 };
 
 export default DashboardPage;

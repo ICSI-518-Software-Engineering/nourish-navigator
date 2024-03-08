@@ -1,3 +1,3 @@
 export const DEFAULTS = {
-  sidebarWidth: "12rem",
+  sidebarWidth: "14rem",
 };

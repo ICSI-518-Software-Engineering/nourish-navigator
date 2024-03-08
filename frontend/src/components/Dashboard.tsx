@@ -8,7 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { InboxIcon, MailIcon } from "lucide-react";
+import { ActivitySquareIcon, SaladIcon } from "lucide-react";
 
 const Dashboard = () => {
   return (
@@ -34,9 +34,10 @@ const Dashboard = () => {
         anchor="left"
         open
       >
+        <Box height="2rem" />
         <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          {sidebarLinks.map((sidebarLink) => (
+            <ListItem key={sidebarLink.label} sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -51,9 +52,9 @@ const Dashboard = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {sidebarLink.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={sidebarLink.label} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -68,4 +69,13 @@ export default Dashboard;
 /**
  * ======================= CUSTOM COMPONENTS / DATA =======================
  */
-const sidebarLinks = [{}];
+const sidebarLinks = [
+  {
+    icon: <ActivitySquareIcon />,
+    label: "Your Activity",
+  },
+  {
+    icon: <SaladIcon />,
+    label: "Meal Planner",
+  },
+];

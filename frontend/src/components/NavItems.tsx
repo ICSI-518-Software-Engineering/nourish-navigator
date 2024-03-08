@@ -3,6 +3,7 @@
 import { UserSessionDetailsType } from "@/app/(auth)/dataAndTypes";
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { buttonVariants } from "./ui/button";
 import { SheetClose } from "./ui/sheet";
@@ -13,6 +14,7 @@ type NavItemsProps = {
 
 const NavItems: React.FC<NavItemsProps> = (props) => {
   const user = getLoggedInUserDetails();
+  const pathname = usePathname();
 
   if (!user) return null;
 
@@ -30,7 +32,9 @@ const NavItems: React.FC<NavItemsProps> = (props) => {
     return (
       <Link
         key={item.url}
-        className={buttonVariants({ variant: "ghost" })}
+        className={buttonVariants({
+          variant: pathname === item.url ? "secondary" : "ghost",
+        })}
         href={item.url}
       >
         {item.label}

@@ -3,7 +3,7 @@
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import MaxWidthContainer from "./MaxWidthContainer";
 import NavItems from "./NavItems";
 import NavbarMobile from "./NavbarMobile";
@@ -11,12 +11,7 @@ import UserMenu from "./UserMenu";
 import { buttonVariants } from "./ui/button";
 
 const Navbar: React.FC = () => {
-  const [mounted, setMounted] = useState<boolean>(false);
   const user = getLoggedInUserDetails();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <div
@@ -32,8 +27,8 @@ const Navbar: React.FC = () => {
       <header className="relative">
         {/* Container */}
 
-        <MaxWidthContainer>
-          <div className="border-b border-gray-200">
+        <MaxWidthContainer className="border-b border-gray-200">
+          <div>
             <div className="flex h-16 items-center">
               {/* Mobile Navbar */}
               <NavbarMobile />
@@ -52,48 +47,43 @@ const Navbar: React.FC = () => {
                 </Link>
               </div>
 
-              {mounted && (
-                <div className="ml-auto flex items-center gap-3">
-                  {user && (
-                    <div className="hidden z-50 lg:flex items-center gap-3">
-                      <NavItems />
-                    </div>
+              <div className="ml-auto flex items-center gap-3">
+                {user && (
+                  <div className="hidden z-50 lg:flex items-center gap-3">
+                    <NavItems />
+                  </div>
+                )}
+
+                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                  {user ? null : (
+                    <Link
+                      href="/sign-in"
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
+                    >
+                      Sign in
+                    </Link>
                   )}
 
-                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                    {user ? null : (
-                      <Link
-                        href="/sign-in"
-                        className={buttonVariants({
-                          variant: "ghost",
-                        })}
-                      >
-                        Sign in
-                      </Link>
-                    )}
+                  {user ? null : (
+                    <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
+                  )}
 
-                    {user ? null : (
-                      <span
-                        className="h-6 w-px bg-gray-200"
-                        aria-hidden="true"
-                      />
-                    )}
-
-                    {user ? (
-                      <UserMenu user={user} />
-                    ) : (
-                      <Link
-                        href="/sign-up"
-                        className={buttonVariants({
-                          variant: "ghost",
-                        })}
-                      >
-                        Create account
-                      </Link>
-                    )}
-                  </div>
+                  {user ? (
+                    <UserMenu user={user} />
+                  ) : (
+                    <Link
+                      href="/sign-up"
+                      className={buttonVariants({
+                        variant: "ghost",
+                      })}
+                    >
+                      Create account
+                    </Link>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </MaxWidthContainer>

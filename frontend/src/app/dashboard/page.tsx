@@ -1,10 +1,16 @@
-import Dashboard from "@/components/Dashboard";
+import Sidebar from "@/components/Sidebar";
+import { Box } from "@mui/material";
 import React from "react";
 
 type DashboardPageProps = {};
 
 const DashboardPage: React.FC<DashboardPageProps> = (props) => {
-  return <Dashboard />;
+  return (
+    <Box>
+      {/* Sidebar */}
+      <Sidebar />
+    </Box>
+  );
 };
 
 export default DashboardPage;

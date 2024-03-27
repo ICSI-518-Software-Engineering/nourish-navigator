@@ -26,6 +26,7 @@ export const MongooseUserSchema = new mongoose.Schema({
     default: false,
   },
   userProfile: MongooseUserProfileSchema,
+  mealPlan: JSON,
 });
 
 MongooseUserSchema.pre("save", async function (next) {
@@ -84,12 +85,13 @@ export const validateSignInRequest = (body: SignInRequestDataType) => {
   return res;
 };
 
-type UserModel = {
+type UserModelType = {
   generateAuthToken: () => string;
   validatePassword: (password: string) => boolean;
 } & SignUpRequestDataType;
 
 const User = mongoose.model<
-  UserModel & { userProfile: UserProfileRequestDataType }
+  UserModelType & { userProfile: UserProfileRequestDataType }
 >("user", MongooseUserSchema);
+
 export default User;

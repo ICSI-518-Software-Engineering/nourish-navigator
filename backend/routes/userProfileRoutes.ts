@@ -30,9 +30,12 @@ userProfileRoutes.get("/profile/:userid", async (req, res: Response) => {
   try {
     if (!req.params.userid) return res.status(400).send("User id is missing");
 
-    const user = await User.findById(req.params.userid);
+    const user = await User.findById(req.params.userid, {
+      password: false,
+      isAdmin: false,
+    });
 
-    return res.send(user?.userProfile);
+    return res.send(user);
   } catch (ex) {
     if (ex instanceof ZodError) {
       return res.status(400).json(ex.issues[0].message);
@@ -59,7 +62,7 @@ userProfileRoutes.get("/profile/", async (req, res: Response) => {
 // delete profile api
 userProfileRoutes.delete("/profile/:userId", async (req, res: Response) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.userId);
+    await User.findByIdAndDelete(req.params.userId);
     return res.send("user deleted successfully");
   } catch (ex) {
     console.log(ex);

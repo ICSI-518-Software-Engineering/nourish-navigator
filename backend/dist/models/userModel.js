@@ -64,6 +64,7 @@ exports.MongooseUserSchema = new mongoose_1.default.Schema({
         default: false,
     },
     userProfile: userProfileModel_1.MongooseUserProfileSchema,
+    mealPlan: JSON,
 });
 exports.MongooseUserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {

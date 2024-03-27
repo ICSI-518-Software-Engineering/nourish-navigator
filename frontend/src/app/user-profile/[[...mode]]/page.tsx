@@ -262,6 +262,8 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
 
   const { data, isPending } = useGetUserProfileService();
 
+  const userProfileData = data?.userProfile;
+
   const user = getLoggedInUserDetails();
   if (!user || isSetupMode) {
     return {
@@ -270,29 +272,29 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
       isLoading: isPending,
       btnLabel: "Save",
       title: "Setup your profile",
-      apiData: data,
+      apiData: userProfileData,
     };
   }
 
   if (isViewMode) {
     return {
-      formData: data,
+      formData: userProfileData,
       isClickable: false,
       isLoading: isPending,
       btnLabel: "Edit",
       title: "Current profile",
-      apiData: data,
+      apiData: userProfileData,
     };
   }
 
   if (isEditMode) {
     return {
-      formData: data,
+      formData: userProfileData,
       isClickable: true,
       isLoading: isPending,
       btnLabel: "Update",
       title: "Update your profile",
-      apiData: data,
+      apiData: userProfileData,
     };
   }
 
@@ -302,6 +304,6 @@ const useGetDefaultValues = (mode: UserProfilePageProps["params"]["mode"]) => {
     isLoading: isPending,
     btnLabel: "Save",
     title: "Setup your profile",
-    apiData: data,
+    apiData: userProfileData,
   };
 };

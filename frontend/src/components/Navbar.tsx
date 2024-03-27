@@ -1,6 +1,7 @@
 "use client";
 
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import { Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -35,15 +36,18 @@ const Navbar: React.FC = () => {
 
               {/* Logo */}
               <div className="flex lg:ml-0">
-                <Link href="/">
+                <Link href="/" className="flex items-center gap-2">
                   <Image
-                    src="/assets/images/logo_white.png"
+                    src="/assets/images/logo_no_text.png"
                     alt="logo"
-                    height={100}
-                    width={130}
-                    className="h-auto w-40"
+                    height={40}
+                    width={40}
+                    className="h-auto w-10"
                     priority
                   />
+                  <Typography letterSpacing={2} fontWeight={600}>
+                    NOURISH NAVIGATOR
+                  </Typography>
                 </Link>
               </div>
 

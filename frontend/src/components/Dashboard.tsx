@@ -24,7 +24,7 @@ const Dashboard = () => {
             boxSizing: "border-box",
             background: "transparent",
             position: "absolute",
-            borderRight: "0.5px solid white",
+            borderRight: "0.2px solid lightgray",
             top: "4rem",
             bottom: 0,
             height: "calc(100vh - 4rem)",
@@ -37,7 +37,7 @@ const Dashboard = () => {
         <Box height="2rem" />
         <List>
           {sidebarLinks.map((sidebarLink) => (
-            <ListItem key={sidebarLink.label} sx={{ display: "block" }}>
+            <ListItem key={sidebarLink.label}>
               <ListItemButton
                 sx={{
                   minHeight: 48,

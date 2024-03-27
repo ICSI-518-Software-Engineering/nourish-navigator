@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
             One stop solution for{" "}
             <span className="text-teal-300">meal planning</span>.
           </h1>
-          <p className="mt-6 text-lg max-w-prose text-muted-foreground">
+          <p className="mt-6 text-lg max-w-prose">
             Welcome to Nourish Navigator. Every meal plan generated is
             completely based on your personal goals.
           </p>

@@ -26,12 +26,12 @@ export default function RootLayout({
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-[100svh] bg-background font-sans antialiased",
+          "min-h-screen bg-background font-sans antialiased",
           inter.variable
         )}
         style={{
           background:
-            "linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),url(/assets/images/background1.jpg)",
+            "linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),url(/assets/images/background1.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundAttachment: "fixed",

@@ -2,6 +2,7 @@ import { Response, Router } from "express";
 import { ZodError } from "zod";
 import User from "../models/userModel";
 import { validateNewUserProfileRequest } from "../models/userProfileModel";
+import { nutritionCalculator } from "../scripts/nutritionCalculation";
 
 const userProfileRoutes = Router();
 
@@ -9,9 +10,11 @@ const userProfileRoutes = Router();
 userProfileRoutes.post("/profile/:userid", async (req, res: Response) => {
   try {
     const reqBody = validateNewUserProfileRequest(req.body);
+    const nutrBody = nutritionCalculator(reqBody)
 
     const user = await User.findByIdAndUpdate(req.params.userid, {
       userProfile: reqBody,
+      userNutrition: nutrBody
     });
     await user?.save();
 

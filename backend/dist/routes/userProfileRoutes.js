@@ -43,17 +43,20 @@ var express_1 = require("express");
 var zod_1 = require("zod");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
+var nutritionCalculation_1 = require("../scripts/nutritionCalculation");
 var userProfileRoutes = (0, express_1.Router)();
 // profile setup api
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqBody, user, ex_1;
+    var reqBody, nutrBody, user, ex_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
                 reqBody = (0, userProfileModel_1.validateNewUserProfileRequest)(req.body);
+                nutrBody = (0, nutritionCalculation_1.nutritionCalculator)(reqBody);
                 return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, {
                         userProfile: reqBody,
+                        userNutrition: nutrBody
                     })];
             case 1:
                 user = _a.sent();

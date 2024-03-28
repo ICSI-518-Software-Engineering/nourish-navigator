@@ -45,6 +45,7 @@ var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
 var userProfileModel_1 = require("./userProfileModel");
+var userNutritionModel_1 = require("./userNutritionModel");
 exports.MongooseUserSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
@@ -65,6 +66,7 @@ exports.MongooseUserSchema = new mongoose_1.default.Schema({
     },
     userProfile: userProfileModel_1.MongooseUserProfileSchema,
     mealPlan: JSON,
+    userNutrition: userNutritionModel_1.MongooseUserNutritionSchema
 });
 exports.MongooseUserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {

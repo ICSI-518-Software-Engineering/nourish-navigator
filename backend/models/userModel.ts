@@ -6,6 +6,7 @@ import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
 } from "./userProfileModel";
+import { MongooseUserNutritionSchema } from "./userNutritionModel";
 
 export const MongooseUserSchema = new mongoose.Schema({
   name: {
@@ -27,6 +28,7 @@ export const MongooseUserSchema = new mongoose.Schema({
   },
   userProfile: MongooseUserProfileSchema,
   mealPlan: JSON,
+  userNutrition: MongooseUserNutritionSchema
 });
 
 MongooseUserSchema.pre("save", async function (next) {

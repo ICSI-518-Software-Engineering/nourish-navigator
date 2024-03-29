@@ -17,10 +17,10 @@ export const MongooseUserNutritionSchema = new mongoose.Schema({
 });
 
 export const userNutritionZodSchema = z.object({
-  calorieTarget: z.string().optional(),
-  proteinTarget: z.string().optional(),
-  fatTarget: z.string().optional(),
-  carbTarget: z.string().optional(),
+  calorieTarget: z.string(),
+  proteinTarget: z.string(),
+  fatTarget: z.string(),
+  carbTarget: z.string(),
 });
 
 export type UserNutritionRequestDataType = z.infer<typeof userNutritionZodSchema>;

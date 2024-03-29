@@ -43,13 +43,11 @@ exports.mealPlanService = void 0;
 var axios_1 = __importDefault(require("axios"));
 function dayMealPlan(userNutrition, partition) {
     return __awaiter(this, void 0, void 0, function () {
-        var totalCalories, response, meals, _a;
+        var totalCalories, response, meals, bestCombo, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     totalCalories = userNutrition.calorieTarget;
-                    if (totalCalories != null) {
-                    }
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 3, , 4]);
@@ -64,16 +62,18 @@ function dayMealPlan(userNutrition, partition) {
                         })];
                 case 2:
                     response = _b.sent();
-                    meals = response.data.hits.forEach(function (hit) {
-                        var recipe = hit.recipe;
-                        console.log("Recipe Name: ".concat(recipe.label));
-                        console.log("Calories: ".concat(Math.round(recipe.calories / recipe.yield)));
-                        console.log('Ingredients:');
-                        recipe.ingredientLines.forEach(function (ingredient, index) {
-                            console.log("  ".concat(index + 1, ". ").concat(ingredient));
-                        });
-                        console.log('-----------------------------------');
-                    });
+                    console.log(response.data._links);
+                    meals = response.data.hits.map(function (hit) { return ({
+                        name: hit.recipe.label,
+                        calories: hit.recipe.calories / hit.recipe.yield,
+                        image: hit.recipe.image,
+                        instructions: hit.recipe.url,
+                        protein: hit.recipe.totalNutrients.PROCNT.quantity / hit.recipe.yield,
+                        fat: hit.recipe.totalNutrients.FAT.quantity / hit.recipe.yield,
+                        carbs: hit.recipe.totalNutrients.CHOCDF.quantity / hit.recipe.yield,
+                        ingredients: hit.recipe.ingredients
+                    }); });
+                    bestCombo = findBestMealCombo(meals, totalCalories);
                     return [3 /*break*/, 4];
                 case 3:
                     _a = _b.sent();
@@ -86,6 +86,24 @@ function dayMealPlan(userNutrition, partition) {
 function caloriePerMeal(totalCalories) {
     var partition = Math.round(parseFloat(totalCalories) / 3);
     return partition;
+}
+function findBestMealCombo(meals, targetCalories) {
+    var target = parseFloat(targetCalories);
+    var bestCombo = null;
+    var closestDiff = Infinity;
+    for (var i = 0; i < meals.length; i++) {
+        for (var j = i + 1; j < meals.length; j++) {
+            for (var k = j + 1; k < meals.length; k++) {
+                var comboCalories = meals[i].calories + meals[j].calories + meals[k].calories;
+                var diff = Math.abs(target - comboCalories);
+                if (diff < closestDiff) {
+                    closestDiff = diff;
+                    bestCombo = [meals[i], meals[j], meals[k]];
+                }
+            }
+        }
+    }
+    return bestCombo;
 }
 function mealPlanService(userNutrition) {
     var totalCalories = userNutrition.calorieTarget;

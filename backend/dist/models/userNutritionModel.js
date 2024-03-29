@@ -21,10 +21,10 @@ exports.MongooseUserNutritionSchema = new mongoose_1.default.Schema({
     }
 });
 exports.userNutritionZodSchema = zod_1.z.object({
-    calorieTarget: zod_1.z.string().optional(),
-    proteinTarget: zod_1.z.string().optional(),
-    fatTarget: zod_1.z.string().optional(),
-    carbTarget: zod_1.z.string().optional(),
+    calorieTarget: zod_1.z.string(),
+    proteinTarget: zod_1.z.string(),
+    fatTarget: zod_1.z.string(),
+    carbTarget: zod_1.z.string(),
 });
 // Custom Validator
 //export const validateNewUserProfileRequest = (

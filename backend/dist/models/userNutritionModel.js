@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateNewUserProfileRequest = exports.userNutritionZodSchema = exports.MongooseUserNutritionSchema = void 0;
+exports.userNutritionZodSchema = exports.MongooseUserNutritionSchema = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
 exports.MongooseUserNutritionSchema = new mongoose_1.default.Schema({
@@ -27,8 +27,9 @@ exports.userNutritionZodSchema = zod_1.z.object({
     carbTarget: zod_1.z.string().optional(),
 });
 // Custom Validator
-var validateNewUserProfileRequest = function (body) {
-    var res = exports.userNutritionZodSchema.parse(body);
-    return res;
-};
-exports.validateNewUserProfileRequest = validateNewUserProfileRequest;
+//export const validateNewUserProfileRequest = (
+//  body: UserNutritionRequestDataType
+//) => {
+//  const res = userNutritionZodSchema.parse(body);
+// return res;
+//};

@@ -26,9 +26,9 @@ export const userNutritionZodSchema = z.object({
 export type UserNutritionRequestDataType = z.infer<typeof userNutritionZodSchema>;
 
 // Custom Validator
-export const validateNewUserProfileRequest = (
-  body: UserNutritionRequestDataType
-) => {
-  const res = userNutritionZodSchema.parse(body);
-  return res;
-};
+//export const validateNewUserProfileRequest = (
+//  body: UserNutritionRequestDataType
+//) => {
+//  const res = userNutritionZodSchema.parse(body);
+// return res;
+//};

@@ -6,7 +6,9 @@ import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
 } from "./userProfileModel";
-import { MongooseUserNutritionSchema } from "./userNutritionModel";
+import { MongooseUserNutritionSchema,
+         UserNutritionRequestDataType
+} from "./userNutritionModel";
 
 export const MongooseUserSchema = new mongoose.Schema({
   name: {
@@ -93,7 +95,7 @@ type UserModelType = {
 } & SignUpRequestDataType;
 
 const User = mongoose.model<
-  UserModelType & { userProfile: UserProfileRequestDataType }
+  UserModelType & { userProfile: UserProfileRequestDataType, userNutrition: UserNutritionRequestDataType }
 >("user", MongooseUserSchema);
 
 export default User;

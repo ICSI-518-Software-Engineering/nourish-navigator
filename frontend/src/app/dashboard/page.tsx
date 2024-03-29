@@ -27,7 +27,7 @@ const DashboardPage: React.FC<DashboardPageProps> = (props) => {
   useEffect(() => {
     const userDetails = getLoggedInUserDetails();
     if (!userDetails){
-      console.log('error')
+      console.log('No user found')
     }
     else{
       mealPlan(userDetails._id)

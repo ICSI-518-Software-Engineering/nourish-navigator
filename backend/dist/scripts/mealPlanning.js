@@ -41,20 +41,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mealPlanService = void 0;
 var axios_1 = __importDefault(require("axios"));
-function dayMealPlan(userNutrition, partition) {
+var userModel_1 = __importDefault(require("../models/userModel"));
+function dayMealPlan(userNutrition, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var totalCalories, response, meals, bestCombo, _a;
+        var totalCalories, today, response, meals, bestCombo, mealPlan, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     totalCalories = userNutrition.calorieTarget;
+                    today = varDate;
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: {
                                 type: 'public',
-                                q: 'chicken',
+                                dishType: 'main course',
                                 app_id: 'de80bcac',
                                 app_key: 'b780c80a7be2129a489cf65f422e8b5b',
                                 calories: '500-800',
@@ -62,18 +64,24 @@ function dayMealPlan(userNutrition, partition) {
                         })];
                 case 2:
                     response = _b.sent();
-                    console.log(response.data._links);
                     meals = response.data.hits.map(function (hit) { return ({
-                        name: hit.recipe.label,
+                        mealName: hit.recipe.label,
                         calories: hit.recipe.calories / hit.recipe.yield,
                         image: hit.recipe.image,
                         instructions: hit.recipe.url,
                         protein: hit.recipe.totalNutrients.PROCNT.quantity / hit.recipe.yield,
                         fat: hit.recipe.totalNutrients.FAT.quantity / hit.recipe.yield,
                         carbs: hit.recipe.totalNutrients.CHOCDF.quantity / hit.recipe.yield,
-                        ingredients: hit.recipe.ingredients
+                        //ingredients: hit.recipe.ingredients
                     }); });
                     bestCombo = findBestMealCombo(meals, totalCalories);
+                    if (bestCombo != null) {
+                        mealPlan = {
+                            date: today,
+                            meal: bestCombo
+                        };
+                        return [2 /*return*/, mealPlan];
+                    }
                     return [3 /*break*/, 4];
                 case 3:
                     _a = _b.sent();
@@ -105,11 +113,68 @@ function findBestMealCombo(meals, targetCalories) {
     }
     return bestCombo;
 }
-function mealPlanService(userNutrition) {
-    var totalCalories = userNutrition.calorieTarget;
-    if (totalCalories != null) {
-        var partition = caloriePerMeal(totalCalories);
-        dayMealPlan(userNutrition, partition);
-    }
+function mealPlanService(user, id) {
+    return __awaiter(this, void 0, void 0, function () {
+        var today, testToday, tomorrow, testTomorrow, todayFlag, tomorrowFlag, test, userNutrition, totalCalories, partition, mealBody, update, partition, mealBody, update;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    today = new Date();
+                    testToday = today.toDateString();
+                    tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    testTomorrow = tomorrow.toDateString();
+                    console.log(testToday);
+                    console.log(testTomorrow);
+                    today.setDate(today.getDate());
+                    todayFlag = false;
+                    tomorrowFlag = false;
+                    return [4 /*yield*/, userModel_1.default.findById(id)];
+                case 1:
+                    test = _a.sent();
+                    test === null || test === void 0 ? void 0 : test.mealPlan.forEach(function (element) {
+                        if (element.date === testToday) {
+                            todayFlag = true;
+                        }
+                        if (element.date === testTomorrow) {
+                            tomorrowFlag = true;
+                        }
+                    });
+                    userNutrition = user.userNutrition;
+                    totalCalories = userNutrition.calorieTarget;
+                    if (!(totalCalories != null)) return [3 /*break*/, 9];
+                    if (!!todayFlag) return [3 /*break*/, 5];
+                    partition = caloriePerMeal(totalCalories);
+                    return [4 /*yield*/, dayMealPlan(userNutrition, partition, testToday)];
+                case 2:
+                    mealBody = _a.sent();
+                    return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
+                            $push: { mealPlan: mealBody }
+                        })];
+                case 3:
+                    update = _a.sent();
+                    return [4 /*yield*/, (update === null || update === void 0 ? void 0 : update.save())];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    if (!!tomorrowFlag) return [3 /*break*/, 9];
+                    partition = caloriePerMeal(totalCalories);
+                    return [4 /*yield*/, dayMealPlan(userNutrition, partition, testTomorrow)];
+                case 6:
+                    mealBody = _a.sent();
+                    return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
+                            $push: { mealPlan: mealBody }
+                        })];
+                case 7:
+                    update = _a.sent();
+                    return [4 /*yield*/, (update === null || update === void 0 ? void 0 : update.save())];
+                case 8:
+                    _a.sent();
+                    _a.label = 9;
+                case 9: return [2 /*return*/];
+            }
+        });
+    });
 }
 exports.mealPlanService = mealPlanService;

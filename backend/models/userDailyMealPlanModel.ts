@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
-export const MongooseUserNutritionSchema = new mongoose.Schema({
+export const MongooseUserMealPlanSchema = new mongoose.Schema({
     date: {
         type: String
     },
     meal:[{
-        name: {
+        mealName: {
             type: String
         },
         calories: {
@@ -31,7 +31,7 @@ export const MongooseUserNutritionSchema = new mongoose.Schema({
   });
 
 const mealZodSchema = z.object({
-    name: z.string(),
+    mealName: z.string(),
     calories: z.string(),
     image: z.string(),
     instruction: z.string(),

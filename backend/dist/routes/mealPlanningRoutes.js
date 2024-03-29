@@ -45,7 +45,7 @@ var mealPlanning_1 = require("../scripts/mealPlanning");
 var mealPlanningRoutes = (0, express_1.Router)();
 // get profile api
 mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
+    var user, mealBody;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
@@ -57,7 +57,9 @@ mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(
                 if (!user) {
                     return [2 /*return*/];
                 }
-                (0, mealPlanning_1.mealPlanService)(user.userNutrition);
+                return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid)];
+            case 2:
+                mealBody = _a.sent();
                 return [2 /*return*/];
         }
     });

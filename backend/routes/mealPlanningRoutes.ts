@@ -1,6 +1,7 @@
 import { Response, Router } from "express";
 import User from "../models/userModel";
 import { mealPlanService } from "../scripts/mealPlanning";
+import { UserMealPlanDataType } from "../models/userDailyMealPlanModel";
 
 const mealPlanningRoutes = Router();
 
@@ -11,7 +12,7 @@ mealPlanningRoutes.get("/meals/:userid", async (req, res: Response) => {
         isAdmin: false,
       });
     if (!user){return}
-    mealPlanService(user.userNutrition)
+    const mealBody = await mealPlanService(user, req.params.userid)
   });
 
 export default mealPlanningRoutes;

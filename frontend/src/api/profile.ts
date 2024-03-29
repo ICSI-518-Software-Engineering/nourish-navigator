@@ -28,8 +28,13 @@ export const useUpdateUserProfileService = () => {
  * Get User Profile Service
  */
 
+export type GetUserProfileServiceResponseType = {
+  userProfile: UserProfileFormDataType;
+  mealPlan: Record<string, unknown>;
+};
+
 const getUserProfileService = async (userId: string) => {
-  const res = await http.get<UserProfileFormDataType>(
+  const res = await http.get<GetUserProfileServiceResponseType>(
     `/user/profile/${userId}`
   );
   return res.data;

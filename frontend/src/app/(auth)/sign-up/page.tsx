@@ -51,6 +51,7 @@ const SignUpPage: React.FC = () => {
             errors={errors}
             label="Name"
             register={register}
+            placeholder="Enter your name"
           />
 
           <CustomInput
@@ -67,6 +68,7 @@ const SignUpPage: React.FC = () => {
             label="Password"
             register={register}
             type="password"
+            placeholder="Enter your password"
           />
 
           <CustomInput
@@ -75,6 +77,7 @@ const SignUpPage: React.FC = () => {
             label="Confirm Password"
             register={register}
             type="password"
+            placeholder="Re-enter your password"
           />
 
           {/* Sign Up Button */}

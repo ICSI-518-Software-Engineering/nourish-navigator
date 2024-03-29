@@ -1,3 +1,6 @@
+"use client";
+
+import http from "@/api/http";
 import Sidebar from "@/components/Sidebar";
 import {
   Card,
@@ -9,11 +12,29 @@ import {
 import { DEFAULTS } from "@/lib/constants";
 import { Box } from "@mui/material";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
+import { getLoggedInUserDetails } from "../(auth)/utils";
+
 
 type DashboardPageProps = {};
 
+function mealPlan(userID: string) {
+  http.get(`/planner/meals/${userID}`)
+}
+
 const DashboardPage: React.FC<DashboardPageProps> = (props) => {
+
+  useEffect(() => {
+    const userDetails = getLoggedInUserDetails();
+    if (!userDetails){
+      console.log('error')
+    }
+    else{
+      mealPlan(userDetails._id)
+    }
+    
+  }, []);
+
   return (
     <Box>
       {/* Sidebar */}

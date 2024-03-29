@@ -43,7 +43,6 @@ function calorieCalculation(user) {
     }
     var target = weightOffset * parseFloat(user.weight) + 30.48 * heightOffset * parseFloat(user.height)
         - ageOffset * parseFloat(user.age) + genderOffset;
-    console.log(target);
     if (target < minCals) {
         target = minCals;
     }

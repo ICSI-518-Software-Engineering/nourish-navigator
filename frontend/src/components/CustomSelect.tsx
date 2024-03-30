@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import React from "react";
 import {
   Control,
@@ -16,6 +15,7 @@ import {
   FieldValues,
   Path,
 } from "react-hook-form";
+import { DescriptionText, ErrorText } from "./Text";
 import { Label } from "./ui/label";
 
 type CustomSelectProps<T extends FieldValues> = {
@@ -24,7 +24,7 @@ type CustomSelectProps<T extends FieldValues> = {
   label: string;
   options: SelectOptionType[];
   description?: string;
-  errors: FieldErrors<T>;
+  errors?: FieldErrors<T>;
   control: Control<T>;
 };
 
@@ -38,7 +38,7 @@ const CustomSelect = <T extends FieldValues>(props: CustomSelectProps<T>) => {
     <Controller
       name={props.id}
       control={props.control}
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         return (
           <div className="grid gap-1 py-2 h-24">
             <Label>{props.label}</Label>
@@ -61,16 +61,8 @@ const CustomSelect = <T extends FieldValues>(props: CustomSelectProps<T>) => {
                 ))}
               </SelectContent>
             </Select>
-            {props.description && (
-              <p className={cn("text-[0.8rem] text-muted-foreground")}>
-                {props.description}
-              </p>
-            )}
-            {props.errors?.[props.id] && (
-              <p className="text-sm text-red-500">
-                {props.errors?.[props.id]?.message as string}
-              </p>
-            )}
+            <DescriptionText>{props.description}</DescriptionText>
+            <ErrorText>{fieldState.error?.message}</ErrorText>
           </div>
         );
       }}

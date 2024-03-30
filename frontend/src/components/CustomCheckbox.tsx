@@ -1,3 +1,4 @@
+import { InputOptionsType } from "@/app/dashboard/meal-planner/dataAndTypes";
 import { FormControllerProps } from "@/lib/dataAndTypes";
 import { Box } from "@mui/material";
 import { Controller, FieldValues } from "react-hook-form";
@@ -5,13 +6,8 @@ import { DescriptionText, ErrorText } from "./Text";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
-export type CheckBoxOptionType = {
-  id: string;
-  label: string;
-};
-
 type CustomCheckboxProps<T extends FieldValues> = FormControllerProps<T> & {
-  options: CheckBoxOptionType[];
+  options: InputOptionsType[];
 };
 
 const CustomCheckbox = <T extends FieldValues>(

@@ -41,8 +41,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateMealPlan = void 0;
 var axios_1 = __importDefault(require("axios"));
+<<<<<<< HEAD
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 var appId = process.env.MEAL_PLAN_API_APP_ID;
 var appKey = process.env.MEAL_PLAN_API_APP_KEY;
 var http = axios_1.default.create({
@@ -51,9 +54,12 @@ var http = axios_1.default.create({
         app_key: appKey,
         app_id: appId,
     },
+<<<<<<< HEAD
     // headers: {
     //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
     // },
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 });
 // edamam api is being used for meal planning
 var KEYS = {
@@ -63,8 +69,11 @@ var KEYS = {
 };
 var prepareMealPlanApiRequest = function (user) {
     var mealPlanProfile = user.mealPlanProfile;
+<<<<<<< HEAD
     var minCal = parseInt(mealPlanProfile.minCaloriesPerDay);
     var maxCal = parseInt(mealPlanProfile.maxCaloriesPerDay);
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
     var mealTimings = new Set(mealPlanProfile.mealsTimings);
     var sections = {};
     //   Breakfast
@@ -78,12 +87,15 @@ var prepareMealPlanApiRequest = function (user) {
                     { meal: [KEYS.breakfast] },
                 ],
             },
+<<<<<<< HEAD
             fit: {
                 ENERC_KCAL: {
                     min: minCal * 0.1,
                     max: maxCal * 0.3,
                 },
             },
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
         };
     }
     //   Lunch
@@ -97,12 +109,15 @@ var prepareMealPlanApiRequest = function (user) {
                     { meal: ["".concat(KEYS.lunch, "/").concat(KEYS.dinner)] },
                 ],
             },
+<<<<<<< HEAD
             fit: {
                 ENERC_KCAL: {
                     min: minCal * 0.3,
                     max: maxCal * 0.4,
                 },
             },
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
         };
     }
     //   Dinner
@@ -116,12 +131,15 @@ var prepareMealPlanApiRequest = function (user) {
                     { meal: ["".concat(KEYS.lunch, "/").concat(KEYS.dinner)] },
                 ],
             },
+<<<<<<< HEAD
             fit: {
                 ENERC_KCAL: {
                     min: minCal * 0.2,
                     max: maxCal * 0.4,
                 },
             },
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
         };
     }
     return {
@@ -139,8 +157,13 @@ var prepareMealPlanApiRequest = function (user) {
             },
             fit: {
                 ENERC_KCAL: {
+<<<<<<< HEAD
                     min: minCal,
                     max: maxCal,
+=======
+                    min: parseInt(mealPlanProfile.minCaloriesPerDay),
+                    max: parseInt(mealPlanProfile.maxCaloriesPerDay),
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
                 },
             },
             sections: sections,
@@ -163,7 +186,10 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
         switch (_a.label) {
             case 0:
                 reqBody = prepareMealPlanApiRequest(user);
+<<<<<<< HEAD
                 console.log(JSON.stringify(reqBody, null, 4));
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
                 return [4 /*yield*/, http.post("meal-planner/v1/".concat(appId, "/select"), reqBody)];
             case 1:
                 res = _a.sent();
@@ -173,10 +199,16 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
                 selections = res.data.selection;
                 if (!selections) return [3 /*break*/, 3];
                 // Restructuring data
+<<<<<<< HEAD
                 selections.forEach(function (selection, index) {
                     var resultObj = {};
                     var _a = selection.sections, Breakfast = _a.Breakfast, Dinner = _a.Dinner, Lunch = _a.Lunch;
                     resultObj.day = index + 1;
+=======
+                selections.forEach(function (selection) {
+                    var resultObj = {};
+                    var _a = selection.sections, Breakfast = _a.Breakfast, Dinner = _a.Dinner, Lunch = _a.Lunch;
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
                     if (Breakfast) {
                         resultObj[KEYS.breakfast] = Breakfast.assigned;
                         recipePromises.push(getRecipeDetails(Breakfast.assigned));

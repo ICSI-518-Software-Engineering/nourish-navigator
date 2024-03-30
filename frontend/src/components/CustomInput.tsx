@@ -19,7 +19,10 @@ type CustomInputProps<T extends FieldValues> = {
   type?: HTMLInputTypeAttribute;
   description?: string;
   className?: string;
+<<<<<<< HEAD
   inputProps?: React.ComponentPropsWithoutRef<"input">;
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 };
 
 const CustomInput = <T extends FieldValues>(props: CustomInputProps<T>) => {

@@ -37,10 +37,14 @@ userProfileRoutes.post(
       if (mealPlanProfile) {
         mealPlanProfile = validateNewUserMealPlanRequest(mealPlanProfile);
         updateReq.mealPlanProfile = mealPlanProfile;
+<<<<<<< HEAD
         updateReq.mealPlan = await generateMealPlan({
           ...user,
           mealPlanProfile: mealPlanProfile,
         });
+=======
+        updateReq.mealPlan = await generateMealPlan(user);
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
       }
 
       const updatedUser = await User.findByIdAndUpdate(

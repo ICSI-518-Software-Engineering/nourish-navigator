@@ -79,7 +79,11 @@ userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaite
                 mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
                 updateReq.mealPlanProfile = mealPlanProfile;
                 _b = updateReq;
+<<<<<<< HEAD
                 return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(__assign(__assign({}, user), { mealPlanProfile: mealPlanProfile }))];
+=======
+                return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(user)];
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
             case 2:
                 _b.mealPlan = _c.sent();
                 _c.label = 3;

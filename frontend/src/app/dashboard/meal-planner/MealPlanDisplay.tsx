@@ -8,11 +8,15 @@ import {
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import React from "react";
+<<<<<<< HEAD
 import {
   MealPlanNutrientsType,
   MealPlanRecordItemType,
   MealPlanRecordType,
 } from "./dataAndTypes";
+=======
+import { MealPlanRecordItemType, MealPlanRecordType } from "./dataAndTypes";
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
 type MealPlanDisplayProps = {
   mealPlanItem: MealPlanRecordType;
@@ -74,6 +78,7 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
     return null;
   }
 
+<<<<<<< HEAD
   const calories = item?.totalNutrients?.ENERC_KCAL;
   const protein = item?.totalNutrients?.PROCNT;
   const carbs = item?.totalNutrients?.CHOCDF;
@@ -142,10 +147,31 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
             </Stack>
           </Stack>
         </Stack>
+=======
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="line-clamp-1" title={item.label}>
+          {item.label}
+        </CardTitle>
+        <CardDescription>{item.calories?.toFixed(2)}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Box width="100%" height="10rem">
+          <Image
+            src={item.image}
+            alt="recipe-image"
+            width={200}
+            height={200}
+            className="w-full h-[10rem] object-cover"
+          />
+        </Box>
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
       </CardContent>
     </Card>
   );
 };
+<<<<<<< HEAD
 
 /**
  * ================ UTILITY FUNCTIONS =============
@@ -156,3 +182,5 @@ const computeNutritionValues = (
 ) => {
   return Math.round(inputs.quantity / quantity) + " " + inputs.unit;
 };
+=======
+>>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52

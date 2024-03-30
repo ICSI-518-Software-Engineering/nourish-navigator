@@ -1,0 +1,34 @@
+import mongoose from "mongoose";
+import { z } from "zod";
+
+export const MongooseUserNutritionSchema = new mongoose.Schema({
+  calorieTarget: {
+    type: String,
+  },
+  proteinTarget: {
+    type: String,
+  },
+  fatTarget: {
+    type: String,
+  },
+  carbTarget: {
+    type: String,
+  }
+});
+
+export const userNutritionZodSchema = z.object({
+  calorieTarget: z.string(),
+  proteinTarget: z.string(),
+  fatTarget: z.string(),
+  carbTarget: z.string(),
+});
+
+export type UserNutritionRequestDataType = z.infer<typeof userNutritionZodSchema>;
+
+// Custom Validator
+//export const validateNewUserProfileRequest = (
+//  body: UserNutritionRequestDataType
+//) => {
+//  const res = userNutritionZodSchema.parse(body);
+// return res;
+//};

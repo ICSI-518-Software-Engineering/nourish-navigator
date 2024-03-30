@@ -44,27 +44,12 @@ var axios_1 = __importDefault(require("axios"));
 var userModel_1 = __importDefault(require("../models/userModel"));
 function dayMealPlan(user, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var params, dietaryPreference, medical, response, meals, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
+        var params, response, meals, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    params = {
-                        type: 'public',
-                        dishType: 'main course',
-                        app_id: process.env.EDAMAME_ID,
-                        app_key: process.env.EDAMAME_KEY,
-                        calories: "".concat(partition - 150, "-").concat(partition + 150),
-                        cuisineType: user.userProfile.cuisinePreferences,
-                        random: 'true',
-                        health: 'DASH',
-                    };
-                    dietaryPreference = [];
-                    dietaryPreference.push(user.userProfile.dietaryPreference);
-                    medical = user.userProfile.allergies.concat(dietaryPreference);
-                    if (medical[0] != '') {
-                        params.health = medical;
-                    }
+                    params = parameterSetter(user, partition);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -105,6 +90,25 @@ function dayMealPlan(user, partition, varDate) {
             }
         });
     });
+}
+function parameterSetter(user, partition) {
+    var params = {
+        type: 'public',
+        dishType: ['main course', 'sandwich'],
+        app_id: process.env.EDAMAME_ID,
+        app_key: process.env.EDAMAME_KEY,
+        calories: "".concat(partition - 150, "-").concat(partition + 150),
+        cuisineType: user.userProfile.cuisinePreferences,
+        random: 'true',
+        health: [],
+    };
+    var dietaryPreference = [];
+    dietaryPreference.push(user.userProfile.dietaryPreference);
+    var medical = user.userProfile.allergies.concat(dietaryPreference);
+    if (medical[0] != '') {
+        params.health = medical;
+    }
+    return params;
 }
 function caloriePerMeal(totalCalories) {
     var partition = Math.round(parseFloat(totalCalories) / 3);

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { mealPlan } from "@/api/mealPlanning";
+import { mealPlan, addDislikeMeal, removeDislikeMeal,addLikeMeal, removeLikeMeal } from "@/api/mealPlanning";
 import { ThumbsUp, ThumbsDown, CheckCircle, CircleSlash2Icon } from "lucide-react";
 
 interface MealReactions {
@@ -19,7 +19,6 @@ const MealPlannerPage: React.FC = () => {
 
     useEffect(() => {
         const fetchMealPlan = async() => {
-            console.log('use effect')
             const meals = await mealPlan();
             setCurrentMeals(meals)
         }
@@ -27,9 +26,8 @@ const MealPlannerPage: React.FC = () => {
         fetchMealPlan()
     }, []);
 
-    const handleLikeDislike = (meal: any, reaction: 'like' | 'dislike') => {
+    const handleDislike = (meal: any, reaction: 'like' | 'dislike') => {
         const mealName = meal.mealName
-        console.log(meal)
         setMealReactions(prevState => ({
             ...prevState,
             [mealName]: {
@@ -38,6 +36,34 @@ const MealPlannerPage: React.FC = () => {
                 consumed: prevState[mealName]?.consumed
             }
         }));
+        const isAlreadyDiskliked = mealReactions[mealName]?.likeDislike === 'dislike'
+
+        if(isAlreadyDiskliked == false){
+            addDislikeMeal(meal)
+        }
+        else{
+            removeDislikeMeal(meal)
+        }
+    };
+
+    const handleLike = (meal: any, reaction: 'like' | 'dislike') => {
+        const mealName = meal.mealName
+        setMealReactions(prevState => ({
+            ...prevState,
+            [mealName]: {
+                ...prevState[mealName],
+                likeDislike: prevState[mealName]?.likeDislike === reaction ? undefined : reaction,
+                consumed: prevState[mealName]?.consumed
+            }
+        }));
+        const isAlreadyDiskliked = mealReactions[mealName]?.likeDislike === 'like'
+
+        if(isAlreadyDiskliked == false){
+            addLikeMeal(meal)
+        }
+        else{
+            removeLikeMeal(meal)
+        }
     };
 
     const handleMarkConsumed = (meal: any) => {
@@ -99,13 +125,13 @@ const MealPlannerPage: React.FC = () => {
                                 <p>Carbs: {Math.round(m.carbs)}</p>
                                 <a href={m.instructions} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Instructions</a>
                                 <div className="flex justify-center items-center mt-3 space-x-2">
-                                    <button onClick={() => handleLikeDislike(m, 'like')} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.likeDislike === 'like' ? 'bg-green-500 hover:bg-green-600' : 'bg-green-200 hover:bg-green-300'}`}>
+                                    <button onClick={() => handleLike(m, 'like')} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.likeDislike === 'like' ? 'bg-green-500 hover:bg-green-600' : 'bg-green-200 hover:bg-green-300'}`}>
                                         <ThumbsUp className="w-6 h-6" />
                                     </button>
                                     <button onClick={() => handleMarkConsumed(m)} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.consumed ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-200 hover:bg-blue-300'}`}>
                                         <CheckCircle className="w-6 h-6" />
                                     </button>
-                                    <button onClick={() => handleLikeDislike(m, 'dislike')} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.likeDislike === 'dislike' ? 'bg-red-500 hover:bg-red-600' : 'bg-red-200 hover:bg-red-300'}`}>
+                                    <button onClick={() => handleDislike(m, 'dislike')} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.likeDislike === 'dislike' ? 'bg-red-500 hover:bg-red-600' : 'bg-red-200 hover:bg-red-300'}`}>
                                         <ThumbsDown className="w-6 h-6" />
                                     </button>
                                     <button onClick={() => handleReject(m.mealName)}className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.rejected ? 'bg-red-500 hover:bg-red-600' : 'bg-red-200 hover:bg-red-300'}`}>

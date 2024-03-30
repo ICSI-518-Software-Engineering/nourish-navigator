@@ -10,7 +10,7 @@ import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
 } from "./userProfileModel";
-import { MongooseUserMealSelectionSchema, UserMealSelectionDataType } from "./userDailyMealPlanModel";
+import { MongooseAPIMealSchema, MongooseUserMealSelectionSchema, UserMealSelectionDataType, UserPreferenceMealDataType } from "./userDailyMealPlanModel";
 import { MongooseUserNutritionSchema, UserNutritionRequestDataType } from "./userNutritionModel";
 
 export const MongooseUserSchema = new mongoose.Schema({
@@ -34,7 +34,9 @@ export const MongooseUserSchema = new mongoose.Schema({
   userProfile: MongooseUserProfileSchema,
   mealPlanProfile: MongooseUserMealPlanSchema,
   mealPlan: [MongooseUserMealSelectionSchema],
-  userNutrition: MongooseUserNutritionSchema
+  userNutrition: MongooseUserNutritionSchema,
+  likedMeals: [MongooseAPIMealSchema],
+  dislikedMeals: [MongooseAPIMealSchema]
 });
 
 MongooseUserSchema.pre("save", async function (next) {
@@ -103,12 +105,15 @@ export type UserProfileUpdateRequestBodyType = {
   mealPlanProfile: UserMealPlanType;
   mealPlan: Record<string, unknown>[];
   userNutrition: UserNutritionRequestDataType
+  likedMeals: Record<string, unknown>[]
+  dislikedMeals: Record<string, unknown>[]
 };
 
-const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType & UserNutritionRequestDataType & [UserMealSelectionDataType]>(
+const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(
   "user",
   MongooseUserSchema
 );
+
 
 export default User;
 

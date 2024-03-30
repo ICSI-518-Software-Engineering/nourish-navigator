@@ -3,9 +3,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userMealSelectionZodSchema = exports.MongooseUserMealSelectionSchema = void 0;
+exports.userMealSelectionZodSchema = exports.MongooseUserMealSelectionSchema = exports.MongooseAPIMealSchema = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
+exports.MongooseAPIMealSchema = new mongoose_1.default.Schema({
+    mealName: {
+        type: String
+    },
+    calories: {
+        type: String
+    },
+    image: {
+        type: String
+    },
+    instructions: {
+        type: String
+    },
+    protein: {
+        type: String
+    },
+    fat: {
+        type: String
+    },
+    carbs: {
+        type: String
+    }
+});
 exports.MongooseUserMealSelectionSchema = new mongoose_1.default.Schema({
     date: {
         type: String
@@ -34,7 +57,7 @@ exports.MongooseUserMealSelectionSchema = new mongoose_1.default.Schema({
             }
         }]
 });
-var mealZodSchema = zod_1.z.object({
+var APImealZodSchema = zod_1.z.object({
     mealName: zod_1.z.string(),
     calories: zod_1.z.string(),
     image: zod_1.z.string(),
@@ -45,5 +68,5 @@ var mealZodSchema = zod_1.z.object({
 });
 exports.userMealSelectionZodSchema = zod_1.z.object({
     date: zod_1.z.string(),
-    meal: mealZodSchema.array()
+    meal: APImealZodSchema.array()
 });

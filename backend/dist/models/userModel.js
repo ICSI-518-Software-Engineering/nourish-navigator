@@ -69,7 +69,9 @@ exports.MongooseUserSchema = new mongoose_1.default.Schema({
     userProfile: userProfileModel_1.MongooseUserProfileSchema,
     mealPlanProfile: userMealPlanModel_1.MongooseUserMealPlanSchema,
     mealPlan: [userDailyMealPlanModel_1.MongooseUserMealSelectionSchema],
-    userNutrition: userNutritionModel_1.MongooseUserNutritionSchema
+    userNutrition: userNutritionModel_1.MongooseUserNutritionSchema,
+    likedMeals: [userDailyMealPlanModel_1.MongooseAPIMealSchema],
+    dislikedMeals: [userDailyMealPlanModel_1.MongooseAPIMealSchema]
 });
 exports.MongooseUserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {

@@ -1,6 +1,30 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
+export const MongooseAPIMealSchema = new mongoose.Schema({
+    mealName: {
+        type: String
+    },
+    calories: {
+        type: String
+    },
+    image: {
+        type: String
+    },
+    instructions: {
+        type: String
+    },
+    protein: {
+        type: String
+    },
+    fat: {
+        type: String
+    },
+    carbs: {
+        type: String
+    }
+});
+
 export const MongooseUserMealSelectionSchema = new mongoose.Schema({
     date: {
         type: String
@@ -28,9 +52,9 @@ export const MongooseUserMealSelectionSchema = new mongoose.Schema({
             type: String
         }
     }]
-  });
+});
 
-const mealZodSchema = z.object({
+const APImealZodSchema = z.object({
     mealName: z.string(),
     calories: z.string(),
     image: z.string(),
@@ -42,9 +66,11 @@ const mealZodSchema = z.object({
 
 export const userMealSelectionZodSchema = z.object({
     date: z.string(),
-    meal: mealZodSchema.array()
+    meal: APImealZodSchema.array()
 });
 
 export type UserMealSelectionDataType = z.infer<typeof userMealSelectionZodSchema>;
+
+export type UserPreferenceMealDataType = z.infer<typeof APImealZodSchema>;
 
 

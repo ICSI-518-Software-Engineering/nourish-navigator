@@ -1,27 +1,12 @@
 import axios from 'axios'
 import User from "../models/userModel";
-import { UserMealSelectionDataType } from '../models/userDailyMealPlanModel';
+import { UserMealSelectionDataType, UserPreferenceMealDataType} from '../models/userDailyMealPlanModel';
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
 
     //console.log(user.userProfile.dietaryPreference.concat(user.userProfile.allergies))
     try {
-        var params = {
-            type: 'public',
-            dishType: 'main course',
-            app_id: process.env.EDAMAME_ID,
-            app_key: process.env.EDAMAME_KEY,
-            calories: `${partition-150}-${partition+150}`,
-            cuisineType: user.userProfile.cuisinePreferences,
-            random: 'true',
-            health: 'DASH',
-        }
-        const dietaryPreference = []
-        dietaryPreference.push(user.userProfile.dietaryPreference)
-        const medical = user.userProfile.allergies.concat(dietaryPreference)
-        if (medical[0] != ''){
-            params.health = medical
-        }
+        const params = parameterSetter(user, partition)
         const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params,
             paramsSerializer: {
@@ -45,15 +30,15 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
         const totalFat = user.userNutrition.fatTarget
         const totalCarbs = user.userNutrition.carbTarget
         var today: string = varDate
-        const bestCombo = findBestMealCombo(meals, totalCalories, totalProtein, totalFat, totalCarbs);
+        const bestCombo: UserPreferenceMealDataType[] | null = findBestMealCombo(meals, totalCalories, totalProtein, totalFat, totalCarbs);
 
         if (bestCombo != null){
             var mealPlan: UserMealSelectionDataType = {
                 date: today,
                 meal: bestCombo
             }
-        
             return mealPlan
+            
         }
     }
     catch (error) {
@@ -61,6 +46,26 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
     }
 }
 
+function parameterSetter(user: any, partition: number){
+    var params = {
+        type: 'public',
+        dishType: ['main course', 'sandwich'],
+        app_id: process.env.EDAMAME_ID,
+        app_key: process.env.EDAMAME_KEY,
+        calories: `${partition-150}-${partition+150}`,
+        cuisineType: user.userProfile.cuisinePreferences,
+        random: 'true',
+        health: [],
+    }
+    const dietaryPreference = []
+    dietaryPreference.push(user.userProfile.dietaryPreference)
+    const medical = user.userProfile.allergies.concat(dietaryPreference)
+    if (medical[0] != ''){
+        params.health = medical
+    }
+
+    return params
+}
 
 function caloriePerMeal(totalCalories: string){
     const partition = Math.round(parseFloat(totalCalories)/3)

@@ -66,4 +66,156 @@ mealPlanningRoutes.get("/mealselection/:userid", function (req, res) { return __
         }
     });
 }); });
+mealPlanningRoutes.post("/adddislikemeal/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, exists, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
+                        password: false,
+                        isAdmin: false,
+                    })];
+            case 1:
+                user = _a.sent();
+                exists = false;
+                user === null || user === void 0 ? void 0 : user.dislikedMeals.forEach(function (meal) {
+                    if (meal.mealName == req.body.meal.mealName) {
+                        exists = true;
+                    }
+                });
+                if (!!exists) return [3 /*break*/, 3];
+                // Add the new meal to the dislikedMeals array
+                user === null || user === void 0 ? void 0 : user.dislikedMeals.push(req.body.meal);
+                // Save the updated user document
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 2:
+                // Save the updated user document
+                _a.sent();
+                console.log('Meal added to dislikedMeals.');
+                return [3 /*break*/, 4];
+            case 3:
+                console.log('Meal already exists in dislikedMeals.');
+                _a.label = 4;
+            case 4:
+                res.sendStatus(200);
+                return [3 /*break*/, 6];
+            case 5:
+                error_1 = _a.sent();
+                console.error('Error adding meal to dislikedMeals:', error_1);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); });
+mealPlanningRoutes.post("/removedislikemeal/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, mealIndex, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
+                        password: false,
+                        isAdmin: false,
+                    })];
+            case 1:
+                user = _a.sent();
+                mealIndex = user === null || user === void 0 ? void 0 : user.dislikedMeals.findIndex(function (dislikedMeal) { return dislikedMeal.mealName === req.body.meal.mealName; });
+                if (!(typeof mealIndex === "number" && mealIndex !== -1)) return [3 /*break*/, 3];
+                user === null || user === void 0 ? void 0 : user.dislikedMeals.splice(mealIndex, 1);
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 2:
+                _a.sent();
+                console.log('Meal removed from dislikedMeals.');
+                return [3 /*break*/, 4];
+            case 3:
+                console.log('Meal does not exist in dislikedMeals.');
+                _a.label = 4;
+            case 4:
+                res.sendStatus(200);
+                return [3 /*break*/, 6];
+            case 5:
+                error_2 = _a.sent();
+                console.error('Error adding meal to dislikedMeals:', error_2);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); });
+mealPlanningRoutes.post("/addlikemeal/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, exists, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
+                        password: false,
+                        isAdmin: false,
+                    })];
+            case 1:
+                user = _a.sent();
+                exists = false;
+                user === null || user === void 0 ? void 0 : user.likedMeals.forEach(function (meal) {
+                    if (meal.mealName == req.body.meal.mealName) {
+                        exists = true;
+                    }
+                });
+                if (!!exists) return [3 /*break*/, 3];
+                // Add the new meal to the dislikedMeals array
+                user === null || user === void 0 ? void 0 : user.likedMeals.push(req.body.meal);
+                // Save the updated user document
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 2:
+                // Save the updated user document
+                _a.sent();
+                console.log('Meal added to likedMeals.');
+                return [3 /*break*/, 4];
+            case 3:
+                console.log('Meal already exists in likedMeals.');
+                _a.label = 4;
+            case 4:
+                res.sendStatus(200);
+                return [3 /*break*/, 6];
+            case 5:
+                error_3 = _a.sent();
+                console.error('Error adding meal to likedMeals:', error_3);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); });
+mealPlanningRoutes.post("/removelikemeal/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, mealIndex, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
+                        password: false,
+                        isAdmin: false,
+                    })];
+            case 1:
+                user = _a.sent();
+                mealIndex = user === null || user === void 0 ? void 0 : user.likedMeals.findIndex(function (likedMeal) { return likedMeal.mealName === req.body.meal.mealName; });
+                if (!(typeof mealIndex === "number" && mealIndex !== -1)) return [3 /*break*/, 3];
+                user === null || user === void 0 ? void 0 : user.likedMeals.splice(mealIndex, 1);
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 2:
+                _a.sent();
+                console.log('Meal removed from likedMeals.');
+                return [3 /*break*/, 4];
+            case 3:
+                console.log('Meal does not exist in likedMeals.');
+                _a.label = 4;
+            case 4:
+                res.sendStatus(200);
+                return [3 /*break*/, 6];
+            case 5:
+                error_4 = _a.sent();
+                console.error('Error adding meal to likedMeals:', error_4);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = mealPlanningRoutes;

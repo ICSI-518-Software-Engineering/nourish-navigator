@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
           {/* These buttons should be visible only when user logged in */}
           {user && (
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Link href="/products" className={buttonVariants()}>
+              <Link href="/dashboard/activity" className={buttonVariants()}>
                 Track your progress
               </Link>
               <Button variant="ghost">Update daily routine &rarr;</Button>

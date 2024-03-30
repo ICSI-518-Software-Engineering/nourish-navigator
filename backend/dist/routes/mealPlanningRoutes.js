@@ -44,7 +44,7 @@ var userModel_1 = __importDefault(require("../models/userModel"));
 var mealPlanning_1 = require("../scripts/mealPlanning");
 var mealPlanningRoutes = (0, express_1.Router)();
 // get profile api
-mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+mealPlanningRoutes.get("/mealselection/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user, mealBody;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -60,6 +60,7 @@ mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(
                 return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid)];
             case 2:
                 mealBody = _a.sent();
+                res.send(mealBody);
                 return [2 /*return*/];
         }
     });

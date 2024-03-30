@@ -1,6 +1,6 @@
 import axios from 'axios'
 import User from "../models/userModel";
-import { UserNutritionRequestDataType } from '../models/userNutritionModel'
+//import { UserNutritionRequestDataType } from '../models/userNutritionModel'
 import { UserMealPlanDataType, userMealPlanZodSchema } from '../models/userDailyMealPlanModel';
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
@@ -17,7 +17,7 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
                 dishType: 'main course',
                 app_id: process.env.EDAMAME_ID,
                 app_key: process.env.EDAMAME_KEY,
-                calories: `${user.userNutrition.calorieTarget/3-150}-${user.userNutrition.calorieTarget/3+150}`,
+                calories: `${partition-150}-${partition+150}`,
                 cuisineType: user.userProfile.cuisinePreferences,
                 random: 'true'
             }
@@ -68,7 +68,6 @@ function caloriePerMeal(totalCalories: string){
 }
 
 function findBestMealCombo(meals: any, targetCalories: string, targetProtein: string, targetFat: string, targetCarbs: string) {
-    console.log('starting')
     let targetCal = parseFloat(targetCalories)
     let targetP = parseFloat(targetProtein)
     let targetF = parseFloat(targetFat)
@@ -95,11 +94,14 @@ function findBestMealCombo(meals: any, targetCalories: string, targetProtein: st
   }
 
 export async function mealPlanService(user: any, id: any){
+    console.log('starting')
     const today = new Date()
     const testToday = today.toDateString()
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate()+1)
     const testTomorrow = tomorrow.toDateString()
+
+    var currentMeals = []
 
     var todayFlag = false
     var tomorrowFlag = false
@@ -107,9 +109,11 @@ export async function mealPlanService(user: any, id: any){
     test?.mealPlan.forEach(element => {
         if(element.date === testToday){
             todayFlag = true
+            currentMeals.push(element)
         }
         if (element.date === testTomorrow){
             tomorrowFlag = true
+            currentMeals.push(element)
         }
     });
 
@@ -120,6 +124,7 @@ export async function mealPlanService(user: any, id: any){
         if(!todayFlag){
             const partition = caloriePerMeal(totalCalories)
             const mealBody = await dayMealPlan(user, partition, testToday)
+            currentMeals.push(mealBody)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
               });
@@ -128,10 +133,12 @@ export async function mealPlanService(user: any, id: any){
         if(!tomorrowFlag){
             const partition = caloriePerMeal(totalCalories)
             const mealBody = await dayMealPlan(user, partition, testTomorrow)
+            currentMeals.push(mealBody)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
               });
               await update?.save();
         }
     }
+    return currentMeals
 }

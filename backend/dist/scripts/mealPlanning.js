@@ -62,7 +62,7 @@ function dayMealPlan(user, partition, varDate) {
                                 dishType: 'main course',
                                 app_id: process.env.EDAMAME_ID,
                                 app_key: process.env.EDAMAME_KEY,
-                                calories: "".concat(user.userNutrition.calorieTarget / 3 - 150, "-").concat(user.userNutrition.calorieTarget / 3 + 150),
+                                calories: "".concat(partition - 150, "-").concat(partition + 150),
                                 cuisineType: user.userProfile.cuisinePreferences,
                                 random: 'true'
                             }
@@ -112,7 +112,6 @@ function caloriePerMeal(totalCalories) {
     return partition;
 }
 function findBestMealCombo(meals, targetCalories, targetProtein, targetFat, targetCarbs) {
-    console.log('starting');
     var targetCal = parseFloat(targetCalories);
     var targetP = parseFloat(targetProtein);
     var targetF = parseFloat(targetFat);
@@ -138,15 +137,17 @@ function findBestMealCombo(meals, targetCalories, targetProtein, targetFat, targ
 }
 function mealPlanService(user, id) {
     return __awaiter(this, void 0, void 0, function () {
-        var today, testToday, tomorrow, testTomorrow, todayFlag, tomorrowFlag, test, userNutrition, totalCalories, partition, mealBody, update, partition, mealBody, update;
+        var today, testToday, tomorrow, testTomorrow, currentMeals, todayFlag, tomorrowFlag, test, userNutrition, totalCalories, partition, mealBody, update, partition, mealBody, update;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    console.log('starting');
                     today = new Date();
                     testToday = today.toDateString();
                     tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     testTomorrow = tomorrow.toDateString();
+                    currentMeals = [];
                     todayFlag = false;
                     tomorrowFlag = false;
                     return [4 /*yield*/, userModel_1.default.findById(id)];
@@ -155,9 +156,11 @@ function mealPlanService(user, id) {
                     test === null || test === void 0 ? void 0 : test.mealPlan.forEach(function (element) {
                         if (element.date === testToday) {
                             todayFlag = true;
+                            currentMeals.push(element);
                         }
                         if (element.date === testTomorrow) {
                             tomorrowFlag = true;
+                            currentMeals.push(element);
                         }
                     });
                     userNutrition = user.userNutrition;
@@ -168,6 +171,7 @@ function mealPlanService(user, id) {
                     return [4 /*yield*/, dayMealPlan(user, partition, testToday)];
                 case 2:
                     mealBody = _a.sent();
+                    currentMeals.push(mealBody);
                     return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
                             $push: { mealPlan: mealBody }
                         })];
@@ -183,6 +187,7 @@ function mealPlanService(user, id) {
                     return [4 /*yield*/, dayMealPlan(user, partition, testTomorrow)];
                 case 6:
                     mealBody = _a.sent();
+                    currentMeals.push(mealBody);
                     return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
                             $push: { mealPlan: mealBody }
                         })];
@@ -192,7 +197,7 @@ function mealPlanService(user, id) {
                 case 8:
                     _a.sent();
                     _a.label = 9;
-                case 9: return [2 /*return*/];
+                case 9: return [2 /*return*/, currentMeals];
             }
         });
     });

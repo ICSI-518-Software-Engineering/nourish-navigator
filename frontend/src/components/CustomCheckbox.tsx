@@ -33,8 +33,9 @@ const CustomCheckbox = <T extends FieldValues>(
                     control={props.control}
                     render={({ field, fieldState }) => {
                       return (
-                        <Box className="flex flex-row items-start space-x-3 space-y-0">
+                        <Box className="flex items-center gap-3">
                           <Checkbox
+                            id={option.id}
                             checked={field.value?.includes(option.id)}
                             onCheckedChange={(checked: boolean) => {
                               return checked
@@ -46,7 +47,7 @@ const CustomCheckbox = <T extends FieldValues>(
                                   );
                             }}
                           />
-                          <Label>{option.label}</Label>
+                          <Label htmlFor={option.id}>{option.label}</Label>
                         </Box>
                       );
                     }}

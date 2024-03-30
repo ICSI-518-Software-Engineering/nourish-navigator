@@ -30,12 +30,9 @@ const CustomRadioInput = <T extends FieldValues>(
           >
             <Stack direction="row" gap="1rem">
               {props.options?.map((option) => (
-                <Box
-                  key={option.id}
-                  className="flex items-center space-x-3 space-y-0"
-                >
-                  <RadioGroupItem value={option.id} />
-                  <Label>{option.label}</Label>
+                <Box key={option.id} className="flex items-center gap-3">
+                  <RadioGroupItem value={option.id} id={option.id} />
+                  <Label htmlFor={option.id}>{option.label}</Label>
                 </Box>
               ))}
             </Stack>

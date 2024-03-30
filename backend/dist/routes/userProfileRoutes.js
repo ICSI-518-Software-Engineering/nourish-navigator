@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -41,34 +52,52 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var zod_1 = require("zod");
+var userMealPlanModel_1 = require("../models/userMealPlanModel");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
+var mealPlannerApiUtils_1 = require("../utils/mealPlannerApiUtils");
 var userProfileRoutes = (0, express_1.Router)();
-// profile setup api
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqBody, user, ex_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var user, _a, userProfile, mealPlanProfile, updateReq, _b, updatedUser, ex_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                reqBody = (0, userProfileModel_1.validateNewUserProfileRequest)(req.body);
-                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, {
-                        userProfile: reqBody,
-                    })];
+                _c.trys.push([0, 6, , 7]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid)];
             case 1:
-                user = _a.sent();
-                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+                user = _c.sent();
+                if (!user) {
+                    return [2 /*return*/, res.status(400).send("No user found")];
+                }
+                _a = req.body, userProfile = _a.userProfile, mealPlanProfile = _a.mealPlanProfile;
+                updateReq = {};
+                if (userProfile) {
+                    userProfile = (0, userProfileModel_1.validateNewUserProfileRequest)(userProfile);
+                    updateReq.userProfile = userProfile;
+                }
+                if (!mealPlanProfile) return [3 /*break*/, 3];
+                mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
+                updateReq.mealPlanProfile = mealPlanProfile;
+                _b = updateReq;
+                return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(__assign(__assign({}, user), { mealPlanProfile: mealPlanProfile }))];
             case 2:
-                _a.sent();
+                _b.mealPlan = _c.sent();
+                _c.label = 3;
+            case 3: return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, updateReq)];
+            case 4:
+                updatedUser = _c.sent();
+                return [4 /*yield*/, (updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.save())];
+            case 5:
+                _c.sent();
                 return [2 /*return*/, res.send("User profile updated successfully")];
-            case 3:
-                ex_1 = _a.sent();
+            case 6:
+                ex_1 = _c.sent();
                 if (ex_1 instanceof zod_1.ZodError) {
                     return [2 /*return*/, res.status(400).json(ex_1.issues[0].message)];
                 }
                 console.log(ex_1);
                 return [2 /*return*/, res.status(500).send("Unknown error occured.")];
-            case 4: return [2 /*return*/];
+            case 7: return [2 /*return*/];
         }
     });
 }); });
@@ -81,10 +110,13 @@ userProfileRoutes.get("/profile/:userid", function (req, res) { return __awaiter
                 _a.trys.push([0, 2, , 3]);
                 if (!req.params.userid)
                     return [2 /*return*/, res.status(400).send("User id is missing")];
-                return [4 /*yield*/, userModel_1.default.findById(req.params.userid)];
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
+                        password: false,
+                        isAdmin: false,
+                    })];
             case 1:
                 user = _a.sent();
-                return [2 /*return*/, res.send(user === null || user === void 0 ? void 0 : user.userProfile)];
+                return [2 /*return*/, res.send(user)];
             case 2:
                 ex_2 = _a.sent();
                 if (ex_2 instanceof zod_1.ZodError) {
@@ -117,14 +149,14 @@ userProfileRoutes.get("/profile/", function (req, res) { return __awaiter(void 0
 }); });
 // delete profile api
 userProfileRoutes.delete("/profile/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, ex_4;
+    var ex_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, userModel_1.default.findByIdAndDelete(req.params.userId)];
             case 1:
-                user = _a.sent();
+                _a.sent();
                 return [2 /*return*/, res.send("user deleted successfully")];
             case 2:
                 ex_4 = _a.sent();

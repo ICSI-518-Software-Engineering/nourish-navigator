@@ -33,7 +33,7 @@ const NavItems: React.FC<NavItemsProps> = (props) => {
       <Link
         key={item.url}
         className={buttonVariants({
-          variant: pathname === item.url ? "secondary" : "ghost",
+          variant: pathname.startsWith(item.url) ? "secondary" : "ghost",
         })}
         href={item.url}
       >

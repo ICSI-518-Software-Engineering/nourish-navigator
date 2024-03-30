@@ -15,6 +15,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "Nourish Navigator",
   description: "Automated meal planner based on provided user inputs.",
+  icons: [
+    {
+      url: "/assets/images/logo.png",
+      type: "image/png",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -31,7 +37,7 @@ export default function RootLayout({
         )}
         style={{
           background:
-            "linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),url(/assets/images/background1.jpg)",
+            "linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/assets/images/background1.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundAttachment: "fixed",

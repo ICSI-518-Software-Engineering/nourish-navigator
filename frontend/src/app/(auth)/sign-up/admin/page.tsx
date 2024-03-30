@@ -5,9 +5,9 @@ import CustomInput from "@/components/CustomInput";
 // import { Icons } from '@/components/Icons'
 import { useSignUpService } from "@/api/auth";
 import { isHttpError } from "@/api/http";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { SignUpFormDataType, signUpSchema } from "../../dataAndTypes";
 import { loginUser } from "../../utils";
@@ -79,7 +79,7 @@ const SignUpPage: React.FC = () => {
 
           {/* Sign Up Button */}
           <Button disabled={isPending}>
-            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <LoadingSpinner isVisible={isPending} />
             Sign up
           </Button>
         </div>

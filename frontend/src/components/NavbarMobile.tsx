@@ -30,9 +30,14 @@ const NavbarMobile = () => {
         <SheetHeader className="mt-4">
           <hr className="my-5 absolute inset-0 top-11" />
           <div className="space-y-6 py-6 pt-8">
+            {/* Name */}
+            {user && (
+              <p className="font-medium text-gold-500">Hi, {user.name}</p>
+            )}
+
             <NavItems mobile />
 
-            {/* Sign In Link */}
+            {/* Sign In Link / Profile Link */}
             <SheetClose asChild>
               <Link
                 href={user ? "/user-profile" : "/sign-in"}

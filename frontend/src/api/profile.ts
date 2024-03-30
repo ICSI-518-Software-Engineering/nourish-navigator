@@ -1,5 +1,9 @@
 import { UserSessionDetailsType } from "@/app/(auth)/dataAndTypes";
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import {
+  MealPlanRecordType,
+  MealPlannerFormDataType,
+} from "@/app/dashboard/meal-planner/dataAndTypes";
 import { UserProfileFormDataType } from "@/app/user-profile/dataAndTypes";
 import { queryClient } from "@/lib/TanstackProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -10,7 +14,7 @@ import http from "./http";
  */
 
 const updateUserProfileService = async (
-  data: UserProfileFormDataType & { userId: string }
+  data: Partial<GetUserProfileServiceResponseType> & { userId: string }
 ) => {
   const { userId, ...rest } = data;
   const res = await http.post<string>(`/user/profile/${userId}`, rest);
@@ -28,8 +32,14 @@ export const useUpdateUserProfileService = () => {
  * Get User Profile Service
  */
 
+export type GetUserProfileServiceResponseType = {
+  userProfile: UserProfileFormDataType;
+  mealPlanProfile: MealPlannerFormDataType;
+  mealPlan: MealPlanRecordType[];
+};
+
 const getUserProfileService = async (userId: string) => {
-  const res = await http.get<UserProfileFormDataType>(
+  const res = await http.get<GetUserProfileServiceResponseType>(
     `/user/profile/${userId}`
   );
   return res.data;

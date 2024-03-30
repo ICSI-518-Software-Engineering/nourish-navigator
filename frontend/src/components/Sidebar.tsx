@@ -1,6 +1,7 @@
+"use client";
+
 import { DEFAULTS } from "@/lib/constants";
 import {
-  Box,
   Drawer,
   List,
   ListItem,
@@ -9,12 +10,13 @@ import {
   ListItemText,
 } from "@mui/material";
 import { ActivitySquareIcon, SaladIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const Sidebar: React.FC = () => {
-  {
-    /* Sidebar */
-  }
+  const pathname = usePathname();
+
   return (
     <Drawer
       sx={{
@@ -25,41 +27,45 @@ const Sidebar: React.FC = () => {
           width: DEFAULTS.sidebarWidth,
           boxSizing: "border-box",
           background: "rgba(0, 0, 0, 0.6)",
-          position: "absolute",
+          // position: "absolute",
           borderRight: "0.2px solid lightgray",
           borderTop: "0.2px solid lightgray",
           top: "4rem",
           bottom: 0,
           height: "calc(100vh - 4rem)",
+          zIndex: 2,
         },
       }}
       variant="permanent"
       anchor="left"
       open
     >
-      <Box height="2rem" />
-      <List>
+      <List sx={{ mt: "1rem" }}>
         {sidebarLinks.map((sidebarLink) => (
-          <ListItem key={sidebarLink.label}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: "initial",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
+          <Link href={sidebarLink.url} key={sidebarLink.label}>
+            <ListItem>
+              <ListItemButton
+                selected={pathname === sidebarLink.url}
                 sx={{
-                  minWidth: 0,
-                  mr: 3,
-                  justifyContent: "center",
+                  minHeight: 48,
+                  justifyContent: "initial",
+                  px: 2.5,
+                  borderRadius: "0.5rem",
                 }}
               >
-                {sidebarLink.icon}
-              </ListItemIcon>
-              <ListItemText primary={sidebarLink.label} />
-            </ListItemButton>
-          </ListItem>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: 3,
+                    justifyContent: "center",
+                  }}
+                >
+                  {sidebarLink.icon}
+                </ListItemIcon>
+                <ListItemText primary={sidebarLink.label} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </Drawer>
@@ -75,9 +81,11 @@ const sidebarLinks = [
   {
     icon: <ActivitySquareIcon />,
     label: "Your Activity",
+    url: "/dashboard/activity",
   },
   {
     icon: <SaladIcon />,
     label: "Meal Planner",
+    url: "/dashboard/meal-planner",
   },
 ];

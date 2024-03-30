@@ -67,6 +67,7 @@ const SignInPage: React.FC = () => {
             label="Password"
             register={register}
             type="password"
+            placeholder="Enter your password"
           />
 
           {/* Sign In Button */}

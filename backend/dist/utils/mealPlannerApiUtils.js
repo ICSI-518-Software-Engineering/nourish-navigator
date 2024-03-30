@@ -147,10 +147,9 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
                 selections = res.data.selection;
                 if (!selections) return [3 /*break*/, 3];
                 // Restructuring data
-                selections.forEach(function (selection, index) {
+                selections.forEach(function (selection) {
                     var resultObj = {};
                     var _a = selection.sections, Breakfast = _a.Breakfast, Dinner = _a.Dinner, Lunch = _a.Lunch;
-                    resultObj.day = index + 1;
                     if (Breakfast) {
                         resultObj[KEYS.breakfast] = Breakfast.assigned;
                         recipePromises.push(getRecipeDetails(Breakfast.assigned));

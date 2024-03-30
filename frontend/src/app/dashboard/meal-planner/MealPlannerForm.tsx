@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useGetUserProfileService,
-  useUpdateUserProfileService,
-} from "@/api/profile";
+import { useUpdateUserProfileService } from "@/api/profile";
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import CustomCheckbox from "@/components/CustomCheckbox";
 import CustomInput from "@/components/CustomInput";
@@ -28,8 +25,6 @@ import {
 const MealPlannerForm: React.FC = () => {
   const { mutate: updateUserProfile, isPending } =
     useUpdateUserProfileService();
-  const { data: userProfile } = useGetUserProfileService();
-  const mealPlanProfile = userProfile?.mealPlanProfile;
 
   const {
     register,
@@ -37,7 +32,7 @@ const MealPlannerForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<MealPlannerFormDataType>({
-    defaultValues: mealPlanProfile ?? {
+    defaultValues: {
       noOfDays: "7",
       mealsTimings: [],
       maxCaloriesPerDay: "2000",

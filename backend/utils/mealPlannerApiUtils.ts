@@ -122,10 +122,9 @@ export const generateMealPlan = async (user: UserObjectType) => {
 
     if (selections) {
       // Restructuring data
-      selections.forEach((selection, index) => {
+      selections.forEach((selection) => {
         const resultObj: Record<string, unknown> = {};
         const { Breakfast, Dinner, Lunch } = selection.sections;
-        resultObj.day = index + 1;
 
         if (Breakfast) {
           resultObj[KEYS.breakfast] = Breakfast.assigned;

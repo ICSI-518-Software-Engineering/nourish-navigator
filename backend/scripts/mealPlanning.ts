@@ -3,17 +3,19 @@ import User from "../models/userModel";
 import { UserNutritionRequestDataType } from '../models/userNutritionModel'
 import { UserMealPlanDataType, userMealPlanZodSchema } from '../models/userDailyMealPlanModel';
 
-async function dayMealPlan(userNutrition: UserNutritionRequestDataType, partition: number, varDate: string){
-    const totalCalories = userNutrition.calorieTarget
+async function dayMealPlan(user: any, partition: number, varDate: string){
+    const totalCalories = user.userNutrition.calorieTarget
     var today: string = varDate
     try {
         const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params: {
                 type: 'public',
                 dishType: 'main course',
-                app_id: 'de80bcac',
-                app_key: 'b780c80a7be2129a489cf65f422e8b5b',
-                calories: '500-800',
+                app_id: process.env.EDAMAME_ID,
+                app_key: process.env.EDAMAME_KEY,
+                calories: `${partition-150}-${partition+150}`,
+                cuisineType: user.userProfile.cuisinePreferences,
+                health: user.userProfile.dietaryPreference.concat(user.userProfile.allergies)
             }
         });
 
@@ -76,11 +78,6 @@ export async function mealPlanService(user: any, id: any){
     tomorrow.setDate(tomorrow.getDate()+1)
     const testTomorrow = tomorrow.toDateString()
 
-    console.log(testToday)
-    console.log(testTomorrow)
-
-    today.setDate(today.getDate())
-
     var todayFlag = false
     var tomorrowFlag = false
     const test = await User.findById(id)
@@ -99,7 +96,7 @@ export async function mealPlanService(user: any, id: any){
     if (totalCalories != null){
         if(!todayFlag){
             const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(userNutrition, partition, testToday)
+            const mealBody = await dayMealPlan(user, partition, testToday)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
               });
@@ -107,7 +104,7 @@ export async function mealPlanService(user: any, id: any){
         }
         if(!tomorrowFlag){
             const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(userNutrition, partition, testTomorrow)
+            const mealBody = await dayMealPlan(user, partition, testTomorrow)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
               });

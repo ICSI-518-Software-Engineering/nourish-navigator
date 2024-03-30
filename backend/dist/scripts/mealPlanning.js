@@ -42,13 +42,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mealPlanService = void 0;
 var axios_1 = __importDefault(require("axios"));
 var userModel_1 = __importDefault(require("../models/userModel"));
-function dayMealPlan(userNutrition, partition, varDate) {
+function dayMealPlan(user, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
         var totalCalories, today, response, meals, bestCombo, mealPlan, _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    totalCalories = userNutrition.calorieTarget;
+                    totalCalories = user.userNutrition.calorieTarget;
                     today = varDate;
                     _b.label = 1;
                 case 1:
@@ -57,9 +57,11 @@ function dayMealPlan(userNutrition, partition, varDate) {
                             params: {
                                 type: 'public',
                                 dishType: 'main course',
-                                app_id: 'de80bcac',
-                                app_key: 'b780c80a7be2129a489cf65f422e8b5b',
-                                calories: '500-800',
+                                app_id: process.env.EDAMAME_ID,
+                                app_key: process.env.EDAMAME_KEY,
+                                calories: "".concat(partition - 150, "-").concat(partition + 150),
+                                cuisineType: user.userProfile.cuisinePreferences,
+                                health: user.userProfile.dietaryPreference.concat(user.userProfile.allergies)
                             }
                         })];
                 case 2:
@@ -124,9 +126,6 @@ function mealPlanService(user, id) {
                     tomorrow = new Date();
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     testTomorrow = tomorrow.toDateString();
-                    console.log(testToday);
-                    console.log(testTomorrow);
-                    today.setDate(today.getDate());
                     todayFlag = false;
                     tomorrowFlag = false;
                     return [4 /*yield*/, userModel_1.default.findById(id)];
@@ -145,7 +144,7 @@ function mealPlanService(user, id) {
                     if (!(totalCalories != null)) return [3 /*break*/, 9];
                     if (!!todayFlag) return [3 /*break*/, 5];
                     partition = caloriePerMeal(totalCalories);
-                    return [4 /*yield*/, dayMealPlan(userNutrition, partition, testToday)];
+                    return [4 /*yield*/, dayMealPlan(user, partition, testToday)];
                 case 2:
                     mealBody = _a.sent();
                     return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
@@ -160,7 +159,7 @@ function mealPlanService(user, id) {
                 case 5:
                     if (!!tomorrowFlag) return [3 /*break*/, 9];
                     partition = caloriePerMeal(totalCalories);
-                    return [4 /*yield*/, dayMealPlan(userNutrition, partition, testTomorrow)];
+                    return [4 /*yield*/, dayMealPlan(user, partition, testTomorrow)];
                 case 6:
                     mealBody = _a.sent();
                     return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {

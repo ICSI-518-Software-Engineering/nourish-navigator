@@ -1,32 +1,47 @@
-import { Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { ZodError } from "zod";
-import User from "../models/userModel";
+import { validateNewUserMealPlanRequest } from "../models/userMealPlanModel";
+import User, { UserProfileUpdateRequestBodyType } from "../models/userModel";
 import { validateNewUserProfileRequest } from "../models/userProfileModel";
-import { nutritionCalculator } from "../scripts/nutritionCalculation";
 
 const userProfileRoutes = Router();
 
 // profile setup api
-userProfileRoutes.post("/profile/:userid", async (req, res: Response) => {
-  try {
-    const reqBody = validateNewUserProfileRequest(req.body);
-    const nutrBody = nutritionCalculator(reqBody)
 
-    const user = await User.findByIdAndUpdate(req.params.userid, {
-      userProfile: reqBody,
-      userNutrition: nutrBody
-    });
-    await user?.save();
+type UserProfileUpdateRequestType = {
+  body: UserProfileUpdateRequestBodyType;
+} & Omit<Request, "body">;
+userProfileRoutes.post(
+  "/profile/:userid",
+  async (req: UserProfileUpdateRequestType, res: Response) => {
+    try {
+      let { userProfile, mealPlanProfile } = req.body;
 
-    return res.send("User profile updated successfully");
-  } catch (ex) {
-    if (ex instanceof ZodError) {
-      return res.status(400).json(ex.issues[0].message);
+      const updateReq = {} as UserProfileUpdateRequestBodyType;
+
+      if (userProfile) {
+        userProfile = validateNewUserProfileRequest(userProfile);
+        updateReq.userProfile = userProfile;
+      }
+
+      if (mealPlanProfile) {
+        mealPlanProfile = validateNewUserMealPlanRequest(mealPlanProfile);
+        updateReq.mealPlanProfile = mealPlanProfile;
+      }
+
+      const user = await User.findByIdAndUpdate(req.params.userid, updateReq);
+      await user?.save();
+
+      return res.send("User profile updated successfully");
+    } catch (ex) {
+      if (ex instanceof ZodError) {
+        return res.status(400).json(ex.issues[0].message);
+      }
+      console.log(ex);
+      return res.status(500).send("Unknown error occured.");
     }
-    console.log(ex);
-    return res.status(500).send("Unknown error occured.");
   }
-});
+);
 
 // get profile api
 userProfileRoutes.get("/profile/:userid", async (req, res: Response) => {

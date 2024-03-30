@@ -41,31 +41,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var zod_1 = require("zod");
+var userMealPlanModel_1 = require("../models/userMealPlanModel");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
-var nutritionCalculation_1 = require("../scripts/nutritionCalculation");
 var userProfileRoutes = (0, express_1.Router)();
-// profile setup api
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqBody, nutrBody, user, ex_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, userProfile, mealPlanProfile, updateReq, user, ex_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 3, , 4]);
-                reqBody = (0, userProfileModel_1.validateNewUserProfileRequest)(req.body);
-                nutrBody = (0, nutritionCalculation_1.nutritionCalculator)(reqBody);
-                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, {
-                        userProfile: reqBody,
-                        userNutrition: nutrBody
-                    })];
+                _b.trys.push([0, 3, , 4]);
+                _a = req.body, userProfile = _a.userProfile, mealPlanProfile = _a.mealPlanProfile;
+                updateReq = {};
+                if (userProfile) {
+                    userProfile = (0, userProfileModel_1.validateNewUserProfileRequest)(userProfile);
+                    updateReq.userProfile = userProfile;
+                }
+                if (mealPlanProfile) {
+                    mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
+                    updateReq.mealPlanProfile = mealPlanProfile;
+                }
+                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, updateReq)];
             case 1:
-                user = _a.sent();
+                user = _b.sent();
                 return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
             case 2:
-                _a.sent();
+                _b.sent();
                 return [2 /*return*/, res.send("User profile updated successfully")];
             case 3:
-                ex_1 = _a.sent();
+                ex_1 = _b.sent();
                 if (ex_1 instanceof zod_1.ZodError) {
                     return [2 /*return*/, res.status(400).json(ex_1.issues[0].message)];
                 }

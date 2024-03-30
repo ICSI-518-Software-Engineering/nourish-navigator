@@ -3,14 +3,13 @@ import jwt from "jsonwebtoken";
 import mongoose, { CallbackError } from "mongoose";
 import { z } from "zod";
 import {
+  MongooseUserMealPlanSchema,
+  UserMealPlanType,
+} from "./userMealPlanModel";
+import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
 } from "./userProfileModel";
-import { MongooseUserNutritionSchema,
-         UserNutritionRequestDataType
-} from "./userNutritionModel";
-import { MongooseUserMealPlanSchema,
-        UserMealPlanDataType } from "./userDailyMealPlanModel";
 
 export const MongooseUserSchema = new mongoose.Schema({
   name: {
@@ -31,8 +30,7 @@ export const MongooseUserSchema = new mongoose.Schema({
     default: false,
   },
   userProfile: MongooseUserProfileSchema,
-  mealPlan: [MongooseUserMealPlanSchema],
-  userNutrition: MongooseUserNutritionSchema
+  mealPlanProfile: MongooseUserMealPlanSchema,
 });
 
 MongooseUserSchema.pre("save", async function (next) {
@@ -96,8 +94,14 @@ type UserModelType = {
   validatePassword: (password: string) => boolean;
 } & SignUpRequestDataType;
 
-const User = mongoose.model<
-  UserModelType & { userProfile: UserProfileRequestDataType, userNutrition: UserNutritionRequestDataType, mealPlan: [UserMealPlanDataType] }
->("user", MongooseUserSchema);
+export type UserProfileUpdateRequestBodyType = {
+  userProfile: UserProfileRequestDataType;
+  mealPlanProfile: UserMealPlanType;
+};
+
+const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(
+  "user",
+  MongooseUserSchema
+);
 
 export default User;

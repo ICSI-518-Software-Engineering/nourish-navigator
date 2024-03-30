@@ -8,7 +8,7 @@ import MealPlannerForm from "./MealPlannerForm";
 
 const MealPlannerPage: React.FC = () => {
   const { data: userProfile } = useGetUserProfileService();
-  const mealPlan = userProfile?.mealPlan;
+  const mealPlan = userProfile?.mealPlanProfile;
 
   return (
     <Stack gap="1rem">

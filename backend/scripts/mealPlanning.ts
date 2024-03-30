@@ -1,22 +1,32 @@
 import axios from 'axios'
 import User from "../models/userModel";
-import { UserNutritionRequestDataType } from '../models/userNutritionModel'
-import { UserMealPlanDataType, userMealPlanZodSchema } from '../models/userDailyMealPlanModel';
+import { UserMealSelectionDataType } from '../models/userDailyMealPlanModel';
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
-    const totalCalories = user.userNutrition.calorieTarget
-    var today: string = varDate
+
+    //console.log(user.userProfile.dietaryPreference.concat(user.userProfile.allergies))
     try {
+        var params = {
+            type: 'public',
+            dishType: 'main course',
+            app_id: process.env.EDAMAME_ID,
+            app_key: process.env.EDAMAME_KEY,
+            calories: `${partition-150}-${partition+150}`,
+            cuisineType: user.userProfile.cuisinePreferences,
+            random: 'true',
+            health: 'DASH',
+        }
+        const dietaryPreference = []
+        dietaryPreference.push(user.userProfile.dietaryPreference)
+        const medical = user.userProfile.allergies.concat(dietaryPreference)
+        if (medical[0] != ''){
+            params.health = medical
+        }
         const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
-            params: {
-                type: 'public',
-                dishType: 'main course',
-                app_id: process.env.EDAMAME_ID,
-                app_key: process.env.EDAMAME_KEY,
-                calories: `${partition-150}-${partition+150}`,
-                cuisineType: user.userProfile.cuisinePreferences,
-                health: user.userProfile.dietaryPreference.concat(user.userProfile.allergies)
-            }
+            params,
+            paramsSerializer: {
+                indexes: null // by default: false
+              }
         });
 
         const meals = response.data.hits.map((hit: any) => ({
@@ -30,10 +40,15 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
             //ingredients: hit.recipe.ingredients
         }));
         
-        const bestCombo = findBestMealCombo(meals, totalCalories);
+        const totalCalories = user.userNutrition.calorieTarget
+        const totalProtein = user.userNutrition.proteinTarget
+        const totalFat = user.userNutrition.fatTarget
+        const totalCarbs = user.userNutrition.carbTarget
+        var today: string = varDate
+        const bestCombo = findBestMealCombo(meals, totalCalories, totalProtein, totalFat, totalCarbs);
 
         if (bestCombo != null){
-            var mealPlan: UserMealPlanDataType = {
+            var mealPlan: UserMealSelectionDataType = {
                 date: today,
                 meal: bestCombo
             }
@@ -41,18 +56,22 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
             return mealPlan
         }
     }
-    catch{
-
+    catch (error) {
+        console.log(error)
     }
 }
+
 
 function caloriePerMeal(totalCalories: string){
     const partition = Math.round(parseFloat(totalCalories)/3)
     return partition
 }
 
-function findBestMealCombo(meals: any, targetCalories: string) {
-    let target = parseFloat(targetCalories)
+function findBestMealCombo(meals: any, targetCalories: string, targetProtein: string, targetFat: string, targetCarbs: string) {
+    let targetCal = parseFloat(targetCalories)
+    let targetP = parseFloat(targetProtein)
+    let targetF = parseFloat(targetFat)
+    let targetC = parseFloat(targetCarbs)
     let bestCombo = null;
     let closestDiff = Infinity;
   
@@ -60,7 +79,10 @@ function findBestMealCombo(meals: any, targetCalories: string) {
         for (let j = i + 1; j < meals.length; j++) {
             for (let k = j + 1; k < meals.length; k++) {
                 const comboCalories = meals[i].calories + meals[j].calories + meals[k].calories;
-                const diff = Math.abs(target - comboCalories);
+                const comboProtein = meals[i].protein + meals[j].protein + meals[k].protein;
+                const comboFat = meals[i].fat + meals[j].fat + meals[k].fat;
+                const comboCarbs = meals[i].carbs + meals[j].carbs + meals[k].carbs;
+                const diff = Math.abs(targetCal - comboCalories) + 20*Math.abs(targetP-comboProtein) + 8*Math.abs(targetF-comboFat)+ 5*Math.abs(targetC-comboCarbs);
                 if (diff < closestDiff) {
                     closestDiff = diff;
                     bestCombo = [meals[i], meals[j], meals[k]];
@@ -71,44 +93,32 @@ function findBestMealCombo(meals: any, targetCalories: string) {
     return bestCombo;
   }
 
-export async function mealPlanService(user: any, id: any){
-    const today = new Date()
-    const testToday = today.toDateString()
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate()+1)
-    const testTomorrow = tomorrow.toDateString()
-
-    var todayFlag = false
-    var tomorrowFlag = false
-    const test = await User.findById(id)
-    test?.mealPlan.forEach(element => {
-        if(element.date === testToday){
-            todayFlag = true
-        }
-        if (element.date === testTomorrow){
-            tomorrowFlag = true
-        }
-    });
-
+export async function mealPlanService(user: any, id: any, days: number){
+    var currentMeals = []
     const userNutrition = user.userNutrition
     const totalCalories = userNutrition.calorieTarget
+    const partition = caloriePerMeal(totalCalories)
+    const test = await User.findById(id)
 
-    if (totalCalories != null){
-        if(!todayFlag){
-            const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(user, partition, testToday)
+    for (let i  = 0; i < days; i++){
+        var priorMealFlag = false
+        const currentDate = new Date()
+        currentDate.setDate(currentDate.getDate()+i)
+        const testDate = currentDate.toDateString()
+        test?.mealPlan.forEach(element => {
+            if(element.date === testDate){
+                priorMealFlag = true
+                currentMeals.push(element)
+            };
+        });
+        if(!priorMealFlag){
+            const mealBody = await dayMealPlan(user, partition, testDate)
+            currentMeals.push(mealBody)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
-              });
-              await update?.save();
+                });
+                await update?.save();
         }
-        if(!tomorrowFlag){
-            const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(user, partition, testTomorrow)
-            const update = await User.findByIdAndUpdate(id, {
-                $push: {mealPlan: mealBody}
-              });
-              await update?.save();
-        }
-    }
+    };
+    return currentMeals
 }

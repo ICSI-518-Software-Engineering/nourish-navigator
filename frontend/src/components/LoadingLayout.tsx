@@ -1,13 +1,9 @@
 "use client";
 
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
-<<<<<<< HEAD
 import { DEFAULTS } from "@/lib/constants";
 import { Typography } from "@mui/material";
 import { redirect, usePathname } from "next/navigation";
-=======
-import { redirect, usePathname, useRouter } from "next/navigation";
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -24,20 +20,11 @@ const LoadingLayout: React.FC<LoadingLayoutProps> = ({ children }) => {
   const user = getLoggedInUserDetails();
 
   useEffect(() => {
-<<<<<<< HEAD
     setIsLoading(() => false);
     if (!user && !authPages.has(pathname)) {
       redirect("/");
     }
   }, [pathname, user]);
-=======
-    setIsLoading(false);
-  }, []);
-
-  if (!user && !authPages.has(pathname)) {
-    redirect("/");
-  }
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
   if (isLoading) {
     return (

@@ -1,14 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-<<<<<<< HEAD
-import dotenv from "dotenv";
 import { UserObjectType } from "../models/userModel";
 
-dotenv.config();
-
-=======
-import { UserObjectType } from "../models/userModel";
-
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 const appId = process.env.MEAL_PLAN_API_APP_ID;
 const appKey = process.env.MEAL_PLAN_API_APP_KEY;
 
@@ -18,12 +10,6 @@ const http = axios.create({
     app_key: appKey,
     app_id: appId,
   },
-<<<<<<< HEAD
-  // headers: {
-  //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
-  // },
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 });
 
 // edamam api is being used for meal planning
@@ -37,12 +23,6 @@ const KEYS = {
 const prepareMealPlanApiRequest = (user: UserObjectType) => {
   const { mealPlanProfile } = user;
 
-<<<<<<< HEAD
-  const minCal = parseInt(mealPlanProfile.minCaloriesPerDay);
-  const maxCal = parseInt(mealPlanProfile.maxCaloriesPerDay);
-
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
   const mealTimings = new Set(mealPlanProfile.mealsTimings);
 
   const sections: Record<string, unknown> = {};
@@ -58,15 +38,6 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           { meal: [KEYS.breakfast] },
         ],
       },
-<<<<<<< HEAD
-      fit: {
-        ENERC_KCAL: {
-          min: minCal * 0.1,
-          max: maxCal * 0.3,
-        },
-      },
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
     };
   }
 
@@ -81,15 +52,6 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           { meal: [`${KEYS.lunch}/${KEYS.dinner}`] },
         ],
       },
-<<<<<<< HEAD
-      fit: {
-        ENERC_KCAL: {
-          min: minCal * 0.3,
-          max: maxCal * 0.4,
-        },
-      },
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
     };
   }
 
@@ -104,15 +66,6 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           { meal: [`${KEYS.lunch}/${KEYS.dinner}`] },
         ],
       },
-<<<<<<< HEAD
-      fit: {
-        ENERC_KCAL: {
-          min: minCal * 0.2,
-          max: maxCal * 0.4,
-        },
-      },
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
     };
   }
 
@@ -131,13 +84,8 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
       },
       fit: {
         ENERC_KCAL: {
-<<<<<<< HEAD
-          min: minCal,
-          max: maxCal,
-=======
           min: parseInt(mealPlanProfile.minCaloriesPerDay),
           max: parseInt(mealPlanProfile.maxCaloriesPerDay),
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
         },
       },
       sections: sections,
@@ -158,10 +106,6 @@ const getRecipeDetails = (apiUrl: string) => {
 
 export const generateMealPlan = async (user: UserObjectType) => {
   const reqBody = prepareMealPlanApiRequest(user);
-<<<<<<< HEAD
-  console.log(JSON.stringify(reqBody, null, 4));
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
   //   Get the meal plan
   const res = await http.post<MealPlanApiResponseType>(
@@ -178,16 +122,9 @@ export const generateMealPlan = async (user: UserObjectType) => {
 
     if (selections) {
       // Restructuring data
-<<<<<<< HEAD
-      selections.forEach((selection, index) => {
-        const resultObj: Record<string, unknown> = {};
-        const { Breakfast, Dinner, Lunch } = selection.sections;
-        resultObj.day = index + 1;
-=======
       selections.forEach((selection) => {
         const resultObj: Record<string, unknown> = {};
         const { Breakfast, Dinner, Lunch } = selection.sections;
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
         if (Breakfast) {
           resultObj[KEYS.breakfast] = Breakfast.assigned;

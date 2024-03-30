@@ -10,6 +10,8 @@ import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
 } from "./userProfileModel";
+import { MongooseUserMealSelectionSchema, UserMealSelectionDataType } from "./userDailyMealPlanModel";
+import { MongooseUserNutritionSchema, UserNutritionRequestDataType } from "./userNutritionModel";
 
 export const MongooseUserSchema = new mongoose.Schema({
   name: {
@@ -31,7 +33,8 @@ export const MongooseUserSchema = new mongoose.Schema({
   },
   userProfile: MongooseUserProfileSchema,
   mealPlanProfile: MongooseUserMealPlanSchema,
-  mealPlan: JSON,
+  mealPlan: [MongooseUserMealSelectionSchema],
+  userNutrition: MongooseUserNutritionSchema
 });
 
 MongooseUserSchema.pre("save", async function (next) {
@@ -99,9 +102,10 @@ export type UserProfileUpdateRequestBodyType = {
   userProfile: UserProfileRequestDataType;
   mealPlanProfile: UserMealPlanType;
   mealPlan: Record<string, unknown>[];
+  userNutrition: UserNutritionRequestDataType
 };
 
-const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(
+const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType & UserNutritionRequestDataType & [UserMealSelectionDataType]>(
   "user",
   MongooseUserSchema
 );

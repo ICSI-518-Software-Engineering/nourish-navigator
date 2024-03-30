@@ -15,29 +15,30 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Typography } from "@mui/material";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import {
   Control,
   Controller,
+  FieldError,
   FieldErrors,
   FieldValues,
   Path,
 } from "react-hook-form";
+import { SelectOptionType } from "./CustomSelect";
+import { DescriptionText, ErrorText } from "./Text";
 import { Label } from "./ui/label";
 
-export type OptionType = {
-  label: string;
-  value: string;
-};
-
 type MultiSelectProps<T extends FieldValues> = {
-  options: OptionType[];
+  options: SelectOptionType[];
   className?: string;
   control: Control<T>;
   id: Path<T>;
-  errors: FieldErrors<T>;
+  errors?: FieldErrors<T>;
   label?: string;
   description?: string;
+  containerClassName?: string;
+  placeholder?: string;
 };
 
 const MultiSelect = <T extends FieldValues>({
@@ -49,15 +50,18 @@ const MultiSelect = <T extends FieldValues>({
     <Controller
       name={props.id}
       control={props.control}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <MultiSelectBase
           id={props.id}
           options={options}
           label={props.label}
           description={props.description}
-          errors={props.errors}
           selected={field.value}
+          className={className}
+          containerClassName={props.containerClassName}
+          placeholder={props.placeholder}
           {...field}
+          {...fieldState}
         />
       )}
     />
@@ -67,18 +71,27 @@ const MultiSelect = <T extends FieldValues>({
 export { MultiSelect };
 
 type MultiSelectBaseProps<T extends FieldValues> = {
-  options: OptionType[];
+  options: SelectOptionType[];
   selected: string[];
   onChange: React.Dispatch<React.SetStateAction<string[]>>;
   className?: string;
   label?: string;
   description?: string;
-  errors: FieldErrors<T>;
   id: Path<T>;
+  error?: FieldError;
+  containerClassName?: string;
+  placeholder?: string;
 };
 
 const MultiSelectBaseComp = <T extends FieldValues>(
-  { options, selected, onChange, className, ...props }: MultiSelectBaseProps<T>,
+  {
+    options,
+    selected,
+    onChange,
+    className,
+    error,
+    ...props
+  }: MultiSelectBaseProps<T>,
   _ref: unknown
 ) => {
   const [open, setOpen] = React.useState(false);
@@ -88,7 +101,7 @@ const MultiSelectBaseComp = <T extends FieldValues>(
   };
 
   return (
-    <div className="grid gap-1 min-h-24 py-2">
+    <div className={cn("grid gap-1 min-h-24 py-2", props.containerClassName)}>
       <Label>{props.label}</Label>
 
       <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -103,12 +116,12 @@ const MultiSelectBaseComp = <T extends FieldValues>(
             )}
             onClick={() => setOpen((prev) => !prev)}
           >
-            <div className="flex gap-1 flex-wrap items-center mt-[0.35rem]">
+            <div className="flex gap-1 flex-wrap items-center">
               {selected?.map((item) => (
                 <Badge
                   variant="secondary"
                   key={item}
-                  className="mr-1 mb-1"
+                  className="mr-1 my-1"
                   onClick={() => handleUnselect(item)}
                 >
                   {item}
@@ -129,6 +142,10 @@ const MultiSelectBaseComp = <T extends FieldValues>(
                   </div>
                 </Badge>
               ))}
+
+              {props.placeholder && selected?.length === 0 && (
+                <Typography>{props.placeholder}</Typography>
+              )}
             </div>
             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -166,16 +183,8 @@ const MultiSelectBaseComp = <T extends FieldValues>(
         </PopoverContent>
       </Popover>
 
-      {props.description && (
-        <p className={cn("text-[0.8rem] text-muted-foreground")}>
-          {props.description}
-        </p>
-      )}
-      {props.errors?.[props.id] && (
-        <p className="text-sm text-red-500">
-          {props.errors?.[props.id]?.message as string}
-        </p>
-      )}
+      <DescriptionText>{props.description}</DescriptionText>
+      <ErrorText>{error?.message}</ErrorText>
     </div>
   );
 };

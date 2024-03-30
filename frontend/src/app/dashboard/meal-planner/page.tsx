@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetUserProfileService } from "@/api/profile";
+import { DEFAULTS } from "@/lib/constants";
 import { Stack, Typography } from "@mui/material";
 import React from "react";
 import MealPlannerForm from "./MealPlannerForm";
@@ -15,7 +16,7 @@ const MealPlannerPage: React.FC = () => {
       <Typography variant="h4" fontWeight="bold">
         Current Meal Plan
       </Typography>
-      <Typography>
+      <Typography color={DEFAULTS.textColor}>
         You have no active meal plan. Create one by filling the form below.
       </Typography>
       <MealPlannerForm />

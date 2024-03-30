@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
           width: DEFAULTS.sidebarWidth,
           boxSizing: "border-box",
           background: "rgba(0, 0, 0, 0.6)",
-          position: "absolute",
+          // position: "absolute",
           borderRight: "0.2px solid lightgray",
           borderTop: "0.2px solid lightgray",
           top: "4rem",

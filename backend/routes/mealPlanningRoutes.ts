@@ -12,7 +12,7 @@ mealPlanningRoutes.get("/mealselection/:userid", async (req, res: Response) => {
         isAdmin: false,
       });
     if (!user){return}
-    const mealBody = await mealPlanService(user, req.params.userid)
+    const mealBody = await mealPlanService(user, req.params.userid, 3)
     res.send(mealBody)
   });
 

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getLoggedInUserDetails } from "../../(auth)/utils";
-import http from "@/api/http";
 import { mealPlan } from "@/api/mealPlanning";
 import { ThumbsUp, ThumbsDown, CheckCircle, CircleSlash2Icon } from "lucide-react";
 
@@ -27,12 +25,6 @@ const MealPlannerPage: React.FC = () => {
 
         fetchMealPlan()
     }, []);
-
-    useEffect(() => {
-        if (currentMeals) {
-            console.log(currentMeals[1]?.date);
-        }
-    }, [currentMeals]);
 
     const handleLikeDislike = (meal: any, reaction: 'like' | 'dislike') => {
         const mealName = meal.mealName
@@ -100,10 +92,10 @@ const MealPlannerPage: React.FC = () => {
                                     margin: '0 0 10px 0' 
                                 }}>{m.mealName}</h3>
                                 {m.image && <img src={m.image} alt={m.mealName} style={{ maxWidth: '100%', height: 'auto', marginBottom: '10px' }} />}
-                                <p>Calories: {m.calories}</p>
-                                <p>Protein: {m.protein}</p>
-                                <p>Fat: {m.fat}</p>
-                                <p>Carbs: {m.carbs}</p>
+                                <p>Calories: {Math.round(m.calories)}</p>
+                                <p>Protein: {Math.round(m.protein)}</p>
+                                <p>Fat: {Math.round(m.fat)}</p>
+                                <p>Carbs: {Math.round(m.carbs)}</p>
                                 <a href={m.instructions} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Instructions</a>
                                 <div className="flex justify-center items-center mt-3 space-x-2">
                                     <button onClick={() => handleLikeDislike(m, 'like')} className={`p-2 rounded-full text-white shadow-lg transform transition-transform duration-200 ${mealReactions[m.mealName]?.likeDislike === 'like' ? 'bg-green-500 hover:bg-green-600' : 'bg-green-200 hover:bg-green-300'}`}>

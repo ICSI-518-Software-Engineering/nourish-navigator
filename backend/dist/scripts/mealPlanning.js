@@ -44,18 +44,19 @@ var axios_1 = __importDefault(require("axios"));
 var userModel_1 = __importDefault(require("../models/userModel"));
 function dayMealPlan(user, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var totalCalories, totalProtein, totalFat, totalCarbs, today, response, meals, bestCombo, mealPlan, error_1;
+        var totalCalories, totalProtein, totalFat, totalCarbs, today, dietaryPreference, medical, response, meals, bestCombo, mealPlan, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    _a.trys.push([0, 2, , 3]);
                     totalCalories = user.userNutrition.calorieTarget;
                     totalProtein = user.userNutrition.proteinTarget;
                     totalFat = user.userNutrition.fatTarget;
                     totalCarbs = user.userNutrition.carbTarget;
                     today = varDate;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    dietaryPreference = [];
+                    dietaryPreference.push(user.userProfile.dietaryPreference);
+                    medical = user.userProfile.allergies.concat(dietaryPreference);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: {
                                 type: 'public',
@@ -64,10 +65,14 @@ function dayMealPlan(user, partition, varDate) {
                                 app_key: process.env.EDAMAME_KEY,
                                 calories: "".concat(partition - 150, "-").concat(partition + 150),
                                 cuisineType: user.userProfile.cuisinePreferences,
-                                random: 'true'
+                                random: 'true',
+                                health: medical,
+                            },
+                            paramsSerializer: {
+                                indexes: null // by default: false
                             }
                         })];
-                case 2:
+                case 1:
                     response = _a.sent();
                     meals = response.data.hits.map(function (hit) { return ({
                         mealName: hit.recipe.label,
@@ -87,26 +92,16 @@ function dayMealPlan(user, partition, varDate) {
                         };
                         return [2 /*return*/, mealPlan];
                     }
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 3];
+                case 2:
                     error_1 = _a.sent();
                     console.log(error_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });
 }
-//function randomInteger(min: number, max: number) {
-//    return Math.floor(Math.random() * (max - min + 1)) + min;
-//  }
-//function mealRandomizer(response: any){
-//    const totalpages = parseInt(response.data.count)/20
-//    const test = randomInteger(1, totalpages)
-//    console.log(totalpages)
-//    console.log(test)
-//    console.log(response.data._links.next.href)
-//}
 function caloriePerMeal(totalCalories) {
     var partition = Math.round(parseFloat(totalCalories) / 3);
     return partition;
@@ -125,7 +120,7 @@ function findBestMealCombo(meals, targetCalories, targetProtein, targetFat, targ
                 var comboProtein = meals[i].protein + meals[j].protein + meals[k].protein;
                 var comboFat = meals[i].fat + meals[j].fat + meals[k].fat;
                 var comboCarbs = meals[i].carbs + meals[j].carbs + meals[k].carbs;
-                var diff = Math.abs(targetCal - comboCalories) + 10 * Math.abs(targetP - comboProtein) + 8 * Math.abs(targetF - comboFat) + 5 * Math.abs(targetC - comboCarbs);
+                var diff = Math.abs(targetCal - comboCalories) + 20 * Math.abs(targetP - comboProtein) + 8 * Math.abs(targetF - comboFat) + 5 * Math.abs(targetC - comboCarbs);
                 if (diff < closestDiff) {
                     closestDiff = diff;
                     bestCombo = [meals[i], meals[j], meals[k]];
@@ -135,69 +130,68 @@ function findBestMealCombo(meals, targetCalories, targetProtein, targetFat, targ
     }
     return bestCombo;
 }
-function mealPlanService(user, id) {
+function mealPlanService(user, id, days) {
     return __awaiter(this, void 0, void 0, function () {
-        var today, testToday, tomorrow, testTomorrow, currentMeals, todayFlag, tomorrowFlag, test, userNutrition, totalCalories, partition, mealBody, update, partition, mealBody, update;
+        var currentMeals, userNutrition, totalCalories, partition, test, _loop_1, priorMealFlag, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log('starting');
-                    today = new Date();
-                    testToday = today.toDateString();
-                    tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    testTomorrow = tomorrow.toDateString();
                     currentMeals = [];
-                    todayFlag = false;
-                    tomorrowFlag = false;
+                    userNutrition = user.userNutrition;
+                    totalCalories = userNutrition.calorieTarget;
+                    partition = caloriePerMeal(totalCalories);
                     return [4 /*yield*/, userModel_1.default.findById(id)];
                 case 1:
                     test = _a.sent();
-                    test === null || test === void 0 ? void 0 : test.mealPlan.forEach(function (element) {
-                        if (element.date === testToday) {
-                            todayFlag = true;
-                            currentMeals.push(element);
-                        }
-                        if (element.date === testTomorrow) {
-                            tomorrowFlag = true;
-                            currentMeals.push(element);
-                        }
-                    });
-                    userNutrition = user.userNutrition;
-                    totalCalories = userNutrition.calorieTarget;
-                    if (!(totalCalories != null)) return [3 /*break*/, 9];
-                    if (!!todayFlag) return [3 /*break*/, 5];
-                    partition = caloriePerMeal(totalCalories);
-                    return [4 /*yield*/, dayMealPlan(user, partition, testToday)];
+                    _loop_1 = function (i) {
+                        var currentDate, testDate, mealBody, update;
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
+                                case 0:
+                                    priorMealFlag = false;
+                                    currentDate = new Date();
+                                    currentDate.setDate(currentDate.getDate() + i);
+                                    testDate = currentDate.toDateString();
+                                    test === null || test === void 0 ? void 0 : test.mealPlan.forEach(function (element) {
+                                        if (element.date === testDate) {
+                                            priorMealFlag = true;
+                                            currentMeals.push(element);
+                                        }
+                                        ;
+                                    });
+                                    if (!!priorMealFlag) return [3 /*break*/, 4];
+                                    console.log('finding meal');
+                                    return [4 /*yield*/, dayMealPlan(user, partition, testDate)];
+                                case 1:
+                                    mealBody = _b.sent();
+                                    currentMeals.push(mealBody);
+                                    return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
+                                            $push: { mealPlan: mealBody }
+                                        })];
+                                case 2:
+                                    update = _b.sent();
+                                    return [4 /*yield*/, (update === null || update === void 0 ? void 0 : update.save())];
+                                case 3:
+                                    _b.sent();
+                                    _b.label = 4;
+                                case 4: return [2 /*return*/];
+                            }
+                        });
+                    };
+                    i = 0;
+                    _a.label = 2;
                 case 2:
-                    mealBody = _a.sent();
-                    currentMeals.push(mealBody);
-                    return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
-                            $push: { mealPlan: mealBody }
-                        })];
+                    if (!(i < days)) return [3 /*break*/, 5];
+                    return [5 /*yield**/, _loop_1(i)];
                 case 3:
-                    update = _a.sent();
-                    return [4 /*yield*/, (update === null || update === void 0 ? void 0 : update.save())];
+                    _a.sent();
+                    _a.label = 4;
                 case 4:
-                    _a.sent();
-                    _a.label = 5;
+                    i++;
+                    return [3 /*break*/, 2];
                 case 5:
-                    if (!!tomorrowFlag) return [3 /*break*/, 9];
-                    partition = caloriePerMeal(totalCalories);
-                    return [4 /*yield*/, dayMealPlan(user, partition, testTomorrow)];
-                case 6:
-                    mealBody = _a.sent();
-                    currentMeals.push(mealBody);
-                    return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(id, {
-                            $push: { mealPlan: mealBody }
-                        })];
-                case 7:
-                    update = _a.sent();
-                    return [4 /*yield*/, (update === null || update === void 0 ? void 0 : update.save())];
-                case 8:
-                    _a.sent();
-                    _a.label = 9;
-                case 9: return [2 /*return*/, currentMeals];
+                    ;
+                    return [2 /*return*/, currentMeals];
             }
         });
     });

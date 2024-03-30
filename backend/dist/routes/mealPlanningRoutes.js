@@ -57,7 +57,7 @@ mealPlanningRoutes.get("/mealselection/:userid", function (req, res) { return __
                 if (!user) {
                     return [2 /*return*/];
                 }
-                return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid)];
+                return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid, 3)];
             case 2:
                 mealBody = _a.sent();
                 res.send(mealBody);

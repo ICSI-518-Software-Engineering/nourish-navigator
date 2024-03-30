@@ -2,15 +2,20 @@ import axios from 'axios'
 import User from "../models/userModel";
 //import { UserNutritionRequestDataType } from '../models/userNutritionModel'
 import { UserMealPlanDataType, userMealPlanZodSchema } from '../models/userDailyMealPlanModel';
+import { LoDashExplicitArrayWrapper } from 'lodash';
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
-    const totalCalories = user.userNutrition.calorieTarget
-    const totalProtein = user.userNutrition.proteinTarget
-    const totalFat = user.userNutrition.fatTarget
-    const totalCarbs = user.userNutrition.carbTarget
-    var today: string = varDate
+
     //console.log(user.userProfile.dietaryPreference.concat(user.userProfile.allergies))
     try {
+        const totalCalories = user.userNutrition.calorieTarget
+        const totalProtein = user.userNutrition.proteinTarget
+        const totalFat = user.userNutrition.fatTarget
+        const totalCarbs = user.userNutrition.carbTarget
+        var today: string = varDate
+        const dietaryPreference = []
+        dietaryPreference.push(user.userProfile.dietaryPreference)
+        const medical = user.userProfile.allergies.concat(dietaryPreference)
         const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params: {
                 type: 'public',
@@ -19,8 +24,12 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
                 app_key: process.env.EDAMAME_KEY,
                 calories: `${partition-150}-${partition+150}`,
                 cuisineType: user.userProfile.cuisinePreferences,
-                random: 'true'
-            }
+                random: 'true',
+                health: medical,
+            },
+            paramsSerializer: {
+                indexes: null // by default: false
+              }
         });
 
         const meals = response.data.hits.map((hit: any) => ({
@@ -50,17 +59,6 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
     }
 }
 
-//function randomInteger(min: number, max: number) {
-//    return Math.floor(Math.random() * (max - min + 1)) + min;
-//  }
-
-//function mealRandomizer(response: any){
-//    const totalpages = parseInt(response.data.count)/20
-//    const test = randomInteger(1, totalpages)
-//    console.log(totalpages)
-//    console.log(test)
-//    console.log(response.data._links.next.href)
-//}
 
 function caloriePerMeal(totalCalories: string){
     const partition = Math.round(parseFloat(totalCalories)/3)
@@ -82,7 +80,7 @@ function findBestMealCombo(meals: any, targetCalories: string, targetProtein: st
                 const comboProtein = meals[i].protein + meals[j].protein + meals[k].protein;
                 const comboFat = meals[i].fat + meals[j].fat + meals[k].fat;
                 const comboCarbs = meals[i].carbs + meals[j].carbs + meals[k].carbs;
-                const diff = Math.abs(targetCal - comboCalories) + 10*Math.abs(targetP-comboProtein) + 8*Math.abs(targetF-comboFat)+ 5*Math.abs(targetC-comboCarbs);
+                const diff = Math.abs(targetCal - comboCalories) + 20*Math.abs(targetP-comboProtein) + 8*Math.abs(targetF-comboFat)+ 5*Math.abs(targetC-comboCarbs);
                 if (diff < closestDiff) {
                     closestDiff = diff;
                     bestCombo = [meals[i], meals[j], meals[k]];
@@ -93,52 +91,33 @@ function findBestMealCombo(meals: any, targetCalories: string, targetProtein: st
     return bestCombo;
   }
 
-export async function mealPlanService(user: any, id: any){
-    console.log('starting')
-    const today = new Date()
-    const testToday = today.toDateString()
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate()+1)
-    const testTomorrow = tomorrow.toDateString()
-
+export async function mealPlanService(user: any, id: any, days: number){
     var currentMeals = []
-
-    var todayFlag = false
-    var tomorrowFlag = false
-    const test = await User.findById(id)
-    test?.mealPlan.forEach(element => {
-        if(element.date === testToday){
-            todayFlag = true
-            currentMeals.push(element)
-        }
-        if (element.date === testTomorrow){
-            tomorrowFlag = true
-            currentMeals.push(element)
-        }
-    });
-
     const userNutrition = user.userNutrition
     const totalCalories = userNutrition.calorieTarget
+    const partition = caloriePerMeal(totalCalories)
+    const test = await User.findById(id)
 
-    if (totalCalories != null){
-        if(!todayFlag){
-            const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(user, partition, testToday)
+    for (let i  = 0; i < days; i++){
+        var priorMealFlag = false
+        const currentDate = new Date()
+        currentDate.setDate(currentDate.getDate()+i)
+        const testDate = currentDate.toDateString()
+        test?.mealPlan.forEach(element => {
+            if(element.date === testDate){
+                priorMealFlag = true
+                currentMeals.push(element)
+            };
+        });
+        if(!priorMealFlag){
+            console.log('finding meal')
+            const mealBody = await dayMealPlan(user, partition, testDate)
             currentMeals.push(mealBody)
             const update = await User.findByIdAndUpdate(id, {
                 $push: {mealPlan: mealBody}
-              });
-              await update?.save();
+                });
+                await update?.save();
         }
-        if(!tomorrowFlag){
-            const partition = caloriePerMeal(totalCalories)
-            const mealBody = await dayMealPlan(user, partition, testTomorrow)
-            currentMeals.push(mealBody)
-            const update = await User.findByIdAndUpdate(id, {
-                $push: {mealPlan: mealBody}
-              });
-              await update?.save();
-        }
-    }
+    };
     return currentMeals
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -20,11 +20,11 @@ const LoadingLayout: React.FC<LoadingLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     setIsLoading(false);
+  }, []);
 
-    if (!user && !authPages.has(pathname)) {
-      router.replace("/");
-    }
-  }, [pathname, router, user]);
+  if (!user && !authPages.has(pathname)) {
+    redirect("/");
+  }
 
   if (isLoading) {
     return (

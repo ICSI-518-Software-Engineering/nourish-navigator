@@ -40,8 +40,8 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, ...props }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center container w-[98vw] h-screen sm:h-[calc(100vh-4rem)]">
-      <Card className="p-16">
+    <div className="flex flex-col items-center h-screen md:h-[calc(100vh-4rem)]">
+      <Card className="p-12 my-auto">
         <div
           className={cn(
             "mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]",

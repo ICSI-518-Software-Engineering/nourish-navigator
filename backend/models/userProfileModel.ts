@@ -50,9 +50,3 @@ export const validateNewUserProfileRequest = (
   const res = userProfileZodSchema.parse(body);
   return res;
 };
-
-// const UserProfile = mongoose.model<UserProfileRequestDataType>(
-//   "user_profile",
-//   MongooseUserProfileSchema
-// );
-// export default UserProfile;

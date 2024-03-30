@@ -7,11 +7,11 @@ import {
 import AuthLayout from "@/components/AuthLayout";
 import CustomInput from "@/components/CustomInput";
 import CustomSelect from "@/components/CustomSelect";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { MultiSelect } from "@/components/MultiSelect";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -65,7 +65,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
     if (!userDetails) return;
 
     mutate(
-      { ...data, userId: userDetails._id },
+      { userProfile: data, userId: userDetails._id },
       {
         onSuccess: (e) => {
           toast.success(e);
@@ -256,7 +256,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
         </div>
         {/* Save Button */}
         <Button disabled={isPending} className="self-end w-1/6">
-          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <LoadingSpinner isVisible={isPending} />
           {settings?.btnLabel}
         </Button>
       </form>

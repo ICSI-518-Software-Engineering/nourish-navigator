@@ -111,8 +111,7 @@ const MultiSelectBaseComp = <T extends FieldValues>(
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between h-full dark:bg-transparent dark:border-slate-500",
-              { "py-0": selected?.length }
+              "w-full justify-between h-full dark:bg-transparent dark:border-slate-500"
             )}
             onClick={() => setOpen((prev) => !prev)}
           >
@@ -121,7 +120,7 @@ const MultiSelectBaseComp = <T extends FieldValues>(
                 <Badge
                   variant="secondary"
                   key={item}
-                  className="mr-1 my-1"
+                  className="mr-1"
                   onClick={() => handleUnselect(item)}
                 >
                   {item}
@@ -144,7 +143,9 @@ const MultiSelectBaseComp = <T extends FieldValues>(
               ))}
 
               {props.placeholder && selected?.length === 0 && (
-                <Typography>{props.placeholder}</Typography>
+                <Typography className="text-muted-foreground">
+                  {props.placeholder}
+                </Typography>
               )}
             </div>
             <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />

@@ -1,5 +1,6 @@
 import { UserNutritionRequestDataType } from "../models/userNutritionModel";
 import { UserProfileRequestDataType } from "../models/userProfileModel";
+import User from "../models/userModel";
 
 const proteinRatio = 0.35;
 const fatRatio = 0.35;

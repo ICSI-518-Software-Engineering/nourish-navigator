@@ -1,6 +1,8 @@
 "use client";
 
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import { DEFAULTS } from "@/lib/constants";
+import { Typography } from "@mui/material";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
@@ -19,19 +21,20 @@ const LoadingLayout: React.FC<LoadingLayoutProps> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    setIsLoading(false);
-  }, []);
-
-  if (!user && !authPages.has(pathname)) {
-    redirect("/");
-  }
+    setIsLoading(() => false);
+    if (!user && !authPages.has(pathname)) {
+      redirect("/");
+    }
+  }, [pathname, user]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center justify-center flex-col gap-5">
           <Skeleton className="h-20 w-20 rounded-full" />
-          <h5 className="text-teal-300 text-xl">Nourish Navigator...</h5>
+          <Typography variant="h5" color={DEFAULTS.textColor}>
+            Nourish Navigator...
+          </Typography>
         </div>
       </div>
     );

@@ -44,38 +44,49 @@ var zod_1 = require("zod");
 var userMealPlanModel_1 = require("../models/userMealPlanModel");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
+var mealPlannerApiUtils_1 = require("../utils/mealPlannerApiUtils");
 var userProfileRoutes = (0, express_1.Router)();
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, userProfile, mealPlanProfile, updateReq, user, ex_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var user, _a, userProfile, mealPlanProfile, updateReq, _b, updatedUser, ex_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
+                _c.trys.push([0, 6, , 7]);
+                return [4 /*yield*/, userModel_1.default.findById(req.params.userid)];
+            case 1:
+                user = _c.sent();
+                if (!user) {
+                    return [2 /*return*/, res.status(400).send("No user found")];
+                }
                 _a = req.body, userProfile = _a.userProfile, mealPlanProfile = _a.mealPlanProfile;
                 updateReq = {};
                 if (userProfile) {
                     userProfile = (0, userProfileModel_1.validateNewUserProfileRequest)(userProfile);
                     updateReq.userProfile = userProfile;
                 }
-                if (mealPlanProfile) {
-                    mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
-                    updateReq.mealPlanProfile = mealPlanProfile;
-                }
-                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, updateReq)];
-            case 1:
-                user = _b.sent();
-                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+                if (!mealPlanProfile) return [3 /*break*/, 3];
+                mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
+                updateReq.mealPlanProfile = mealPlanProfile;
+                _b = updateReq;
+                return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(user)];
             case 2:
-                _b.sent();
+                _b.mealPlan = _c.sent();
+                _c.label = 3;
+            case 3: return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(req.params.userid, updateReq)];
+            case 4:
+                updatedUser = _c.sent();
+                return [4 /*yield*/, (updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.save())];
+            case 5:
+                _c.sent();
                 return [2 /*return*/, res.send("User profile updated successfully")];
-            case 3:
-                ex_1 = _b.sent();
+            case 6:
+                ex_1 = _c.sent();
                 if (ex_1 instanceof zod_1.ZodError) {
                     return [2 /*return*/, res.status(400).json(ex_1.issues[0].message)];
                 }
                 console.log(ex_1);
                 return [2 /*return*/, res.status(500).send("Unknown error occured.")];
-            case 4: return [2 /*return*/];
+            case 7: return [2 /*return*/];
         }
     });
 }); });

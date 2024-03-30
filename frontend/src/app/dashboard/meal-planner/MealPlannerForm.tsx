@@ -1,6 +1,9 @@
 "use client";
 
-import { useUpdateUserProfileService } from "@/api/profile";
+import {
+  useGetUserProfileService,
+  useUpdateUserProfileService,
+} from "@/api/profile";
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import CustomCheckbox from "@/components/CustomCheckbox";
 import CustomInput from "@/components/CustomInput";
@@ -25,6 +28,8 @@ import {
 const MealPlannerForm: React.FC = () => {
   const { mutate: updateUserProfile, isPending } =
     useUpdateUserProfileService();
+  const { data: userProfile } = useGetUserProfileService();
+  const mealPlanProfile = userProfile?.mealPlanProfile;
 
   const {
     register,
@@ -32,7 +37,7 @@ const MealPlannerForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<MealPlannerFormDataType>({
-    defaultValues: {
+    defaultValues: mealPlanProfile ?? {
       noOfDays: "7",
       mealsTimings: [],
       maxCaloriesPerDay: "2000",
@@ -91,7 +96,7 @@ const MealPlannerForm: React.FC = () => {
             label="Min Calories"
             errors={errors}
             type="number"
-            description="Preferred minimum calories"
+            description="Minimum calories per day"
             className="h-auto py-0 w-full"
           />
           {/* Max Calories */}
@@ -101,7 +106,7 @@ const MealPlannerForm: React.FC = () => {
             label="Max Calories"
             errors={errors}
             type="number"
-            description="Preferred maximum calories"
+            description="Maximum calories per day"
             className="h-auto py-0 w-full"
           />
         </Box>

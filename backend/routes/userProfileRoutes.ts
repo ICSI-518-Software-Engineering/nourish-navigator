@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { validateNewUserMealPlanRequest } from "../models/userMealPlanModel";
 import User, { UserProfileUpdateRequestBodyType } from "../models/userModel";
 import { validateNewUserProfileRequest } from "../models/userProfileModel";
+import { generateMealPlan } from "../utils/mealPlannerApiUtils";
 
 const userProfileRoutes = Router();
 
@@ -10,11 +11,20 @@ const userProfileRoutes = Router();
 
 type UserProfileUpdateRequestType = {
   body: UserProfileUpdateRequestBodyType;
+  params: {
+    userid: string;
+  };
 } & Omit<Request, "body">;
 userProfileRoutes.post(
   "/profile/:userid",
   async (req: UserProfileUpdateRequestType, res: Response) => {
     try {
+      const user = await User.findById(req.params.userid);
+
+      if (!user) {
+        return res.status(400).send("No user found");
+      }
+
       let { userProfile, mealPlanProfile } = req.body;
 
       const updateReq = {} as UserProfileUpdateRequestBodyType;
@@ -27,10 +37,15 @@ userProfileRoutes.post(
       if (mealPlanProfile) {
         mealPlanProfile = validateNewUserMealPlanRequest(mealPlanProfile);
         updateReq.mealPlanProfile = mealPlanProfile;
+        updateReq.mealPlan = await generateMealPlan(user);
       }
 
-      const user = await User.findByIdAndUpdate(req.params.userid, updateReq);
-      await user?.save();
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.userid,
+        updateReq
+      );
+
+      await updatedUser?.save();
 
       return res.send("User profile updated successfully");
     } catch (ex) {

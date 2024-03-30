@@ -31,6 +31,7 @@ export const MongooseUserSchema = new mongoose.Schema({
   },
   userProfile: MongooseUserProfileSchema,
   mealPlanProfile: MongooseUserMealPlanSchema,
+  mealPlan: JSON,
 });
 
 MongooseUserSchema.pre("save", async function (next) {
@@ -97,6 +98,7 @@ type UserModelType = {
 export type UserProfileUpdateRequestBodyType = {
   userProfile: UserProfileRequestDataType;
   mealPlanProfile: UserMealPlanType;
+  mealPlan: Record<string, unknown>[];
 };
 
 const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(
@@ -105,3 +107,10 @@ const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(
 );
 
 export default User;
+
+/**
+ * ============ USER OBJECT TYPE ===============
+ */
+
+export type UserObjectType = SignUpRequestDataType &
+  UserProfileUpdateRequestBodyType;

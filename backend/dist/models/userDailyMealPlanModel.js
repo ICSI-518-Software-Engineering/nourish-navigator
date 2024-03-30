@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userMealPlanZodSchema = exports.MongooseUserMealPlanSchema = void 0;
+exports.userMealSelectionZodSchema = exports.MongooseUserMealSelectionSchema = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
-exports.MongooseUserMealPlanSchema = new mongoose_1.default.Schema({
+exports.MongooseUserMealSelectionSchema = new mongoose_1.default.Schema({
     date: {
         type: String
     },
@@ -43,7 +43,7 @@ var mealZodSchema = zod_1.z.object({
     fat: zod_1.z.string(),
     carbs: zod_1.z.string()
 });
-exports.userMealPlanZodSchema = zod_1.z.object({
+exports.userMealSelectionZodSchema = zod_1.z.object({
     date: zod_1.z.string(),
     meal: mealZodSchema.array()
 });

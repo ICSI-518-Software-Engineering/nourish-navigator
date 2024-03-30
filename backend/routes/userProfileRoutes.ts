@@ -4,6 +4,7 @@ import { validateNewUserMealPlanRequest } from "../models/userMealPlanModel";
 import User, { UserProfileUpdateRequestBodyType } from "../models/userModel";
 import { validateNewUserProfileRequest } from "../models/userProfileModel";
 import { generateMealPlan } from "../utils/mealPlannerApiUtils";
+import { nutritionCalculator } from "../scripts/nutritionCalculation";
 
 const userProfileRoutes = Router();
 
@@ -31,20 +32,15 @@ userProfileRoutes.post(
 
       if (userProfile) {
         userProfile = validateNewUserProfileRequest(userProfile);
+        const nutrBody = nutritionCalculator(userProfile)
         updateReq.userProfile = userProfile;
+        updateReq.userNutrition = nutrBody;
       }
 
       if (mealPlanProfile) {
         mealPlanProfile = validateNewUserMealPlanRequest(mealPlanProfile);
         updateReq.mealPlanProfile = mealPlanProfile;
-<<<<<<< HEAD
-        updateReq.mealPlan = await generateMealPlan({
-          ...user,
-          mealPlanProfile: mealPlanProfile,
-        });
-=======
         updateReq.mealPlan = await generateMealPlan(user);
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
       }
 
       const updatedUser = await User.findByIdAndUpdate(

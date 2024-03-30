@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
-export const MongooseUserMealPlanSchema = new mongoose.Schema({
+export const MongooseUserMealSelectionSchema = new mongoose.Schema({
     date: {
         type: String
     },
@@ -40,11 +40,11 @@ const mealZodSchema = z.object({
     carbs: z.string()
 })
 
-export const userMealPlanZodSchema = z.object({
+export const userMealSelectionZodSchema = z.object({
     date: z.string(),
     meal: mealZodSchema.array()
 });
 
-export type UserMealPlanDataType = z.infer<typeof userMealPlanZodSchema>;
+export type UserMealSelectionDataType = z.infer<typeof userMealSelectionZodSchema>;
 
 

@@ -42,9 +42,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var mealPlanning_1 = require("../scripts/mealPlanning");
+//import { UserMealPlanDataType } from "../models/userDailyMealPlanModel";
 var mealPlanningRoutes = (0, express_1.Router)();
 // get profile api
-mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+mealPlanningRoutes.get("/mealselection/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var user, mealBody;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -57,9 +58,10 @@ mealPlanningRoutes.get("/meals/:userid", function (req, res) { return __awaiter(
                 if (!user) {
                     return [2 /*return*/];
                 }
-                return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid)];
+                return [4 /*yield*/, (0, mealPlanning_1.mealPlanService)(user, req.params.userid, 3)];
             case 2:
                 mealBody = _a.sent();
+                res.send(mealBody);
                 return [2 /*return*/];
         }
     });

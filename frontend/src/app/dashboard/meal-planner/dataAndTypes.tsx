@@ -112,7 +112,6 @@ export const mealCategoriesOptions: SelectOptionType[] = [
   },
 ];
 
-<<<<<<< HEAD
 export const mealPlannerFormZodSchema = z
   .object({
     noOfDays: z.string().min(1, { message: "Meal plan duration is required" }),
@@ -136,22 +135,6 @@ export const mealPlannerFormZodSchema = z
       path: ["maxCaloriesPerDay"],
     }
   );
-=======
-export const mealPlannerFormZodSchema = z.object({
-  noOfDays: z.string().min(1, { message: "Meal plan duration is required" }),
-  mealsTimings: z
-    .string()
-    .array()
-    .min(1, { message: "Select at least 1 meal time" }),
-  minCaloriesPerDay: z
-    .string()
-    .min(0, { message: "Calories per day is required" }),
-  maxCaloriesPerDay: z
-    .string()
-    .min(0, { message: "Calories per day is required" }),
-  mealCategories: z.string().array().optional(),
-});
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
 export type MealPlannerFormDataType = z.infer<typeof mealPlannerFormZodSchema>;
 
@@ -159,7 +142,6 @@ export type InputOptionsType = {
   id: string;
   label: string;
 };
-<<<<<<< HEAD
 
 export type MealPlanRecordType = {
   breakfast?: MealPlanRecordItemType;
@@ -199,5 +181,3 @@ export type MealPlanNutrientsType = {
   quantity: number;
   unit: string;
 };
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52

@@ -11,28 +11,31 @@ import {
   UserProfileRequestDataType,
 } from "./userProfileModel";
 
-export const MongooseUserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+export const MongooseUserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    userProfile: MongooseUserProfileSchema,
+    mealPlanProfile: MongooseUserMealPlanSchema,
+    mealPlan: JSON,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  userProfile: MongooseUserProfileSchema,
-  mealPlanProfile: MongooseUserMealPlanSchema,
-  mealPlan: JSON,
-});
+  { timestamps: true }
+);
 
 MongooseUserSchema.pre("save", async function (next) {
   const thisObj = this as SignUpRequestDataType;

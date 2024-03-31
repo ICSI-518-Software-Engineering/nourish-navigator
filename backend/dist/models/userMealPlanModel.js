@@ -24,7 +24,7 @@ exports.MongooseUserMealPlanSchema = new mongoose_1.default.Schema({
         required: true,
     },
     mealCategories: [String],
-});
+}, { timestamps: true });
 exports.userMealPlanZodSchema = zod_1.z.object({
     noOfDays: zod_1.z
         .string({ required_error: "Meal plan duration is required" })

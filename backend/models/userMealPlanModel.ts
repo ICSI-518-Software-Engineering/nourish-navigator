@@ -1,25 +1,28 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
-export const MongooseUserMealPlanSchema = new mongoose.Schema({
-  noOfDays: {
-    type: String,
-    required: true,
+export const MongooseUserMealPlanSchema = new mongoose.Schema(
+  {
+    noOfDays: {
+      type: String,
+      required: true,
+    },
+    mealsTimings: {
+      type: [String],
+      required: true,
+    },
+    minCaloriesPerDay: {
+      type: String,
+      required: true,
+    },
+    maxCaloriesPerDay: {
+      type: String,
+      required: true,
+    },
+    mealCategories: [String],
   },
-  mealsTimings: {
-    type: [String],
-    required: true,
-  },
-  minCaloriesPerDay: {
-    type: String,
-    required: true,
-  },
-  maxCaloriesPerDay: {
-    type: String,
-    required: true,
-  },
-  mealCategories: [String],
-});
+  { timestamps: true }
+);
 
 export const userMealPlanZodSchema = z.object({
   noOfDays: z

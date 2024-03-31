@@ -1,34 +1,37 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
-export const MongooseUserProfileSchema = new mongoose.Schema({
-  age: {
-    type: String,
-    required: true,
+export const MongooseUserProfileSchema = new mongoose.Schema(
+  {
+    age: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
+    },
+    height: {
+      type: String,
+    },
+    weight: {
+      type: String,
+    },
+    dietaryPreference: {
+      type: String,
+    },
+    cuisinePreferences: {
+      type: [String],
+    },
+    medicalHistory: {
+      type: [String],
+    },
+    allergies: {
+      type: [String],
+    },
   },
-  gender: {
-    type: String,
-    required: true,
-  },
-  height: {
-    type: String,
-  },
-  weight: {
-    type: String,
-  },
-  dietaryPreference: {
-    type: String,
-  },
-  cuisinePreferences: {
-    type: [String],
-  },
-  medicalHistory: {
-    type: [String],
-  },
-  allergies: {
-    type: [String],
-  },
-});
+  { timestamps: true }
+);
 
 export const userProfileZodSchema = z.object({
   age: z.string({ required_error: "Age is required" }),

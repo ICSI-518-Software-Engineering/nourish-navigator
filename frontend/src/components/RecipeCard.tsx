@@ -18,9 +18,14 @@ import {
 type RecipeCardProps = {
   icon?: React.ReactNode;
   recipeItem?: MealPlanRecordItemType;
+  actions?: React.ReactNode;
 };
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ icon, recipeItem: item }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({
+  icon,
+  recipeItem: item,
+  actions,
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   if (!item) {
@@ -102,9 +107,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ icon, recipeItem: item }) => {
           </Stack>
 
           {/* Actions */}
-          <Button size="sm" onClick={() => setIsOpen(true)}>
-            View Recipe
-          </Button>
+          <Stack direction="row" gap="1rem">
+            {/* Recipe Button */}
+            <Button
+              size="sm"
+              onClick={() => setIsOpen(true)}
+              className="flex-grow"
+            >
+              View Recipe
+            </Button>
+
+            {/* Other Actions */}
+            {actions}
+          </Stack>
           <RecipeDialog isOpen={isOpen} setIsOpen={setIsOpen} meal={item} />
         </Stack>
       </CardContent>

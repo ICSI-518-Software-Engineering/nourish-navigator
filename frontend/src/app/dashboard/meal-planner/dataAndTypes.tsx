@@ -5,6 +5,8 @@
  */
 
 import { SelectOptionType } from "@/components/CustomSelect";
+import { Tooltip } from "@mui/material";
+import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
 import { z } from "zod";
 
 export const mealsTimingsOptions: InputOptionsType[] = [
@@ -154,6 +156,7 @@ export type MealPlanRecordType = {
 export type MealPlanRecordItemType = {
   label: string;
   image: string;
+  noOfServingsConsumed: number;
   yield: 6;
   ingredientLines: string[];
   ingredients: MealPlanIngredientsType[];
@@ -187,6 +190,24 @@ export type MealPlanNutrientsType = {
   quantity: number;
   unit: string;
 };
+
+export const lunchIcon = (
+  <Tooltip title="Lunch" arrow>
+    <UtensilsIcon size="1.25rem" />
+  </Tooltip>
+);
+
+export const breakfastIcon = (
+  <Tooltip title="Breakfast" arrow>
+    <SunIcon size="1.25rem" />
+  </Tooltip>
+);
+
+export const dinnerIcon = (
+  <Tooltip title="Dinner" arrow>
+    <MoonIcon size="1.25rem" />
+  </Tooltip>
+);
 
 /**
  * ================ UTILITY FUNCTIONS =============

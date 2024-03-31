@@ -6,15 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Box, Paper, Stack, Tooltip, Typography } from "@mui/material";
-import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
 import RecipeDialog from "../../../components/RecipeDialog";
 import {
   MealPlanRecordItemType,
   MealPlanRecordType,
+  breakfastIcon,
   computeNutritionValues,
+  dinnerIcon,
+  lunchIcon,
 } from "./dataAndTypes";
 
 type MealPlanDisplayProps = {
@@ -46,29 +48,14 @@ const MealPlanDisplay: React.FC<MealPlanDisplayProps> = ({ mealPlanItem }) => {
       <Stack gap="1.5rem">
         {/* Breakfast */}
         <MealPlanItemCard
-          icon={
-            <Tooltip title="Breakfast">
-              <SunIcon size="1.25rem" />
-            </Tooltip>
-          }
+          icon={breakfastIcon}
           mealPlanItem={mealPlanItem.breakfast}
         />
         {/* Lunch */}
-        <MealPlanItemCard
-          icon={
-            <Tooltip title="Lunch">
-              <UtensilsIcon size="1.25rem" />
-            </Tooltip>
-          }
-          mealPlanItem={mealPlanItem.lunch}
-        />
+        <MealPlanItemCard icon={lunchIcon} mealPlanItem={mealPlanItem.lunch} />
         {/* Dinner */}
         <MealPlanItemCard
-          icon={
-            <Tooltip title="Dinner">
-              <MoonIcon size="1.25rem" />
-            </Tooltip>
-          }
+          icon={dinnerIcon}
           mealPlanItem={mealPlanItem.dinner}
         />
       </Stack>
@@ -188,20 +175,3 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
     </Card>
   );
 };
-
-// {/* Consumed & Swap Button */}
-// <Stack direction="row" gap="0.5rem">
-//   {/* Consumed Button */}
-//   <Tooltip title="Mark as consumed" arrow>
-//     <Button size="sm" variant="outline">
-//       <CheckCircleIcon size="1.25rem" />
-//     </Button>
-//   </Tooltip>
-
-//   {/* Swap Button */}
-//   <Tooltip title="Swap with another recipe" arrow>
-//     <Button size="sm" variant="outline">
-//       <ListRestartIcon size="1.25rem" />
-//     </Button>
-//   </Tooltip>
-// </Stack>

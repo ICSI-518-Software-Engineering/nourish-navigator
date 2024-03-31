@@ -135,6 +135,7 @@
 
 ::-webkit-scrollbar {
   width: 0.2rem !important;
+  height: 0.3rem !important;
 }
 
 ::-webkit-scrollbar-track {

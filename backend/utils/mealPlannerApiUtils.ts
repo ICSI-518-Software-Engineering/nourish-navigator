@@ -1,25 +1,8 @@
-import axios, { AxiosResponse } from "axios";
-import dotenv from "dotenv";
+import { AxiosResponse } from "axios";
 import { UserObjectType } from "../models/userModel";
-
-dotenv.config();
-
-const appId = process.env.MEAL_PLAN_API_APP_ID;
-const appKey = process.env.MEAL_PLAN_API_APP_KEY;
-
-const http = axios.create({
-  baseURL: "https://api.edamam.com/api",
-  params: {
-    app_key: appKey,
-    app_id: appId,
-  },
-  // headers: {
-  //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
-  // },
-});
+import { appId, appKey, edamamApi as http } from "./edamamApiUtils";
 
 // edamam api is being used for meal planning
-
 const KEYS = {
   breakfast: "breakfast",
   lunch: "lunch",
@@ -121,7 +104,7 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
 };
 
 const getRecipeDetails = (apiUrl: string) => {
-  return http.get<RecipeApiResponseType>("/recipes/v2/by-uri", {
+  return http.get<RecipeApiResponseType>("/api/recipes/v2/by-uri", {
     params: {
       type: "public",
       uri: apiUrl,
@@ -136,7 +119,7 @@ export const generateMealPlan = async (user: UserObjectType) => {
 
   //   Get the meal plan
   const res = await http.post<MealPlanApiResponseType>(
-    `meal-planner/v1/${appId}/select`,
+    `/api/meal-planner/v1/${appId}/select`,
     reqBody
   );
   const mealPlan: Record<string, unknown>[] = [];
@@ -216,17 +199,17 @@ type MealPlanApiSelectionItemType = {
   };
 };
 
-type MealPlanApiResponseType = {
+export type MealPlanApiResponseType = {
   status: string;
   selection: MealPlanApiSelectionItemType[];
 };
 
-type RecipeApiHitItemType = {
+export type RecipeApiHitItemType = {
   recipe: {
     uri: string;
   };
 };
 
-type RecipeApiResponseType = {
+export type RecipeApiResponseType = {
   hits: RecipeApiHitItemType[];
 };

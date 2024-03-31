@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { DEFAULTS } from "@/lib/constants";
 import { Divider, Stack, Typography } from "@mui/material";
 import { SearchIcon } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import RecipeSearchForm from "./RecipeSearchForm";
 
 const RecipesPage: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
     data: recipes,
     mutate: searchForRecipes,
@@ -27,32 +28,41 @@ const RecipesPage: React.FC = () => {
         </Typography>
 
         {/* Update Meal Plan Dialog */}
-        {recipes && (
-          <CustomDialog
-            className="max-w-2xl"
-            dialogTrigger={
-              <Button className="border-gold-600 border">
+        <CustomDialog
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          className="max-w-2xl"
+          dialogTrigger={
+            recipes ? (
+              <Button
+                className="border-gold-600 border"
+                onClick={() => setIsOpen(true)}
+              >
                 <SearchIcon size="1rem" className="mr-2" />
                 New Search
               </Button>
+            ) : null
+          }
+          dialogTitle="Modify Recipe Search"
+        >
+          <Divider color={DEFAULTS.textColor} />
+          <RecipeSearchForm
+            notAsCard
+            onSubmit={(d) =>
+              searchForRecipes(d, { onSuccess: () => setIsOpen(false) })
             }
-            dialogTitle="Modify Recipe Search"
-          >
-            <Divider color={DEFAULTS.textColor} />
-            <RecipeSearchForm
-              notAsCard
-              onSubmit={(d) => searchForRecipes(d)}
-              isLoading={isPending}
-            />
-          </CustomDialog>
-        )}
+            isLoading={isPending}
+          />
+        </CustomDialog>
       </Stack>
 
       {/* Initial Search Form */}
-      {!recipes && (
+      {(!recipes || recipes?.length === 0) && (
         <>
           <Typography color={DEFAULTS.textColor}>
-            Perform a new recipe search
+            {recipes?.length === 0
+              ? "No recipes found with given data. Please perform an new recipe search"
+              : "Perform a new recipe search"}
           </Typography>
           <RecipeSearchForm
             onSubmit={(d) => searchForRecipes(d)}
@@ -62,7 +72,6 @@ const RecipesPage: React.FC = () => {
       )}
 
       {/* Recipes */}
-
       {recipes && (
         <>
           <Typography color={DEFAULTS.textColor}>

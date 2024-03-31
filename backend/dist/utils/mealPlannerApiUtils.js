@@ -41,6 +41,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateMealPlan = void 0;
 var axios_1 = __importDefault(require("axios"));
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 var appId = process.env.MEAL_PLAN_API_APP_ID;
 var appKey = process.env.MEAL_PLAN_API_APP_KEY;
 var http = axios_1.default.create({
@@ -49,6 +51,9 @@ var http = axios_1.default.create({
         app_key: appKey,
         app_id: appId,
     },
+    // headers: {
+    //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
+    // },
 });
 // edamam api is being used for meal planning
 var KEYS = {
@@ -58,6 +63,8 @@ var KEYS = {
 };
 var prepareMealPlanApiRequest = function (user) {
     var mealPlanProfile = user.mealPlanProfile;
+    var minCal = parseInt(mealPlanProfile.minCaloriesPerDay);
+    var maxCal = parseInt(mealPlanProfile.maxCaloriesPerDay);
     var mealTimings = new Set(mealPlanProfile.mealsTimings);
     var sections = {};
     //   Breakfast
@@ -70,6 +77,12 @@ var prepareMealPlanApiRequest = function (user) {
                     },
                     { meal: [KEYS.breakfast] },
                 ],
+            },
+            fit: {
+                ENERC_KCAL: {
+                    min: minCal * 0.1,
+                    max: maxCal * 0.3,
+                },
             },
         };
     }
@@ -84,6 +97,12 @@ var prepareMealPlanApiRequest = function (user) {
                     { meal: ["".concat(KEYS.lunch, "/").concat(KEYS.dinner)] },
                 ],
             },
+            fit: {
+                ENERC_KCAL: {
+                    min: minCal * 0.3,
+                    max: maxCal * 0.4,
+                },
+            },
         };
     }
     //   Dinner
@@ -96,6 +115,12 @@ var prepareMealPlanApiRequest = function (user) {
                     },
                     { meal: ["".concat(KEYS.lunch, "/").concat(KEYS.dinner)] },
                 ],
+            },
+            fit: {
+                ENERC_KCAL: {
+                    min: minCal * 0.2,
+                    max: maxCal * 0.4,
+                },
             },
         };
     }
@@ -114,8 +139,8 @@ var prepareMealPlanApiRequest = function (user) {
             },
             fit: {
                 ENERC_KCAL: {
-                    min: parseInt(mealPlanProfile.minCaloriesPerDay),
-                    max: parseInt(mealPlanProfile.maxCaloriesPerDay),
+                    min: minCal,
+                    max: maxCal,
                 },
             },
             sections: sections,
@@ -147,9 +172,10 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
                 selections = res.data.selection;
                 if (!selections) return [3 /*break*/, 3];
                 // Restructuring data
-                selections.forEach(function (selection) {
+                selections.forEach(function (selection, index) {
                     var resultObj = {};
                     var _a = selection.sections, Breakfast = _a.Breakfast, Dinner = _a.Dinner, Lunch = _a.Lunch;
+                    resultObj.day = index + 1;
                     if (Breakfast) {
                         resultObj[KEYS.breakfast] = Breakfast.assigned;
                         recipePromises.push(getRecipeDetails(Breakfast.assigned));

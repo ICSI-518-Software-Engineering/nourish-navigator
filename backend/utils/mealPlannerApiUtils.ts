@@ -1,5 +1,8 @@
 import axios, { AxiosResponse } from "axios";
+import dotenv from "dotenv";
 import { UserObjectType } from "../models/userModel";
+
+dotenv.config();
 
 const appId = process.env.MEAL_PLAN_API_APP_ID;
 const appKey = process.env.MEAL_PLAN_API_APP_KEY;
@@ -10,6 +13,9 @@ const http = axios.create({
     app_key: appKey,
     app_id: appId,
   },
+  // headers: {
+  //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
+  // },
 });
 
 // edamam api is being used for meal planning
@@ -22,6 +28,9 @@ const KEYS = {
 
 const prepareMealPlanApiRequest = (user: UserObjectType) => {
   const { mealPlanProfile } = user;
+
+  const minCal = parseInt(mealPlanProfile.minCaloriesPerDay);
+  const maxCal = parseInt(mealPlanProfile.maxCaloriesPerDay);
 
   const mealTimings = new Set(mealPlanProfile.mealsTimings);
 
@@ -38,6 +47,12 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           { meal: [KEYS.breakfast] },
         ],
       },
+      fit: {
+        ENERC_KCAL: {
+          min: minCal * 0.1,
+          max: maxCal * 0.3,
+        },
+      },
     };
   }
 
@@ -52,6 +67,12 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           { meal: [`${KEYS.lunch}/${KEYS.dinner}`] },
         ],
       },
+      fit: {
+        ENERC_KCAL: {
+          min: minCal * 0.3,
+          max: maxCal * 0.4,
+        },
+      },
     };
   }
 
@@ -65,6 +86,12 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
           },
           { meal: [`${KEYS.lunch}/${KEYS.dinner}`] },
         ],
+      },
+      fit: {
+        ENERC_KCAL: {
+          min: minCal * 0.2,
+          max: maxCal * 0.4,
+        },
       },
     };
   }
@@ -84,8 +111,8 @@ const prepareMealPlanApiRequest = (user: UserObjectType) => {
       },
       fit: {
         ENERC_KCAL: {
-          min: parseInt(mealPlanProfile.minCaloriesPerDay),
-          max: parseInt(mealPlanProfile.maxCaloriesPerDay),
+          min: minCal,
+          max: maxCal,
         },
       },
       sections: sections,
@@ -122,9 +149,10 @@ export const generateMealPlan = async (user: UserObjectType) => {
 
     if (selections) {
       // Restructuring data
-      selections.forEach((selection) => {
+      selections.forEach((selection, index) => {
         const resultObj: Record<string, unknown> = {};
         const { Breakfast, Dinner, Lunch } = selection.sections;
+        resultObj.day = index + 1;
 
         if (Breakfast) {
           resultObj[KEYS.breakfast] = Breakfast.assigned;

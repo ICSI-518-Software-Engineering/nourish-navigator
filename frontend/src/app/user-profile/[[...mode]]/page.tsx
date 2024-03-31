@@ -146,16 +146,12 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             control={control}
             options={[
               {
-                label: "Vegetarian",
-                value: "vegetarian",
+                label: "Veg",
+                value: "veg",
               },
               {
-                label: "Vegan",
-                value: "vegan",
-              },
-              {
-                label: "Non Vegetarian",
-                value: "DASH",
+                label: "Non Veg",
+                value: "non_veg",
               },
             ]}
             description="Veg or Non-veg"
@@ -170,11 +166,11 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             options={[
               {
                 label: "American",
-                value: "American",
+                value: "american",
               },
               {
                 label: "Indian",
-                value: "Indian",
+                value: "indian",
               },
             ]}
             description="To customise meal plan based on selected cuisines"
@@ -220,23 +216,19 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             options={[
               {
                 label: "Dairy",
-                value: "dairy-free",
+                value: "dairy",
               },
               {
                 label: "Nuts",
-                value: "tree-nut-free",
+                value: "nuts",
               },
               {
                 label: "Fish",
-                value: "fish-free",
+                value: "fish",
               },
               {
                 label: "Soy",
-                value: "soy-free",
-              },
-              {
-                label: "Gluten",
-                value: "gluten-free",
+                value: "soy",
               },
             ]}
             description="To customise meal plan based on food allergies"

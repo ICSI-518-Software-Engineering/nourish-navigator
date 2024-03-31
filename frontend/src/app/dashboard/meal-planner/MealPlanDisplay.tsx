@@ -5,18 +5,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Box, Paper, Stack, Tooltip, Typography } from "@mui/material";
+import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
-<<<<<<< HEAD
 import {
   MealPlanNutrientsType,
   MealPlanRecordItemType,
   MealPlanRecordType,
 } from "./dataAndTypes";
-=======
-import { MealPlanRecordItemType, MealPlanRecordType } from "./dataAndTypes";
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
 
 type MealPlanDisplayProps = {
   mealPlanItem: MealPlanRecordType;
@@ -47,13 +44,31 @@ const MealPlanDisplay: React.FC<MealPlanDisplayProps> = ({ mealPlanItem }) => {
       <Stack gap="1.5rem">
         {/* Breakfast */}
         <MealPlanItemCard
-          title="Breakfast"
+          icon={
+            <Tooltip title="Breakfast">
+              <SunIcon size="1.25rem" />
+            </Tooltip>
+          }
           mealPlanItem={mealPlanItem.breakfast}
         />
         {/* Lunch */}
-        <MealPlanItemCard title="Lunch" mealPlanItem={mealPlanItem.lunch} />
+        <MealPlanItemCard
+          icon={
+            <Tooltip title="Lunch">
+              <UtensilsIcon size="1.25rem" />
+            </Tooltip>
+          }
+          mealPlanItem={mealPlanItem.lunch}
+        />
         {/* Dinner */}
-        <MealPlanItemCard title="Dinner" mealPlanItem={mealPlanItem.dinner} />
+        <MealPlanItemCard
+          icon={
+            <Tooltip title="Dinner">
+              <MoonIcon size="1.25rem" />
+            </Tooltip>
+          }
+          mealPlanItem={mealPlanItem.dinner}
+        />
       </Stack>
     </Box>
   );
@@ -66,19 +81,18 @@ export default MealPlanDisplay;
  */
 
 type MealPlanItemCardProps = {
-  title: string;
+  icon: React.ReactNode;
   mealPlanItem?: MealPlanRecordItemType;
 };
 
 const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
-  title,
+  icon,
   mealPlanItem: item,
 }) => {
   if (!item) {
     return null;
   }
 
-<<<<<<< HEAD
   const calories = item?.totalNutrients?.ENERC_KCAL;
   const protein = item?.totalNutrients?.PROCNT;
   const carbs = item?.totalNutrients?.CHOCDF;
@@ -87,23 +101,26 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="line-clamp-1 text-gold-500" title={item.label}>
+        <CardTitle
+          className="whitespace-nowrap text-ellipsis w-72 overflow-hidden text-gold-500 pb-1.5"
+          title={item.label}
+        >
           {item.label}
         </CardTitle>
-        <CardDescription>
-          {computeNutritionValues(calories, item.yield)}
+        <CardDescription className="font-bold flex items-center gap-2">
+          {computeNutritionValues(calories, item.yield)} {icon}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Stack direction="row" gap="1rem">
           {/* Image */}
-          <Box width="100%" height="10rem">
+          <Box width="100%" height="10rem" className="border rounded-lg">
             <Image
               src={item.image}
               alt="recipe-image"
               width={200}
               height={200}
-              className="w-full h-[10rem] object-cover"
+              className="w-full max-h-full object-cover rounded-lg p-1"
             />
           </Box>
 
@@ -147,31 +164,10 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
             </Stack>
           </Stack>
         </Stack>
-=======
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="line-clamp-1" title={item.label}>
-          {item.label}
-        </CardTitle>
-        <CardDescription>{item.calories?.toFixed(2)}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Box width="100%" height="10rem">
-          <Image
-            src={item.image}
-            alt="recipe-image"
-            width={200}
-            height={200}
-            className="w-full h-[10rem] object-cover"
-          />
-        </Box>
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52
       </CardContent>
     </Card>
   );
 };
-<<<<<<< HEAD
 
 /**
  * ================ UTILITY FUNCTIONS =============
@@ -182,5 +178,3 @@ const computeNutritionValues = (
 ) => {
   return Math.round(inputs.quantity / quantity) + " " + inputs.unit;
 };
-=======
->>>>>>> 3bd6fb090b5bb743d33ee3c80957f04cdaee5e52

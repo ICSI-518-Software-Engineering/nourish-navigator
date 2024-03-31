@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,10 +56,9 @@ var userMealPlanModel_1 = require("../models/userMealPlanModel");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
 var mealPlannerApiUtils_1 = require("../utils/mealPlannerApiUtils");
-var nutritionCalculation_1 = require("../scripts/nutritionCalculation");
 var userProfileRoutes = (0, express_1.Router)();
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, _a, userProfile, mealPlanProfile, updateReq, nutrBody, _b, updatedUser, ex_1;
+    var user, _a, userProfile, mealPlanProfile, updateReq, _b, updatedUser, ex_1;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -63,15 +73,13 @@ userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaite
                 updateReq = {};
                 if (userProfile) {
                     userProfile = (0, userProfileModel_1.validateNewUserProfileRequest)(userProfile);
-                    nutrBody = (0, nutritionCalculation_1.nutritionCalculator)(userProfile);
                     updateReq.userProfile = userProfile;
-                    updateReq.userNutrition = nutrBody;
                 }
                 if (!mealPlanProfile) return [3 /*break*/, 3];
                 mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);
                 updateReq.mealPlanProfile = mealPlanProfile;
                 _b = updateReq;
-                return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(user)];
+                return [4 /*yield*/, (0, mealPlannerApiUtils_1.generateMealPlan)(__assign(__assign({}, user), { mealPlanProfile: mealPlanProfile }))];
             case 2:
                 _b.mealPlan = _c.sent();
                 _c.label = 3;

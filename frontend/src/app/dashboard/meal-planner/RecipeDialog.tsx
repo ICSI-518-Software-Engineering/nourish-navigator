@@ -1,6 +1,13 @@
 import CustomDialog from "@/components/CustomDialog";
 import { Button } from "@/components/ui/button";
-import { Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  Chip,
+  Divider,
+  Stack,
+  Theme,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -17,6 +24,7 @@ type RecipeDialogProps = {
 };
 
 const RecipeDialog: React.FC<RecipeDialogProps> = ({ meal, ...props }) => {
+  const isDesktop = useMediaQuery((t: Theme) => t.breakpoints.up("lg"));
   return (
     <CustomDialog
       isOpen={props.isOpen}
@@ -24,7 +32,12 @@ const RecipeDialog: React.FC<RecipeDialogProps> = ({ meal, ...props }) => {
       dialogTitle={meal?.label}
       className="w-[50vw]"
     >
-      <Stack direction="row" gap="2rem" maxHeight="69.5vh" overflow="auto">
+      <Stack
+        direction={{ xs: "column", lg: "row" }}
+        gap="2rem"
+        maxHeight="69.5vh"
+        overflow="auto"
+      >
         {/* Left Container */}
         <Stack gap="1.5rem">
           {/* Top Container */}
@@ -81,10 +94,15 @@ const RecipeDialog: React.FC<RecipeDialogProps> = ({ meal, ...props }) => {
         </Stack>
 
         {/* Divider */}
-        <Divider orientation="vertical" />
+        <Divider orientation={isDesktop ? "vertical" : "horizontal"} />
 
         {/* Right Container */}
-        <Stack maxHeight="69.5vh" overflow="auto" gap="1rem" flexGrow={1}>
+        <Stack
+          maxHeight="69.5vh"
+          overflow={{ xs: "initial", lg: "auto" }}
+          gap="1rem"
+          flexGrow={1}
+        >
           <Typography variant="h6">Nutrition Values</Typography>
           {(
             Object.values(meal?.totalNutrients) as MealPlanNutrientsType[]

@@ -1,4 +1,5 @@
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
+import { MealPlanRecordItemType } from "@/app/dashboard/meal-planner/dataAndTypes";
 import { queryClient } from "@/lib/TanstackProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import http from "./http";
@@ -11,6 +12,7 @@ type UpdateUserActivityServiceDataType = {
   mealTime: string;
   consumption: string;
   userId: string;
+  recipe?: MealPlanRecordItemType;
 };
 
 const updateUserActivityService = async (

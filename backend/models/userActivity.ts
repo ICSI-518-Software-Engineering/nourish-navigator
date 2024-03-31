@@ -23,7 +23,7 @@ export const MongooseUserActivitySchema = new mongoose.Schema<UserActivityType>(
     date: {
       type: String,
       required: true,
-      default: moment().format(DEFAULTS.dateFormat),
+      default: moment(Date.now()).format(DEFAULTS.dateFormat),
     },
     userId: {
       type: String,

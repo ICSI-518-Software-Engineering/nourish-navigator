@@ -27,7 +27,7 @@ exports.MongooseUserActivitySchema = new mongoose_1.default.Schema({
     date: {
         type: String,
         required: true,
-        default: (0, moment_1.default)().format(constants_1.DEFAULTS.dateFormat),
+        default: (0, moment_1.default)(Date.now()).format(constants_1.DEFAULTS.dateFormat),
     },
     userId: {
         type: String,

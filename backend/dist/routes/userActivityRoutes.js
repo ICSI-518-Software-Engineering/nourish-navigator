@@ -75,8 +75,9 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
                 }
                 newMealPlan = (_a = user.mealPlan) === null || _a === void 0 ? void 0 : _a.map(function (item) {
                     var _a;
+                    var _b;
                     if ((0, moment_1.default)(item.date, constants_1.DEFAULTS.dateFormat).isSame((0, moment_1.default)(), "day")) {
-                        var itemClone = __assign(__assign({}, item), (_a = {}, _a[mealTime_1] = __assign(__assign({}, item[mealTime_1]), { noOfServingsConsumed: Number(req.body.consumption) }), _a));
+                        var itemClone = __assign(__assign({}, item), (_a = {}, _a[mealTime_1] = (_b = req.body.recipe) !== null && _b !== void 0 ? _b : __assign(__assign({}, item[mealTime_1]), { noOfServingsConsumed: Number(req.body.consumption) }), _a));
                         todaysMealPlan_1 = __assign({}, itemClone);
                         return itemClone;
                     }

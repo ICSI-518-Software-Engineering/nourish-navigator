@@ -11,6 +11,7 @@ type UserActivityReqType = {
   body: {
     mealTime: string;
     consumption: string;
+    recipe?: JSON;
   };
   params: {
     userId: string;
@@ -41,7 +42,7 @@ userActivityRoutes.post(
         ) {
           const itemClone = {
             ...item,
-            [mealTime]: {
+            [mealTime]: req.body.recipe ?? {
               ...(item[mealTime] as object),
               noOfServingsConsumed: Number(req.body.consumption),
             },

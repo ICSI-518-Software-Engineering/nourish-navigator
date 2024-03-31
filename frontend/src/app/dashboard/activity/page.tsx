@@ -30,17 +30,17 @@ const ActivityPage: React.FC = () => {
     {
       icon: <ActivityIcon size="2.5rem" />,
       label: "Total Calories",
-      value: todaysActivity?.totalCalories?.toFixed(2) + " kcal" ?? "N/A",
+      value: (todaysActivity?.totalCalories ?? 0).toFixed(2) + " kcal",
     },
     {
       icon: <PieChartIcon size="2.5rem" />,
       label: "Total Protein",
-      value: todaysActivity?.totalProtein?.toFixed(2) + " g" ?? "N/A",
+      value: (todaysActivity?.totalProtein ?? 0).toFixed(2) + " g",
     },
     {
       icon: <TorusIcon size="2.5rem" />,
       label: "Total Fat",
-      value: todaysActivity?.totalFat?.toFixed(2) + " g" ?? "N/A",
+      value: (todaysActivity?.totalFat ?? 0).toFixed(2) + " g",
     },
   ];
 

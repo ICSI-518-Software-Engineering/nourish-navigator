@@ -2,7 +2,7 @@ import { SelectOptionType } from "@/components/CustomSelect";
 import { z } from "zod";
 
 export const recipeSearchZodSchema = z.object({
-  keywords: z.string(),
+  keywords: z.string().min(1, { message: "required" }).trim(),
   allergies: z.array(z.string()).optional(),
   diets: z.array(z.string()).optional(),
   maxCalories: z.union([z.string(), z.number()]).optional(),

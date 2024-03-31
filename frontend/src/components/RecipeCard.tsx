@@ -1,97 +1,28 @@
-import { Button } from "@/components/ui/button";
+import {
+  MealPlanRecordItemType,
+  computeNutritionValues,
+} from "@/app/dashboard/meal-planner/dataAndTypes";
+import RecipeDialog from "@/components/RecipeDialog";
+import { Box, Stack, Typography } from "@mui/material";
+import Image from "next/image";
+import { useState } from "react";
+import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Box, Paper, Stack, Tooltip, Typography } from "@mui/material";
-import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
-import Image from "next/image";
-import React, { useState } from "react";
-import RecipeDialog from "../../../components/RecipeDialog";
-import {
-  MealPlanRecordItemType,
-  MealPlanRecordType,
-  computeNutritionValues,
-} from "./dataAndTypes";
+} from "./ui/card";
 
-type MealPlanDisplayProps = {
-  mealPlanItem: MealPlanRecordType;
+type RecipeCardProps = {
+  icon?: React.ReactNode;
+  recipeItem?: MealPlanRecordItemType;
 };
 
-const MealPlanDisplay: React.FC<MealPlanDisplayProps> = ({ mealPlanItem }) => {
-  if (!mealPlanItem) {
-    return null;
-  }
-
-  return (
-    <Box
-      component={Paper}
-      p="1rem"
-      display="flex"
-      flexDirection="column"
-      gap="1rem"
-      flexShrink={0}
-      width="25rem"
-      borderRadius="1rem"
-      bgcolor="transparent"
-      elevation={2}
-    >
-      <Typography textAlign="center" variant="h6" position="sticky" top={0}>
-        Day {mealPlanItem.day}
-      </Typography>
-      {/* Cards */}
-      <Stack gap="1.5rem">
-        {/* Breakfast */}
-        <MealPlanItemCard
-          icon={
-            <Tooltip title="Breakfast">
-              <SunIcon size="1.25rem" />
-            </Tooltip>
-          }
-          mealPlanItem={mealPlanItem.breakfast}
-        />
-        {/* Lunch */}
-        <MealPlanItemCard
-          icon={
-            <Tooltip title="Lunch">
-              <UtensilsIcon size="1.25rem" />
-            </Tooltip>
-          }
-          mealPlanItem={mealPlanItem.lunch}
-        />
-        {/* Dinner */}
-        <MealPlanItemCard
-          icon={
-            <Tooltip title="Dinner">
-              <MoonIcon size="1.25rem" />
-            </Tooltip>
-          }
-          mealPlanItem={mealPlanItem.dinner}
-        />
-      </Stack>
-    </Box>
-  );
-};
-
-export default MealPlanDisplay;
-
-/**
- * =============== MEAL PLAN ITEM CARD ===================
- */
-
-type MealPlanItemCardProps = {
-  icon: React.ReactNode;
-  mealPlanItem?: MealPlanRecordItemType;
-};
-
-const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
-  icon,
-  mealPlanItem: item,
-}) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ icon, recipeItem: item }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
   if (!item) {
     return null;
   }
@@ -174,10 +105,11 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
           <Button size="sm" onClick={() => setIsOpen(true)}>
             View Recipe
           </Button>
+          <RecipeDialog isOpen={isOpen} setIsOpen={setIsOpen} meal={item} />
         </Stack>
       </CardContent>
-
-      <RecipeDialog isOpen={isOpen} setIsOpen={setIsOpen} meal={item} />
     </Card>
   );
 };
+
+export default RecipeCard;

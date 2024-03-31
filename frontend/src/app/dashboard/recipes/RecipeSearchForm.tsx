@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
-import React, { useCallback } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import {
   RecipeSearchFormDataType,
@@ -16,16 +16,19 @@ import {
 
 type RecipeSearchFormProps = {
   notAsCard?: boolean;
-};
+} & RecipeSearchFormBaseProps;
 
-const RecipeSearchForm: React.FC<RecipeSearchFormProps> = ({ notAsCard }) => {
+const RecipeSearchForm: React.FC<RecipeSearchFormProps> = ({
+  notAsCard,
+  ...props
+}) => {
   if (notAsCard) {
-    return <RecipeSearchFormBase />;
+    return <RecipeSearchFormBase {...props} />;
   }
 
   return (
     <Card className="p-10 max-w-xl">
-      <RecipeSearchFormBase />
+      <RecipeSearchFormBase {...props} />
     </Card>
   );
 };
@@ -36,13 +39,15 @@ export default RecipeSearchForm;
  * ================= BASE FORM ==================
  */
 
-const RecipeSearchFormBase: React.FC = () => {
-  // const { mutate: updateUserProfile, isPending } =
-  //   useUpdateUserProfileService();
-  // const { data: userProfile } = useGetUserProfileService();
-  // const mealPlanProfile = userProfile?.mealPlanProfile;
-  const isPending = false;
+type RecipeSearchFormBaseProps = {
+  onSubmit: (data: RecipeSearchFormDataType) => unknown;
+  isLoading: boolean;
+};
 
+const RecipeSearchFormBase: React.FC<RecipeSearchFormBaseProps> = ({
+  onSubmit,
+  isLoading,
+}) => {
   const {
     register,
     control,
@@ -58,25 +63,11 @@ const RecipeSearchFormBase: React.FC = () => {
     resolver: zodResolver(recipeSearchZodSchema),
   });
 
-  const onSave = useCallback((data: RecipeSearchFormDataType) => {
-    //     const user = getLoggedInUserDetails();
-    //     if (!user) return;
-    //     updateUserProfile(
-    //       {
-    //         userId: user?._id,
-    //         mealPlanProfile: data,
-    //       },
-    //       { onSuccess: (d) => toast.success(d) }
-    //     );
-    //   },
-    return null;
-  }, []);
-
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(onSave)}
-      className="flex flex-col gap-5"
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-7"
     >
       {/* Keywords Input */}
       <CustomInput
@@ -121,8 +112,9 @@ const RecipeSearchFormBase: React.FC = () => {
         description="Used to filter recipes"
       />
 
-      <Button className="self-end" disabled={isPending}>
-        <LoadingSpinner isVisible={isPending} /> Submit
+      <Button className="self-end" disabled={isLoading}>
+        <LoadingSpinner isVisible={isLoading} />
+        Submit
       </Button>
     </Box>
   );

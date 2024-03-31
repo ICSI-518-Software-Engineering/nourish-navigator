@@ -35,26 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateMealPlan = void 0;
-var axios_1 = __importDefault(require("axios"));
-var dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-var appId = process.env.MEAL_PLAN_API_APP_ID;
-var appKey = process.env.MEAL_PLAN_API_APP_KEY;
-var http = axios_1.default.create({
-    baseURL: "https://api.edamam.com/api",
-    params: {
-        app_key: appKey,
-        app_id: appId,
-    },
-    // headers: {
-    //   "Edamam-Account-User": process.env.MEAL_PLAN_API_USER_ID,
-    // },
-});
+var edamamApiUtils_1 = require("./edamamApiUtils");
 // edamam api is being used for meal planning
 var KEYS = {
     breakfast: "breakfast",
@@ -148,12 +131,12 @@ var prepareMealPlanApiRequest = function (user) {
     };
 };
 var getRecipeDetails = function (apiUrl) {
-    return http.get("/recipes/v2/by-uri", {
+    return edamamApiUtils_1.edamamApi.get("/api/recipes/v2/by-uri", {
         params: {
             type: "public",
             uri: apiUrl,
-            app_id: appId,
-            app_key: appKey,
+            app_id: edamamApiUtils_1.appId,
+            app_key: edamamApiUtils_1.appKey,
         },
     });
 };
@@ -163,7 +146,7 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
         switch (_a.label) {
             case 0:
                 reqBody = prepareMealPlanApiRequest(user);
-                return [4 /*yield*/, http.post("meal-planner/v1/".concat(appId, "/select"), reqBody)];
+                return [4 /*yield*/, edamamApiUtils_1.edamamApi.post("/api/meal-planner/v1/".concat(edamamApiUtils_1.appId, "/select"), reqBody)];
             case 1:
                 res = _a.sent();
                 mealPlan = [];

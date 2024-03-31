@@ -10,12 +10,14 @@ import {
 } from "./ui/dialog";
 
 type CustomDialogProps = {
-  dialogTrigger: React.ReactNode;
+  dialogTrigger?: React.ReactNode;
   className?: string;
   dialogTitle?: string;
   dialogDescription?: string;
   children?: React.ReactNode;
   dialogFooter?: React.ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const CustomDialog: React.FC<CustomDialogProps> = ({
@@ -25,10 +27,12 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
   dialogDescription,
   children,
   dialogFooter,
+  isOpen,
+  setIsOpen,
 }) => {
   return (
-    <Dialog>
-      <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {dialogTrigger && <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>}
       <DialogContent className={className}>
         <DialogHeader>
           {dialogTitle && <DialogTitle>{dialogTitle}</DialogTitle>}

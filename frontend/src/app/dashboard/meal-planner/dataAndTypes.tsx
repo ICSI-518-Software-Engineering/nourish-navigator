@@ -163,6 +163,11 @@ export type MealPlanRecordItemType = {
     PROCNT: MealPlanNutrientsType;
     ENERC_KCAL: MealPlanNutrientsType;
   };
+  cautions: string[];
+  dietLabels: string[];
+  healthLabels: string[];
+  cuisineType: string[];
+  url: string;
 };
 
 type MealPlanIngredientsType = {
@@ -180,4 +185,14 @@ export type MealPlanNutrientsType = {
   label: string;
   quantity: number;
   unit: string;
+};
+
+/**
+ * ================ UTILITY FUNCTIONS =============
+ */
+export const computeNutritionValues = (
+  inputs: MealPlanNutrientsType,
+  quantity: number
+) => {
+  return Math.round(inputs.quantity / quantity) + " " + inputs.unit;
 };

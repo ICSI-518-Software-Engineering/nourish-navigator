@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,11 +9,12 @@ import {
 import { Box, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import RecipeDialog from "./RecipeDialog";
 import {
-  MealPlanNutrientsType,
   MealPlanRecordItemType,
   MealPlanRecordType,
+  computeNutritionValues,
 } from "./dataAndTypes";
 
 type MealPlanDisplayProps = {
@@ -89,6 +91,7 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
   icon,
   mealPlanItem: item,
 }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   if (!item) {
     return null;
   }
@@ -112,69 +115,69 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Stack direction="row" gap="1rem">
-          {/* Image */}
-          <Box width="100%" height="10rem" className="border rounded-lg">
-            <Image
-              src={item.image}
-              alt="recipe-image"
-              width={200}
-              height={200}
-              className="w-full max-h-full object-cover rounded-lg p-1"
-            />
-          </Box>
+        <Stack gap="0.5rem">
+          {/* Content */}
+          <Stack direction="row" gap="1rem">
+            {/* Image */}
+            <Box width="100%" height="10rem" className="border rounded-lg">
+              <Image
+                src={item.image}
+                alt="recipe-image"
+                width={200}
+                height={200}
+                className="w-full max-h-full object-cover rounded-lg p-1"
+              />
+            </Box>
 
-          {/* Nutrients */}
-          <Stack justifyContent="center" gap="1.25rem" whiteSpace="nowrap">
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
-                Protien
-              </Typography>
-              <Typography fontSize="0.9rem">
-                {computeNutritionValues(protein, item.yield)}
-              </Typography>
-            </Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
-                Fat
-              </Typography>
-              <Typography fontSize="0.9rem">
-                {computeNutritionValues(fat, item.yield)}
-              </Typography>
-            </Stack>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
-                Carbs
-              </Typography>
-              <Typography fontSize="0.9rem">
-                {computeNutritionValues(carbs, item.yield)}
-              </Typography>
+            {/* Nutrients */}
+            <Stack justifyContent="center" gap="1.25rem" whiteSpace="nowrap">
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
+                  Protien
+                </Typography>
+                <Typography fontSize="0.9rem">
+                  {computeNutritionValues(protein, item.yield)}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
+                  Fat
+                </Typography>
+                <Typography fontSize="0.9rem">
+                  {computeNutritionValues(fat, item.yield)}
+                </Typography>
+              </Stack>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
+                  Carbs
+                </Typography>
+                <Typography fontSize="0.9rem">
+                  {computeNutritionValues(carbs, item.yield)}
+                </Typography>
+              </Stack>
             </Stack>
           </Stack>
+
+          {/* Actions */}
+          <Button size="sm" onClick={() => setIsOpen(true)}>
+            View Recipe
+          </Button>
         </Stack>
       </CardContent>
+
+      <RecipeDialog isOpen={isOpen} setIsOpen={setIsOpen} meal={item} />
     </Card>
   );
-};
-
-/**
- * ================ UTILITY FUNCTIONS =============
- */
-const computeNutritionValues = (
-  inputs: MealPlanNutrientsType,
-  quantity: number
-) => {
-  return Math.round(inputs.quantity / quantity) + " " + inputs.unit;
 };

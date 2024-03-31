@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose, { CallbackError } from "mongoose";
 import { z } from "zod";
+import UserActivity from "./userActivity";
 import {
   MongooseUserMealPlanSchema,
   UserMealPlanType,
@@ -33,6 +34,10 @@ export const MongooseUserSchema = new mongoose.Schema(
     userProfile: MongooseUserProfileSchema,
     mealPlanProfile: MongooseUserMealPlanSchema,
     mealPlan: JSON,
+    activity: {
+      type: mongoose.Types.ObjectId,
+      ref: UserActivity,
+    },
   },
   { timestamps: true }
 );

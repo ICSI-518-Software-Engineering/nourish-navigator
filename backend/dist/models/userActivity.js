@@ -19,7 +19,7 @@ exports.MongooseUserActivitySchema = new mongoose_1.default.Schema({
         required: true,
         default: 0,
     },
-    totalProtien: {
+    totalProtein: {
         type: Number,
         required: true,
         default: 0,
@@ -43,9 +43,9 @@ exports.userActivityZodSchema = zod_1.z.object({
     totalFat: zod_1.z
         .number({ required_error: "Total Fat is required" })
         .min(0, { message: "Total Fat must be greater than 0" }),
-    totalProtien: zod_1.z
-        .number({ required_error: "Total Protien is required" })
-        .min(0, { message: "Total Protien must be greater than 0" }),
+    totalProtein: zod_1.z
+        .number({ required_error: "Total Protein is required" })
+        .min(0, { message: "Total Protein must be greater than 0" }),
     date: zod_1.z.union([zod_1.z.string(), zod_1.z.date()], { required_error: "Date is required" }),
     userId: zod_1.z.string({ required_error: "User ID is required" }),
 });

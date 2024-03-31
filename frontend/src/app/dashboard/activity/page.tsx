@@ -1,16 +1,48 @@
 "use client";
 
-import { useGetUserProfileService } from "@/api/profile";
+import { useGetUserActivityService } from "@/api/activity";
 import { DEFAULTS } from "@/lib/constants";
 import { Stack, Typography } from "@mui/material";
-import { ActivityIcon, PieChartIcon } from "lucide-react";
+import { ActivityIcon, PieChartIcon, TorusIcon } from "lucide-react";
 import moment from "moment";
-import React from "react";
+import React, { useMemo } from "react";
+import ActivityChart from "./ActivityChart";
 import KpiCard from "./KpiCard";
 import TodaysMealPlan from "./TodaysMealPlan";
 
 const ActivityPage: React.FC = () => {
-  const { data: userProfile } = useGetUserProfileService();
+  const { data: userActivities = [], isLoading } = useGetUserActivityService();
+
+  const todaysActivity = useMemo(() => {
+    if (!userActivities || userActivities?.length === 0) {
+      return;
+    }
+    return userActivities.find((item) =>
+      moment().isSame(moment(item.date, DEFAULTS.dateFormat), "day")
+    );
+  }, [userActivities]);
+
+  /**
+   * KPI Cards
+   */
+
+  const kpiCards = [
+    {
+      icon: <ActivityIcon size="2.5rem" />,
+      label: "Total Calories",
+      value: todaysActivity?.totalCalories?.toFixed(2) + " kcal" ?? "N/A",
+    },
+    {
+      icon: <PieChartIcon size="2.5rem" />,
+      label: "Total Protein",
+      value: todaysActivity?.totalProtein?.toFixed(2) + " g" ?? "N/A",
+    },
+    {
+      icon: <TorusIcon size="2.5rem" />,
+      label: "Total Fat",
+      value: todaysActivity?.totalFat?.toFixed(2) + " g" ?? "N/A",
+    },
+  ];
 
   return (
     <Stack gap="1rem">
@@ -19,47 +51,51 @@ const ActivityPage: React.FC = () => {
         Today&apos;s Activity ({moment().format(DEFAULTS.dateFormat)})
       </Typography>
 
-      {/* KPI Cards */}
-      <Stack gap="2rem">
+      <Typography color={DEFAULTS.textColor}>
+        Showing all your activity for today
+      </Typography>
+
+      {/* Main Content */}
+      <Stack gap="2rem" overflow="auto" height="77vh">
         {/* KPI CARDS */}
-        <Stack direction="row" gap="1rem">
-          {kpiCards.map((card) => (
-            <KpiCard key={card.label}>
-              <Stack direction="row" gap="1rem" alignItems="flex-start">
-                {card.icon}
-                <Stack>
-                  <Typography fontSize="1rem">{card.label}</Typography>
-                  <Typography fontSize="1.25rem" fontWeight="bold">
-                    {card.value}
-                  </Typography>
+        <Stack gap="1rem">
+          <Typography variant="h6">Nutrients Info</Typography>
+
+          {/* Nutrients Info */}
+          <Stack
+            direction="row"
+            gap="1rem"
+            overflow="auto"
+            className="hide-scrollbar"
+          >
+            {kpiCards.map((card) => (
+              <KpiCard key={card.label} isLoading={isLoading}>
+                <Stack
+                  direction="row"
+                  gap="1rem"
+                  alignItems="flex-start"
+                  width="12rem"
+                >
+                  {card.icon}
+                  <Stack>
+                    <Typography fontSize="1rem">{card.label}</Typography>
+                    <Typography fontSize="1.25rem" fontWeight="bold">
+                      {card.value}
+                    </Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </KpiCard>
-          ))}
+              </KpiCard>
+            ))}
+          </Stack>
         </Stack>
 
         {/* Todays Meal Plan  */}
         <TodaysMealPlan />
+
+        <ActivityChart userActivities={userActivities} isLoading={isLoading} />
       </Stack>
     </Stack>
   );
 };
 
 export default ActivityPage;
-
-/**
- * KPI Cards
- */
-
-const kpiCards = [
-  {
-    icon: <ActivityIcon size="2.5rem" />,
-    label: "Total Calories",
-    value: 3022,
-  },
-  {
-    icon: <PieChartIcon size="2.5rem" />,
-    label: "Total Protein",
-    value: 2000,
-  },
-];

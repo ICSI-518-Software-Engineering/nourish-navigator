@@ -15,7 +15,7 @@ export const MongooseUserActivitySchema = new mongoose.Schema<UserActivityType>(
       required: true,
       default: 0,
     },
-    totalProtien: {
+    totalProtein: {
       type: Number,
       required: true,
       default: 0,
@@ -46,9 +46,9 @@ export const userActivityZodSchema = z.object({
   totalFat: z
     .number({ required_error: "Total Fat is required" })
     .min(0, { message: "Total Fat must be greater than 0" }),
-  totalProtien: z
-    .number({ required_error: "Total Protien is required" })
-    .min(0, { message: "Total Protien must be greater than 0" }),
+  totalProtein: z
+    .number({ required_error: "Total Protein is required" })
+    .min(0, { message: "Total Protein must be greater than 0" }),
   date: z.union([z.string(), z.date()], { required_error: "Date is required" }),
   userId: z.string({ required_error: "User ID is required" }),
 });

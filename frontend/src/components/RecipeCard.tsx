@@ -73,7 +73,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                 alignItems="center"
               >
                 <Typography fontSize="0.9rem" width="4rem" fontWeight="bold">
-                  Protien
+                  Protein
                 </Typography>
                 <Typography fontSize="0.9rem">
                   {computeNutritionValues(protein, item.yield)}

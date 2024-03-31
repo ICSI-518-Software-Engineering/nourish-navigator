@@ -103,7 +103,7 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
                 nutrientInfo = computeNutrientInfo(todaysMealPlan_1);
                 activity.totalCalories = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalCalories;
                 activity.totalFat = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalFat;
-                activity.totalProtien = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalProtien;
+                activity.totalProtein = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalProtein;
                 return [4 /*yield*/, activity.save()];
             case 6:
                 _b.sent();
@@ -119,6 +119,29 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
         }
     });
 }); });
+userActivityRoutes.get("/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, activity, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                userId = req.params.userId;
+                if (!userId)
+                    return [2 /*return*/, res.status(400).send("User ID is required")];
+                return [4 /*yield*/, userActivity_1.default.find({
+                        userId: userId,
+                    })];
+            case 1:
+                activity = _a.sent();
+                return [2 /*return*/, res.json(activity)];
+            case 2:
+                error_2 = _a.sent();
+                console.log(error_2);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = userActivityRoutes;
 /**
  * ============ Compute nutrient info ==============
@@ -127,7 +150,7 @@ var computeNutrientInfo = function (mealPlanItem) {
     var res = {
         totalCalories: 0,
         totalFat: 0,
-        totalProtien: 0,
+        totalProtein: 0,
     };
     if (!mealPlanItem)
         return res;
@@ -142,10 +165,10 @@ var computeNutrientInfo = function (mealPlanItem) {
         getFat(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getFat(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
             getFat(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
-    res.totalProtien =
-        getProtien(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
-            getProtien(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
-            getProtien(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
+    res.totalProtein =
+        getProtein(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
+            getProtein(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
+            getProtein(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
     return res;
 };
 var getCalories = function (recipeItem, consumption) {
@@ -166,12 +189,12 @@ var getFat = function (recipeItem, consumption) {
     var res = (totalFat / Number(recipeItem === null || recipeItem === void 0 ? void 0 : recipeItem.yield)) * Number(consumption);
     return res;
 };
-var getProtien = function (recipeItem, consumption) {
+var getProtein = function (recipeItem, consumption) {
     var _a, _b, _c;
     if (consumption === void 0) { consumption = 0; }
     if (!recipeItem)
         return 0;
-    var totalProtien = Number((_c = (_b = (_a = recipeItem === null || recipeItem === void 0 ? void 0 : recipeItem.totalNutrients) === null || _a === void 0 ? void 0 : _a.PROCNT) === null || _b === void 0 ? void 0 : _b.quantity) !== null && _c !== void 0 ? _c : 0);
-    var res = (totalProtien / Number(recipeItem === null || recipeItem === void 0 ? void 0 : recipeItem.yield)) * Number(consumption);
+    var totalProtein = Number((_c = (_b = (_a = recipeItem === null || recipeItem === void 0 ? void 0 : recipeItem.totalNutrients) === null || _a === void 0 ? void 0 : _a.PROCNT) === null || _b === void 0 ? void 0 : _b.quantity) !== null && _c !== void 0 ? _c : 0);
+    var res = (totalProtein / Number(recipeItem === null || recipeItem === void 0 ? void 0 : recipeItem.yield)) * Number(consumption);
     return res;
 };

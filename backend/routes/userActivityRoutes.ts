@@ -72,7 +72,7 @@ userActivityRoutes.post(
 
       activity.totalCalories = nutrientInfo?.totalCalories;
       activity.totalFat = nutrientInfo?.totalFat;
-      activity.totalProtien = nutrientInfo?.totalProtien;
+      activity.totalProtein = nutrientInfo?.totalProtein;
 
       await activity.save();
 
@@ -88,6 +88,23 @@ userActivityRoutes.post(
   }
 );
 
+userActivityRoutes.get("/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) return res.status(400).send("User ID is required");
+
+    const activity = await UserActivity.find({
+      userId: userId,
+    });
+
+    return res.json(activity);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
 export default userActivityRoutes;
 
 /**
@@ -97,7 +114,7 @@ const computeNutrientInfo = (mealPlanItem?: Record<string, unknown>) => {
   const res = {
     totalCalories: 0,
     totalFat: 0,
-    totalProtien: 0,
+    totalProtein: 0,
   };
 
   if (!mealPlanItem) return res;
@@ -116,10 +133,10 @@ const computeNutrientInfo = (mealPlanItem?: Record<string, unknown>) => {
     getFat(lunch, lunch?.noOfServingsConsumed) +
     getFat(dinner, dinner?.noOfServingsConsumed);
 
-  res.totalProtien =
-    getProtien(breakfast, breakfast?.noOfServingsConsumed) +
-    getProtien(lunch, lunch?.noOfServingsConsumed) +
-    getProtien(dinner, dinner?.noOfServingsConsumed);
+  res.totalProtein =
+    getProtein(breakfast, breakfast?.noOfServingsConsumed) +
+    getProtein(lunch, lunch?.noOfServingsConsumed) +
+    getProtein(dinner, dinner?.noOfServingsConsumed);
 
   return res;
 };
@@ -142,13 +159,13 @@ const getFat = (recipeItem: Record<string, any>, consumption = 0) => {
   return res;
 };
 
-const getProtien = (recipeItem: Record<string, any>, consumption = 0) => {
+const getProtein = (recipeItem: Record<string, any>, consumption = 0) => {
   if (!recipeItem) return 0;
-  const totalProtien = Number(
+  const totalProtein = Number(
     recipeItem?.totalNutrients?.PROCNT?.quantity ?? 0
   );
 
-  const res = (totalProtien / Number(recipeItem?.yield)) * Number(consumption);
+  const res = (totalProtein / Number(recipeItem?.yield)) * Number(consumption);
 
   return res;
 };

@@ -69,7 +69,7 @@ userProfileRoutes.get("/profile/:userid", async (req, res: Response) => {
     const user = await User.findById(req.params.userid, {
       password: false,
       isAdmin: false,
-    });
+    }).populate("activity");
 
     return res.send(user);
   } catch (ex) {

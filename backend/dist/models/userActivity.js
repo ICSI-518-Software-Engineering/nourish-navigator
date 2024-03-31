@@ -4,8 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateNewUserActivityRequest = exports.userActivityZodSchema = exports.MongooseUserActivitySchema = void 0;
+var moment_1 = __importDefault(require("moment"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
+var constants_1 = require("../lib/constants");
 exports.MongooseUserActivitySchema = new mongoose_1.default.Schema({
     totalCalories: {
         type: Number,
@@ -23,11 +25,14 @@ exports.MongooseUserActivitySchema = new mongoose_1.default.Schema({
         default: 0,
     },
     date: {
-        type: Date,
+        type: String,
         required: true,
-        default: Date.now,
+        default: (0, moment_1.default)().format(constants_1.DEFAULTS.dateFormat),
     },
-    history: [JSON],
+    userId: {
+        type: String,
+        required: true,
+    },
 }, { timestamps: true });
 var UserActivity = mongoose_1.default.model("user_activitie", exports.MongooseUserActivitySchema);
 exports.default = UserActivity;
@@ -42,7 +47,7 @@ exports.userActivityZodSchema = zod_1.z.object({
         .number({ required_error: "Total Protien is required" })
         .min(0, { message: "Total Protien must be greater than 0" }),
     date: zod_1.z.union([zod_1.z.string(), zod_1.z.date()], { required_error: "Date is required" }),
-    history: zod_1.z.array(zod_1.z.any()).optional(),
+    userId: zod_1.z.string({ required_error: "User ID is required" }),
 });
 var validateNewUserActivityRequest = function (body) {
     var res = exports.userActivityZodSchema.parse(body);

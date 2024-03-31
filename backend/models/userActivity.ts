@@ -1,5 +1,7 @@
+import moment from "moment";
 import mongoose from "mongoose";
 import { z } from "zod";
+import { DEFAULTS } from "../lib/constants";
 
 export const MongooseUserActivitySchema = new mongoose.Schema<UserActivityType>(
   {
@@ -19,11 +21,14 @@ export const MongooseUserActivitySchema = new mongoose.Schema<UserActivityType>(
       default: 0,
     },
     date: {
-      type: Date,
+      type: String,
       required: true,
-      default: Date.now,
+      default: moment().format(DEFAULTS.dateFormat),
     },
-    history: [JSON],
+    userId: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
@@ -45,7 +50,7 @@ export const userActivityZodSchema = z.object({
     .number({ required_error: "Total Protien is required" })
     .min(0, { message: "Total Protien must be greater than 0" }),
   date: z.union([z.string(), z.date()], { required_error: "Date is required" }),
-  history: z.array(z.any()).optional(),
+  userId: z.string({ required_error: "User ID is required" }),
 });
 
 export type UserActivityType = z.infer<typeof userActivityZodSchema>;

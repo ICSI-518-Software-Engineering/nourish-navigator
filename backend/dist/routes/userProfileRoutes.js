@@ -113,7 +113,7 @@ userProfileRoutes.get("/profile/:userid", function (req, res) { return __awaiter
                 return [4 /*yield*/, userModel_1.default.findById(req.params.userid, {
                         password: false,
                         isAdmin: false,
-                    })];
+                    }).populate("activity")];
             case 1:
                 user = _a.sent();
                 return [2 /*return*/, res.send(user)];

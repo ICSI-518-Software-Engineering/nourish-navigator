@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 
-export const MongooseUserMealPlanSchema = new mongoose.Schema(
+export const MongooseUserMealPlanSchema = new mongoose.Schema<UserMealPlanType>(
   {
     noOfDays: {
       type: String,
@@ -20,9 +20,16 @@ export const MongooseUserMealPlanSchema = new mongoose.Schema(
       required: true,
     },
     mealCategories: [String],
+    // userId: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
+
+// const MealPlan = mongoose.model("mealplan", MongooseUserMealPlanSchema);
+// export default MealPlan;
 
 export const userMealPlanZodSchema = z.object({
   noOfDays: z
@@ -39,6 +46,7 @@ export const userMealPlanZodSchema = z.object({
     .string({ required_error: "Max calories is required" })
     .min(0, { message: "Calories per day is required" }),
   mealCategories: z.string().array().optional(),
+  // userId: z.string({ required_error: "User ID is required" }),
 });
 
 export type UserMealPlanType = z.infer<typeof userMealPlanZodSchema>;

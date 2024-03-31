@@ -30,7 +30,7 @@ const RecipeDialog: React.FC<RecipeDialogProps> = ({ meal, ...props }) => {
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
       dialogTitle={meal?.label}
-      className="w-[70vw]"
+      className="w-[70vw] lg:w-[50vw]"
     >
       <Stack
         direction={{ xs: "column", lg: "row" }}

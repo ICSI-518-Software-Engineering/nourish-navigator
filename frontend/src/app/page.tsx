@@ -1,7 +1,7 @@
 "use client";
 
 import MaxWidthContainer from "@/components/MaxWidthContainer";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { DEFAULTS } from "@/lib/constants";
 import { Typography } from "@mui/material";
 import Link from "next/link";
@@ -35,7 +35,12 @@ const HomePage: React.FC = () => {
               <Link href="/dashboard/activity" className={buttonVariants()}>
                 Track your progress
               </Link>
-              <Button variant="ghost">Update daily routine &rarr;</Button>
+              <Link
+                href="/dashboard/meal-planner"
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                View current meal plan &rarr;
+              </Link>
             </div>
           )}
         </div>

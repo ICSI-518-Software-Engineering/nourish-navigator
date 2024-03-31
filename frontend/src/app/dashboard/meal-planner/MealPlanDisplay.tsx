@@ -40,7 +40,7 @@ const MealPlanDisplay: React.FC<MealPlanDisplayProps> = ({ mealPlanItem }) => {
       elevation={2}
     >
       <Typography textAlign="center" variant="h6" position="sticky" top={0}>
-        Day {mealPlanItem.day}
+        Day {mealPlanItem.day} ({mealPlanItem.date})
       </Typography>
       {/* Cards */}
       <Stack gap="1.5rem">
@@ -171,9 +171,16 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
           </Stack>
 
           {/* Actions */}
-          <Button size="sm" onClick={() => setIsOpen(true)}>
-            View Recipe
-          </Button>
+          <Stack direction="row" gap="1rem">
+            {/* View Recipe Button */}
+            <Button
+              size="sm"
+              onClick={() => setIsOpen(true)}
+              className="flex-grow"
+            >
+              View Recipe
+            </Button>
+          </Stack>
         </Stack>
       </CardContent>
 
@@ -181,3 +188,20 @@ const MealPlanItemCard: React.FC<MealPlanItemCardProps> = ({
     </Card>
   );
 };
+
+// {/* Consumed & Swap Button */}
+// <Stack direction="row" gap="0.5rem">
+//   {/* Consumed Button */}
+//   <Tooltip title="Mark as consumed" arrow>
+//     <Button size="sm" variant="outline">
+//       <CheckCircleIcon size="1.25rem" />
+//     </Button>
+//   </Tooltip>
+
+//   {/* Swap Button */}
+//   <Tooltip title="Swap with another recipe" arrow>
+//     <Button size="sm" variant="outline">
+//       <ListRestartIcon size="1.25rem" />
+//     </Button>
+//   </Tooltip>
+// </Stack>

@@ -33,7 +33,7 @@ exports.MongooseUserProfileSchema = new mongoose_1.default.Schema({
     allergies: {
         type: [String],
     },
-});
+}, { timestamps: true });
 exports.userProfileZodSchema = zod_1.z.object({
     age: zod_1.z.string({ required_error: "Age is required" }),
     gender: zod_1.z.string({ required_error: "Gender is required" }),

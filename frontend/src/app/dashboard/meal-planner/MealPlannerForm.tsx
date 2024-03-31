@@ -27,16 +27,19 @@ import {
 
 type MealPlannerFormProps = {
   notAsCard?: boolean;
-};
+} & MealPlannerFormBaseProps;
 
-const MealPlannerForm: React.FC<MealPlannerFormProps> = ({ notAsCard }) => {
+const MealPlannerForm: React.FC<MealPlannerFormProps> = ({
+  notAsCard,
+  ...props
+}) => {
   if (notAsCard) {
-    return <MealPlannerFormBase />;
+    return <MealPlannerFormBase {...props} />;
   }
 
   return (
     <Card className="p-10 max-w-xl">
-      <MealPlannerFormBase />
+      <MealPlannerFormBase {...props} />
     </Card>
   );
 };
@@ -47,7 +50,13 @@ export default MealPlannerForm;
  * ================= BASE FORM ==================
  */
 
-const MealPlannerFormBase: React.FC = () => {
+type MealPlannerFormBaseProps = {
+  onSave?: () => unknown;
+};
+
+const MealPlannerFormBase: React.FC<MealPlannerFormBaseProps> = ({
+  onSave,
+}) => {
   const { mutate: updateUserProfile, isPending } =
     useUpdateUserProfileService();
   const { data: userProfile } = useGetUserProfileService();
@@ -69,7 +78,7 @@ const MealPlannerFormBase: React.FC = () => {
     resolver: zodResolver(mealPlannerFormZodSchema),
   });
 
-  const onSave = useCallback(
+  const handleSave = useCallback(
     (data: MealPlannerFormDataType) => {
       const user = getLoggedInUserDetails();
       if (!user) return;
@@ -78,16 +87,23 @@ const MealPlannerFormBase: React.FC = () => {
           userId: user?._id,
           mealPlanProfile: data,
         },
-        { onSuccess: (d) => toast.success(d) }
+        {
+          onSuccess: (d) => {
+            if (onSave) {
+              onSave();
+            }
+            toast.success(d);
+          },
+        }
       );
     },
-    [updateUserProfile]
+    [onSave, updateUserProfile]
   );
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(onSave)}
+      onSubmit={handleSubmit(handleSave)}
       className="flex flex-col gap-10"
     >
       {/* No of days */}

@@ -35,8 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateMealPlan = void 0;
+var moment_1 = __importDefault(require("moment"));
 var edamamApiUtils_1 = require("./edamamApiUtils");
 // edamam api is being used for meal planning
 var KEYS = {
@@ -159,6 +163,7 @@ var generateMealPlan = function (user) { return __awaiter(void 0, void 0, void 0
                     var resultObj = {};
                     var _a = selection.sections, Breakfast = _a.Breakfast, Dinner = _a.Dinner, Lunch = _a.Lunch;
                     resultObj.day = index + 1;
+                    resultObj.date = (0, moment_1.default)().add(index, "days").format("DD-MMM-YYYY");
                     if (Breakfast) {
                         resultObj[KEYS.breakfast] = Breakfast.assigned;
                         recipePromises.push(getRecipeDetails(Breakfast.assigned));

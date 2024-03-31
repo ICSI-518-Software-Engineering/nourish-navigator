@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { DEFAULTS } from "@/lib/constants";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Edit2 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import ActiveMealPlan from "./ActiveMealPlan";
 import MealPlannerForm from "./MealPlannerForm";
 import NoActiveMealPlan from "./NoActiveMealPlan";
 
 const MealPlannerPage: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const { isLoading, data: userData } = useGetUserProfileService();
 
   if (isLoading) {
@@ -32,16 +33,21 @@ const MealPlannerPage: React.FC = () => {
         {/* Update Meal Plan Dialog */}
         {hasMealPlan && (
           <CustomDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
             className="max-w-2xl"
             dialogTrigger={
-              <Button className="border-gold-600 border">
+              <Button
+                className="border-gold-600 border"
+                onClick={() => setIsOpen(true)}
+              >
                 <Edit2 size="1rem" className="mr-2" /> Edit Meal Plan
               </Button>
             }
             dialogTitle="Edit Meal Plan"
           >
             <Divider color={DEFAULTS.textColor} />
-            <MealPlannerForm notAsCard />
+            <MealPlannerForm notAsCard onSave={() => setIsOpen(false)} />
           </CustomDialog>
         )}
       </Stack>

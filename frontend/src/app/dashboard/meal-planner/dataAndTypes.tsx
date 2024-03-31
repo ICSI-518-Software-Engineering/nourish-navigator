@@ -148,6 +148,7 @@ export type MealPlanRecordType = {
   lunch?: MealPlanRecordItemType;
   dinner?: MealPlanRecordItemType;
   day: number;
+  date: string;
 };
 
 export type MealPlanRecordItemType = {

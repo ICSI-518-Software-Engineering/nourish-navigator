@@ -44,6 +44,7 @@ var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
+var userActivity_1 = __importDefault(require("./userActivity"));
 var userMealPlanModel_1 = require("./userMealPlanModel");
 var userProfileModel_1 = require("./userProfileModel");
 exports.MongooseUserSchema = new mongoose_1.default.Schema({
@@ -67,6 +68,10 @@ exports.MongooseUserSchema = new mongoose_1.default.Schema({
     userProfile: userProfileModel_1.MongooseUserProfileSchema,
     mealPlanProfile: userMealPlanModel_1.MongooseUserMealPlanSchema,
     mealPlan: JSON,
+    activity: {
+        type: mongoose_1.default.Types.ObjectId,
+        ref: userActivity_1.default,
+    },
 }, { timestamps: true });
 exports.MongooseUserSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function () {

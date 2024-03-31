@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import moment from "moment";
 import { UserObjectType } from "../models/userModel";
 import { appId, appKey, edamamApi as http } from "./edamamApiUtils";
 
@@ -136,6 +137,7 @@ export const generateMealPlan = async (user: UserObjectType) => {
         const resultObj: Record<string, unknown> = {};
         const { Breakfast, Dinner, Lunch } = selection.sections;
         resultObj.day = index + 1;
+        resultObj.date = moment().add(index, "days").format("DD-MMM-YYYY");
 
         if (Breakfast) {
           resultObj[KEYS.breakfast] = Breakfast.assigned;

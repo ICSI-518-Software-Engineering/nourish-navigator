@@ -24,7 +24,13 @@ exports.MongooseUserMealPlanSchema = new mongoose_1.default.Schema({
         required: true,
     },
     mealCategories: [String],
+    // userId: {
+    //   type: String,
+    //   required: true,
+    // },
 }, { timestamps: true });
+// const MealPlan = mongoose.model("mealplan", MongooseUserMealPlanSchema);
+// export default MealPlan;
 exports.userMealPlanZodSchema = zod_1.z.object({
     noOfDays: zod_1.z
         .string({ required_error: "Meal plan duration is required" })
@@ -40,6 +46,7 @@ exports.userMealPlanZodSchema = zod_1.z.object({
         .string({ required_error: "Max calories is required" })
         .min(0, { message: "Calories per day is required" }),
     mealCategories: zod_1.z.string().array().optional(),
+    // userId: z.string({ required_error: "User ID is required" }),
 });
 var validateNewUserMealPlanRequest = function (body) {
     var res = exports.userMealPlanZodSchema.parse(body);

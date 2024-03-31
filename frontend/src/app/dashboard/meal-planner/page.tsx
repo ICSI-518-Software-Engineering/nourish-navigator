@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button";
 import { DEFAULTS } from "@/lib/constants";
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { Edit2 } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import ActiveMealPlan from "./ActiveMealPlan";
 import MealPlannerForm from "./MealPlannerForm";
 import NoActiveMealPlan from "./NoActiveMealPlan";
 
 const MealPlannerPage: React.FC = () => {
   const { isLoading, data: userData } = useGetUserProfileService();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   if (isLoading) {
     return <LoadingSkeletion className="h-[80vh]" />;
@@ -33,11 +32,9 @@ const MealPlannerPage: React.FC = () => {
         {/* Update Meal Plan Dialog */}
         {hasMealPlan && (
           <CustomDialog
+            className="max-w-2xl"
             dialogTrigger={
-              <Button
-                className="border-gold-600 border"
-                onClick={() => setIsOpen(true)}
-              >
+              <Button className="border-gold-600 border">
                 <Edit2 size="1rem" className="mr-2" /> Edit Meal Plan
               </Button>
             }

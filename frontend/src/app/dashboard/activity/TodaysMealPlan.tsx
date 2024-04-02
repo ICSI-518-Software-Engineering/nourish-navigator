@@ -22,7 +22,8 @@ import {
 } from "@mui/material";
 import { CheckCircleIcon, CheckIcon, ListRestartIcon } from "lucide-react";
 import moment from "moment";
-import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useMemo } from "react";
 import { toast } from "sonner";
 import {
   MealPlanRecordType,
@@ -67,8 +68,9 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
   todaysMealPlan,
   isLoading,
 }) => {
-  const [isSwapRecipeDialogOpen, setIsSwapRecipeDialogOpen] =
-    useState<boolean>(false);
+  const router = useRouter();
+  // const [isSwapRecipeDialogOpen, setIsSwapRecipeDialogOpen] =
+  //   useState<boolean>(false);
   const isLargeScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.up("lg")
   );
@@ -169,8 +171,8 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
 
                   {/* Swap Button */}
                   <CustomDialog
-                    isOpen={isSwapRecipeDialogOpen}
-                    setIsOpen={setIsSwapRecipeDialogOpen}
+                    // isOpen={isSwapRecipeDialogOpen}
+                    // setIsOpen={setIsSwapRecipeDialogOpen}
                     dialogTrigger={
                       <Tooltip
                         title={
@@ -192,7 +194,7 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
                             size="sm"
                             variant="outline"
                             disabled={disableSwapBtn}
-                            onClick={() => setIsSwapRecipeDialogOpen(true)}
+                            // onClick={() => setIsSwapRecipeDialogOpen(true)}
                           >
                             <ListRestartIcon size="1.25rem" />
                           </Button>
@@ -287,7 +289,8 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
                                             toast.success(
                                               "Recipe swapped successfully."
                                             );
-                                            setIsSwapRecipeDialogOpen(false);
+
+                                            // setIsSwapRecipeDialogOpen(false);
                                           },
                                         }
                                       );

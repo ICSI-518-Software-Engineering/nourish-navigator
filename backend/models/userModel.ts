@@ -74,9 +74,25 @@ MongooseUserSchema.methods.generateAuthToken = function () {
   return token;
 };
 
+const passwordValidation = new RegExp(
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+);
+
 export const signInZodSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email(),
-  password: z.string({ required_error: "Password is required" }),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, { message: "Password should be atleast 8 characters" })
+    .regex(passwordValidation, {
+      message:
+        "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+    }),
+});
+
+export const updateSignInZodSchema = signInZodSchema.extend({
+  newPassword: z
+    .string({ required_error: "New password is required" })
+    .min(8, { message: "Password should be atleast 8 characters" }),
 });
 
 export const signUpZodSchema = signInZodSchema.extend({
@@ -86,6 +102,7 @@ export const signUpZodSchema = signInZodSchema.extend({
 
 export type SignUpRequestDataType = z.infer<typeof signUpZodSchema>;
 export type SignInRequestDataType = z.infer<typeof signInZodSchema>;
+export type UpdateSignInRequestDataType = z.infer<typeof updateSignInZodSchema>;
 
 // Custom Validator
 export const validateSignUpRequest = (body: SignUpRequestDataType) => {
@@ -95,6 +112,13 @@ export const validateSignUpRequest = (body: SignUpRequestDataType) => {
 
 export const validateSignInRequest = (body: SignInRequestDataType) => {
   const res = signInZodSchema.parse(body);
+  return res;
+};
+
+export const validateUpdateSignInRequest = (
+  body: UpdateSignInRequestDataType
+) => {
+  const res = updateSignInZodSchema.parse(body);
   return res;
 };
 

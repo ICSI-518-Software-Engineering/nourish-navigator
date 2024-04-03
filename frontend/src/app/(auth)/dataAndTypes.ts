@@ -1,8 +1,18 @@
 import { z } from "zod";
 
+const passwordValidation = new RegExp(
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+);
+
 export const signInSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1, { message: "Password is required" }),
+  password: z
+    .string()
+    .min(8, { message: "Password should contain minimum 8 characters" })
+    .regex(passwordValidation, {
+      message:
+        "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+    }),
 });
 
 export const signUpSchema = signInSchema

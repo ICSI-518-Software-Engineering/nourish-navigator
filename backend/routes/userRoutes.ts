@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import User, {
   validateSignInRequest,
   validateSignUpRequest,
+  validateUpdateSignInRequest,
 } from "../models/userModel";
 
 const userRoutes = Router();
@@ -55,6 +56,36 @@ userRoutes.post("/sign-in", async (req: Request, res: Response) => {
     }
 
     return res.send(userRec.generateAuthToken());
+  } catch (ex) {
+    if (ex instanceof ZodError) {
+      return res.status(400).json(ex.issues[0].message);
+    }
+    console.log(ex);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
+// Update password
+userRoutes.put("/:userId", async (req: Request, res: Response) => {
+  try {
+    const userData = validateUpdateSignInRequest(req.body);
+
+    const userRec = await User.findOne({
+      email: userData.email,
+    });
+
+    if (!userRec) {
+      return res.status(400).send("User not found");
+    }
+
+    if (!userRec.validatePassword(userData.password)) {
+      return res.status(400).send("Invalid Email / Password");
+    }
+
+    userRec.password = userData.newPassword;
+    await userRec.save();
+
+    return res.send("Password updated succesfully.");
   } catch (ex) {
     if (ex instanceof ZodError) {
       return res.status(400).json(ex.issues[0].message);

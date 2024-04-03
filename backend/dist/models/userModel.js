@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSignInRequest = exports.validateSignUpRequest = exports.signUpZodSchema = exports.signInZodSchema = exports.MongooseUserSchema = void 0;
+exports.validateUpdateSignInRequest = exports.validateSignInRequest = exports.validateSignUpRequest = exports.signUpZodSchema = exports.updateSignInZodSchema = exports.signInZodSchema = exports.MongooseUserSchema = void 0;
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var mongoose_1 = __importDefault(require("mongoose"));
@@ -111,9 +111,20 @@ exports.MongooseUserSchema.methods.generateAuthToken = function () {
     }, process.env.JWT_PRIVATE_KEY);
     return token;
 };
+var passwordValidation = new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/);
 exports.signInZodSchema = zod_1.z.object({
     email: zod_1.z.string({ required_error: "Email is required" }).email(),
-    password: zod_1.z.string({ required_error: "Password is required" }),
+    password: zod_1.z
+        .string({ required_error: "Password is required" })
+        .min(8, { message: "Password should be atleast 8 characters" })
+        .regex(passwordValidation, {
+        message: "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+    }),
+});
+exports.updateSignInZodSchema = exports.signInZodSchema.extend({
+    newPassword: zod_1.z
+        .string({ required_error: "New password is required" })
+        .min(8, { message: "Password should be atleast 8 characters" }),
 });
 exports.signUpZodSchema = exports.signInZodSchema.extend({
     name: zod_1.z.string({ required_error: "Name is required" }),
@@ -130,5 +141,10 @@ var validateSignInRequest = function (body) {
     return res;
 };
 exports.validateSignInRequest = validateSignInRequest;
+var validateUpdateSignInRequest = function (body) {
+    var res = exports.updateSignInZodSchema.parse(body);
+    return res;
+};
+exports.validateUpdateSignInRequest = validateUpdateSignInRequest;
 var User = mongoose_1.default.model("user", exports.MongooseUserSchema);
 exports.default = User;

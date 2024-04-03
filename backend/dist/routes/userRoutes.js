@@ -137,4 +137,39 @@ userRoutes.post("/sign-in", function (req, res) { return __awaiter(void 0, void 
         }
     });
 }); });
+// Update password
+userRoutes.put("/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userData, userRec, ex_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                userData = (0, userModel_1.validateUpdateSignInRequest)(req.body);
+                return [4 /*yield*/, userModel_1.default.findOne({
+                        email: userData.email,
+                    })];
+            case 1:
+                userRec = _a.sent();
+                if (!userRec) {
+                    return [2 /*return*/, res.status(400).send("User not found")];
+                }
+                if (!userRec.validatePassword(userData.password)) {
+                    return [2 /*return*/, res.status(400).send("Invalid Email / Password")];
+                }
+                userRec.password = userData.newPassword;
+                return [4 /*yield*/, userRec.save()];
+            case 2:
+                _a.sent();
+                return [2 /*return*/, res.send("Password updated succesfully.")];
+            case 3:
+                ex_3 = _a.sent();
+                if (ex_3 instanceof zod_1.ZodError) {
+                    return [2 /*return*/, res.status(400).json(ex_3.issues[0].message)];
+                }
+                console.log(ex_3);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = userRoutes;

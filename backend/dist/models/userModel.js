@@ -116,19 +116,25 @@ exports.signInZodSchema = zod_1.z.object({
     email: zod_1.z.string({ required_error: "Email is required" }).email(),
     password: zod_1.z
         .string({ required_error: "Password is required" })
+        .min(1, { message: "Password is required" }),
+});
+exports.updateSignInZodSchema = exports.signInZodSchema.extend({
+    newPassword: zod_1.z
+        .string({ required_error: "New password is required" })
         .min(8, { message: "Password should be atleast 8 characters" })
         .regex(passwordValidation, {
         message: "Password must contain atleast one lowercase letter, uppercase letter and a special character",
     }),
 });
-exports.updateSignInZodSchema = exports.signInZodSchema.extend({
-    newPassword: zod_1.z
-        .string({ required_error: "New password is required" })
-        .min(8, { message: "Password should be atleast 8 characters" }),
-});
 exports.signUpZodSchema = exports.signInZodSchema.extend({
     name: zod_1.z.string({ required_error: "Name is required" }),
     isAdmin: zod_1.z.boolean().optional(),
+    password: zod_1.z
+        .string({ required_error: "Password is required" })
+        .min(8, { message: "Password should be atleast 8 characters" })
+        .regex(passwordValidation, {
+        message: "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+    }),
 });
 // Custom Validator
 var validateSignUpRequest = function (body) {

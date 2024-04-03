@@ -6,17 +6,18 @@ const passwordValidation = new RegExp(
 
 export const signInSchema = z.object({
   email: z.string().email(),
-  password: z
-    .string()
-    .min(8, { message: "Password should contain minimum 8 characters" })
-    .regex(passwordValidation, {
-      message:
-        "Password must contain atleast one lowercase letter, uppercase letter and a special character",
-    }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 export const signUpSchema = signInSchema
   .extend({
+    password: z
+      .string()
+      .min(8, { message: "Password should contain atleast 8 characters" })
+      .regex(passwordValidation, {
+        message:
+          "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+      }),
     name: z.string().min(1, { message: "Name is required" }),
     isAdmin: z.boolean().optional(),
     confirmPassword: z

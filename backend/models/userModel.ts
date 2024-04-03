@@ -82,6 +82,12 @@ export const signInZodSchema = z.object({
   email: z.string({ required_error: "Email is required" }).email(),
   password: z
     .string({ required_error: "Password is required" })
+    .min(1, { message: "Password is required" }),
+});
+
+export const updateSignInZodSchema = signInZodSchema.extend({
+  newPassword: z
+    .string({ required_error: "New password is required" })
     .min(8, { message: "Password should be atleast 8 characters" })
     .regex(passwordValidation, {
       message:
@@ -89,15 +95,16 @@ export const signInZodSchema = z.object({
     }),
 });
 
-export const updateSignInZodSchema = signInZodSchema.extend({
-  newPassword: z
-    .string({ required_error: "New password is required" })
-    .min(8, { message: "Password should be atleast 8 characters" }),
-});
-
 export const signUpZodSchema = signInZodSchema.extend({
   name: z.string({ required_error: "Name is required" }),
   isAdmin: z.boolean().optional(),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, { message: "Password should be atleast 8 characters" })
+    .regex(passwordValidation, {
+      message:
+        "Password must contain atleast one lowercase letter, uppercase letter and a special character",
+    }),
 });
 
 export type SignUpRequestDataType = z.infer<typeof signUpZodSchema>;

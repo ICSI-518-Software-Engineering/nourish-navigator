@@ -58,18 +58,18 @@ var userActivity_1 = __importDefault(require("../models/userActivity"));
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userActivityRoutes = (0, express_1.Router)();
 userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, today, mealTime_1, user, todaysMealPlan_1, newMealPlan, activity, nutrientInfo, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var userId, today, mealTime_1, user, todaysMealPlan_1, newMealPlan, activity, nutrientInfo, previousWeight, error_1;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _b.trys.push([0, 7, , 8]);
+                _c.trys.push([0, 9, , 10]);
                 userId = req.params.userId;
                 today = (0, moment_1.default)().format(constants_1.DEFAULTS.dateFormat);
                 mealTime_1 = req.body.mealTime;
                 return [4 /*yield*/, userModel_1.default.findById(userId)];
             case 1:
-                user = _b.sent();
+                user = _c.sent();
                 if (!user) {
                     return [2 /*return*/, res.status(400).send("Invalid User ID")];
                 }
@@ -86,37 +86,50 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
                 user.mealPlan = newMealPlan;
                 return [4 /*yield*/, user.save()];
             case 2:
-                _b.sent();
+                _c.sent();
                 return [4 /*yield*/, userActivity_1.default.findOne({
                         userId: userId,
                         date: today,
                     })];
             case 3:
-                activity = _b.sent();
+                activity = _c.sent();
                 if (!!activity) return [3 /*break*/, 5];
                 return [4 /*yield*/, userActivity_1.default.create({
                         userId: userId,
                     })];
             case 4:
-                activity = _b.sent();
-                _b.label = 5;
+                activity = _c.sent();
+                _c.label = 5;
             case 5:
                 nutrientInfo = computeNutrientInfo(todaysMealPlan_1);
                 activity.totalCalories = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalCalories;
                 activity.totalFat = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalFat;
                 activity.totalProtein = nutrientInfo === null || nutrientInfo === void 0 ? void 0 : nutrientInfo.totalProtein;
-                return [4 /*yield*/, activity.save()];
+                if (!!activity.currentWeight) return [3 /*break*/, 7];
+                return [4 /*yield*/, userActivity_1.default.findOne({
+                        userId: userId,
+                        currentWeight: {
+                            $ne: null,
+                        },
+                    }, { currentWeight: true }).sort("-createdAt")];
             case 6:
-                _b.sent();
+                previousWeight = (_b = (_c.sent())) === null || _b === void 0 ? void 0 : _b.currentWeight;
+                if (previousWeight) {
+                    activity.currentWeight = previousWeight;
+                }
+                _c.label = 7;
+            case 7: return [4 /*yield*/, activity.save()];
+            case 8:
+                _c.sent();
                 return [2 /*return*/, res.send("Activity updated successfully.")];
-            case 7:
-                error_1 = _b.sent();
+            case 9:
+                error_1 = _c.sent();
                 if (error_1 instanceof zod_1.ZodError) {
                     return [2 /*return*/, res.status(400).json(error_1.issues[0].message)];
                 }
                 console.log(error_1);
                 return [2 /*return*/, res.status(500).send("Unknown error occured.")];
-            case 8: return [2 /*return*/];
+            case 10: return [2 /*return*/];
         }
     });
 }); });
@@ -140,6 +153,43 @@ userActivityRoutes.get("/:userId", function (req, res) { return __awaiter(void 0
                 console.log(error_2);
                 return [2 /*return*/, res.status(500).send("Unknown error occured.")];
             case 3: return [2 /*return*/];
+        }
+    });
+}); });
+userActivityRoutes.post("/current-weight/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, today, activity, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                userId = req.params.userId;
+                today = (0, moment_1.default)().format(constants_1.DEFAULTS.dateFormat);
+                if (!userId)
+                    return [2 /*return*/, res.status(400).send("User ID is required")];
+                return [4 /*yield*/, userActivity_1.default.findOne({
+                        userId: userId,
+                        date: today,
+                    })];
+            case 1:
+                activity = _a.sent();
+                if (!!activity) return [3 /*break*/, 3];
+                return [4 /*yield*/, userActivity_1.default.create({
+                        userId: userId,
+                    })];
+            case 2:
+                activity = _a.sent();
+                _a.label = 3;
+            case 3:
+                activity.currentWeight = req.body.weight;
+                return [4 /*yield*/, activity.save()];
+            case 4:
+                _a.sent();
+                return [2 /*return*/, res.json(activity)];
+            case 5:
+                error_3 = _a.sent();
+                console.log(error_3);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

@@ -3,7 +3,12 @@
 import { useGetUserActivityService } from "@/api/activity";
 import { DEFAULTS } from "@/lib/constants";
 import { Stack, Typography } from "@mui/material";
-import { ActivityIcon, PieChartIcon, TorusIcon } from "lucide-react";
+import {
+  ActivityIcon,
+  PieChartIcon,
+  TorusIcon,
+  WeightIcon,
+} from "lucide-react";
 import moment from "moment";
 import React, { useMemo } from "react";
 import ActivityChart from "./ActivityChart";
@@ -42,6 +47,13 @@ const ActivityPage: React.FC = () => {
       label: "Total Fat",
       value: (todaysActivity?.totalFat ?? 0).toFixed(2) + " g",
     },
+    {
+      icon: <WeightIcon size="2.5rem" />,
+      label: "Current Weight",
+      value: todaysActivity?.currentWeight
+        ? todaysActivity?.currentWeight.toFixed(2) + " kg(s)"
+        : "N/A",
+    },
   ];
 
   return (
@@ -59,7 +71,7 @@ const ActivityPage: React.FC = () => {
       <Stack gap="2rem" overflow="auto" height="77vh">
         {/* KPI CARDS */}
         <Stack gap="1rem">
-          <Typography variant="h6">Nutrients Info</Typography>
+          <Typography variant="h6">Nutrients & Weight Info</Typography>
 
           {/* Nutrients Info */}
           <Stack
@@ -74,7 +86,7 @@ const ActivityPage: React.FC = () => {
                   direction="row"
                   gap="1rem"
                   alignItems="flex-start"
-                  width="12rem"
+                  width="12.5rem"
                 >
                   {card.icon}
                   <Stack>

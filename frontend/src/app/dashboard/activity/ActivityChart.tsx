@@ -1,5 +1,10 @@
-import { GetUserActivityServiceResponseType } from "@/api/activity";
+import {
+  GetUserActivityServiceResponseType,
+  useUpdateUserWeightService,
+} from "@/api/activity";
+import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
@@ -30,7 +35,10 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
         {charts.map((ch) => (
           <Card key={ch.dataKey}>
             <CardHeader>
-              <CardTitle>{ch.cardTitle}</CardTitle>
+              <Stack direction="row" gap="1rem" alignItems="center">
+                <CardTitle>{ch.cardTitle}</CardTitle>
+                {ch.renderHeader}
+              </Stack>
             </CardHeader>
 
             <CardContent>
@@ -41,7 +49,11 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
               ) : (
                 <ResponsiveContainer height={400} width="100%">
                   <BarChart data={userActivities} barSize={40}>
-                    <XAxis dataKey="date" />
+                    <XAxis
+                      dataKey="date"
+                      minTickGap={7}
+                      interval="preserveStartEnd"
+                    />
                     <YAxis />
                     <Tooltip
                       contentStyle={{
@@ -73,10 +85,51 @@ const ActivityChart: React.FC<ActivityChartProps> = ({
 export default ActivityChart;
 
 /**
+ * Custom Components
+ */
+
+const UpdateWeight: React.FC = () => {
+  const { mutate, isPending } = useUpdateUserWeightService();
+  const user = getLoggedInUserDetails();
+
+  return (
+    <Button
+      className="ml-auto"
+      disabled={isPending}
+      onClick={() => {
+        const weight = window.prompt("Enter your weight in kgs.");
+        if (!weight) {
+          return;
+        }
+
+        if (Number(weight) <= 3) {
+          return window.alert("Entered weight should be greater than 3 kgs.");
+        }
+
+        mutate({
+          userId: user?._id,
+          weight: Number(weight),
+        });
+      }}
+    >
+      Update Weight <LoadingSpinner className="ml-2" isVisible={isPending} />{" "}
+    </Button>
+  );
+};
+
+/**
  * ===== CHARTS =======
  */
 
 const charts = [
+  {
+    cardTitle: "Weight Tracker",
+    dataKey: "currentWeight",
+    color: "#ffffff",
+    unit: " kg",
+    label: "Weight",
+    renderHeader: <UpdateWeight />,
+  },
   {
     cardTitle: "Calories Tracker",
     dataKey: "totalCalories",

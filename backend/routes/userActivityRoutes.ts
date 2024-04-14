@@ -75,6 +75,23 @@ userActivityRoutes.post(
       activity.totalFat = nutrientInfo?.totalFat;
       activity.totalProtein = nutrientInfo?.totalProtein;
 
+      if (!activity.currentWeight) {
+        const previousWeight = (
+          await UserActivity.findOne(
+            {
+              userId: userId,
+              currentWeight: {
+                $ne: null,
+              },
+            },
+            { currentWeight: true }
+          ).sort("-createdAt")
+        )?.currentWeight;
+        if (previousWeight) {
+          activity.currentWeight = previousWeight;
+        }
+      }
+
       await activity.save();
 
       return res.send("Activity updated successfully.");
@@ -98,6 +115,34 @@ userActivityRoutes.get("/:userId", async (req, res) => {
     const activity = await UserActivity.find({
       userId: userId,
     });
+
+    return res.json(activity);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
+userActivityRoutes.post("/current-weight/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const today = moment().format(DEFAULTS.dateFormat);
+
+    if (!userId) return res.status(400).send("User ID is required");
+
+    let activity = await UserActivity.findOne({
+      userId: userId,
+      date: today,
+    });
+
+    if (!activity) {
+      activity = await UserActivity.create({
+        userId: userId,
+      });
+    }
+
+    activity.currentWeight = req.body.weight;
+    await activity.save();
 
     return res.json(activity);
   } catch (error) {

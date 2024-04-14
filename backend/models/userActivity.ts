@@ -20,6 +20,9 @@ export const MongooseUserActivitySchema = new mongoose.Schema<UserActivityType>(
       required: true,
       default: 0,
     },
+    currentWeight: {
+      type: Number,
+    },
     date: {
       type: String,
       required: true,
@@ -51,6 +54,10 @@ export const userActivityZodSchema = z.object({
     .min(0, { message: "Total Protein must be greater than 0" }),
   date: z.union([z.string(), z.date()], { required_error: "Date is required" }),
   userId: z.string({ required_error: "User ID is required" }),
+  currentWeight: z
+    .number()
+    .min(3, { message: "Weight must be greater than 3 kgs." })
+    .optional(),
 });
 
 export type UserActivityType = z.infer<typeof userActivityZodSchema>;

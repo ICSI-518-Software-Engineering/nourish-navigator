@@ -37,6 +37,7 @@ export type GetUserActivityServiceResponseType = {
   date: string | Date;
   totalCalories: number;
   totalFat: number;
+  currentWeight: number;
   totalProtein: number;
   userId: string;
 };
@@ -53,5 +54,30 @@ export const useGetUserActivityService = () => {
     queryKey: ["getUserActivityService", user?._id],
     queryFn: () => getUserActivityService(user?._id),
     enabled: Boolean(user?._id),
+  });
+};
+
+/**
+ * update user weight service
+ */
+export type UpdateUserWeightServiceDataType = {
+  userId?: string;
+  weight: number;
+};
+
+const updateUserWeightService = async (
+  data: UpdateUserWeightServiceDataType
+) => {
+  const res = await http.post<string>(
+    `/activity/current-weight/${data.userId}`,
+    data
+  );
+  return res.data;
+};
+
+export const useUpdateUserWeightService = () => {
+  return useMutation({
+    mutationFn: updateUserWeightService,
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 };

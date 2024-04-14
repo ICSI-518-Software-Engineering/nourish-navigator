@@ -24,6 +24,9 @@ exports.MongooseUserActivitySchema = new mongoose_1.default.Schema({
         required: true,
         default: 0,
     },
+    currentWeight: {
+        type: Number,
+    },
     date: {
         type: String,
         required: true,
@@ -48,6 +51,10 @@ exports.userActivityZodSchema = zod_1.z.object({
         .min(0, { message: "Total Protein must be greater than 0" }),
     date: zod_1.z.union([zod_1.z.string(), zod_1.z.date()], { required_error: "Date is required" }),
     userId: zod_1.z.string({ required_error: "User ID is required" }),
+    currentWeight: zod_1.z
+        .number()
+        .min(3, { message: "Weight must be greater than 3 kgs." })
+        .optional(),
 });
 var validateNewUserActivityRequest = function (body) {
     var res = exports.userActivityZodSchema.parse(body);

@@ -15,6 +15,7 @@ import {
   MealPlanRecordType,
   breakfastIcon,
   computeNutritionValues,
+  customRecipeIcon,
   dinnerIcon,
   lunchIcon,
 } from "./dataAndTypes";
@@ -58,6 +59,15 @@ const MealPlanDisplay: React.FC<MealPlanDisplayProps> = ({ mealPlanItem }) => {
           icon={dinnerIcon}
           mealPlanItem={mealPlanItem.dinner}
         />
+
+        {/* Other */}
+        {mealPlanItem?.other?.map?.((item, index) => (
+          <MealPlanItemCard
+            key={item.uri + index}
+            icon={customRecipeIcon}
+            mealPlanItem={item}
+          />
+        ))}
       </Stack>
     </Box>
   );

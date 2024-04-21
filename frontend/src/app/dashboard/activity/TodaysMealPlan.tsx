@@ -1,8 +1,10 @@
 "use client";
 
-import { useUpdateUserActivityService } from "@/api/activity";
+import {
+  useRemoveUserAddedRecipeService,
+  useUpdateUserActivityService,
+} from "@/api/activity";
 import { useGetUserProfileService } from "@/api/profile";
-import { useRecipeSearchService } from "@/api/recipe";
 import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import CustomDialog from "@/components/CustomDialog";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -11,16 +13,13 @@ import RecipeCard from "@/components/RecipeCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DEFAULTS } from "@/lib/constants";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import {
-  Box,
-  Divider,
-  Stack,
-  Theme,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
-import { CheckCircleIcon, CheckIcon, ListRestartIcon } from "lucide-react";
+  CheckCircleIcon,
+  CheckIcon,
+  ListRestartIcon,
+  TrashIcon,
+} from "lucide-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import React, { useMemo } from "react";
@@ -28,10 +27,12 @@ import { toast } from "sonner";
 import {
   MealPlanRecordType,
   breakfastIcon,
+  customRecipeIcon,
   dinnerIcon,
   lunchIcon,
 } from "../meal-planner/dataAndTypes";
-import RecipeSearchForm from "../recipes/RecipeSearchForm";
+import AddOtherFoodItem from "./AddOtherFoodItem";
+import SearchRecipeDialog from "./SearchRecipeDialog";
 
 const TodaysMealPlan: React.FC = () => {
   const { data: userProfile, isLoading } = useGetUserProfileService();
@@ -71,18 +72,12 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
   const router = useRouter();
   // const [isSwapRecipeDialogOpen, setIsSwapRecipeDialogOpen] =
   //   useState<boolean>(false);
-  const isLargeScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.up("lg")
-  );
 
   const { mutate: updateUserActivity, isPending: isUpdatingUserActivity } =
     useUpdateUserActivityService();
 
-  const {
-    data: recipes,
-    mutate: searchForRecipes,
-    isPending: isSearchingForRecipes,
-  } = useRecipeSearchService();
+  const { mutate: removeRecipe, isPending: isRemoving } =
+    useRemoveUserAddedRecipeService();
 
   const loggedInUser = getLoggedInUserDetails();
 
@@ -129,7 +124,7 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
 
   return (
     <>
-      <Stack direction="row" gap="1rem" overflow="auto">
+      <Stack direction="row" gap="1rem" flexWrap="wrap">
         {recipeCards.map((card) => {
           const disableSwapBtn =
             (card?.recipeItem?.noOfServingsConsumed ?? 0) > 0;
@@ -206,111 +201,136 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
                       "Swap Recipe in place of " + card.recipeItem?.label ?? ""
                     }
                   >
-                    <Stack
-                      direction={{ xs: "column", lg: "row" }}
-                      gap="2rem"
-                      height="100%"
-                      mt="0.5rem"
-                    >
-                      {/* Recipe Search Form */}
-                      <Box minWidth="40%">
-                        <RecipeSearchForm
-                          notAsCard
-                          onSubmit={(d) => searchForRecipes(d)}
-                          isLoading={isSearchingForRecipes}
-                        />
-                      </Box>
-
-                      {/* Divider */}
-
-                      <Divider
-                        orientation={isLargeScreen ? "vertical" : "horizontal"}
-                      />
-
-                      {/* Recipe Search Results */}
-                      <Stack
-                        direction="row"
-                        flexWrap="wrap"
-                        flexGrow={1}
-                        gap="2rem"
-                        overflow={{ xs: "initial", lg: "auto" }}
-                        maxHeight={{ xs: undefined, lg: "60vh" }}
-                        width={{ xs: "100%", lg: "auto" }}
-                      >
-                        {/* Start search for recipes */}
-                        {!recipes && (
-                          <Stack
-                            alignItems="center"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <Typography className="text-muted-foreground">
-                              Start search for a recipes
-                            </Typography>
-                          </Stack>
-                        )}
-
-                        {/* No Recipes Found */}
-                        {recipes && recipes.length === 0 && (
-                          <Stack
-                            alignItems="center"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <Typography className="text-muted-foreground">
-                              No recipes found. please search again.
-                            </Typography>
-                          </Stack>
-                        )}
-
-                        {recipes?.map?.((r, idx) => (
-                          <RecipeCard
-                            key={r.url + idx.toString()}
-                            recipeItem={r}
-                            actions={
-                              <Tooltip arrow title="Swap with this recipe">
-                                <Button
-                                  size="sm"
-                                  onClick={() => {
-                                    if (
-                                      window.confirm(
-                                        "Are you sure you want to swap the current recipe with this recipe?"
-                                      )
-                                    ) {
-                                      updateUserActivity(
-                                        {
-                                          mealTime: card.key,
-                                          consumption: "0",
-                                          userId: loggedInUser._id,
-                                          recipe: r,
-                                        },
-                                        {
-                                          onSuccess: () => {
-                                            toast.success(
-                                              "Recipe swapped successfully."
-                                            );
-
-                                            // setIsSwapRecipeDialogOpen(false);
-                                          },
-                                        }
+                    <SearchRecipeDialog
+                      recipeCardActions={(r) => (
+                        <Tooltip arrow title="Swap with this recipe">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              if (
+                                window.confirm(
+                                  "Are you sure you want to swap the current recipe with this recipe?"
+                                )
+                              ) {
+                                updateUserActivity(
+                                  {
+                                    mealTime: card.key,
+                                    consumption: "0",
+                                    userId: loggedInUser._id,
+                                    recipe: r,
+                                  },
+                                  {
+                                    onSuccess: () => {
+                                      toast.success(
+                                        "Recipe swapped successfully."
                                       );
-                                    }
-                                  }}
-                                >
-                                  <CheckIcon />
-                                </Button>
-                              </Tooltip>
-                            }
-                          />
-                        ))}
-                      </Stack>
-                    </Stack>
+
+                                      // setIsSwapRecipeDialogOpen(false);
+                                    },
+                                  }
+                                );
+                              }
+                            }}
+                          >
+                            <CheckIcon />
+                          </Button>
+                        </Tooltip>
+                      )}
+                    />
                   </CustomDialog>
                 </Stack>
               }
             />
           );
         })}
+
+        {/* Other Food Items */}
+        {todaysMealPlan?.other?.map?.((item, index) => {
+          const disableDeleteBtn = (item?.noOfServingsConsumed ?? 0) > 0;
+          return (
+            <RecipeCard
+              key={item.url + index}
+              icon={customRecipeIcon}
+              recipeItem={item}
+              actions={
+                // Consumed & Swap Button
+                <Stack direction="row" gap="0.5rem">
+                  {/* Consumed Button */}
+                  <Tooltip title="Update comsumption status" arrow>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const numberOfServings = window.prompt(
+                          "Number of servings consumed",
+                          item?.noOfServingsConsumed?.toString?.()
+                        );
+
+                        if (Number(numberOfServings) < 0) {
+                          return window.alert(
+                            "Portion sizes must be non negative."
+                          );
+                        }
+
+                        if (numberOfServings) {
+                          updateUserActivity({
+                            mealTime: "other",
+                            consumption: numberOfServings ?? "0",
+                            userId: loggedInUser._id,
+                            recipe: item,
+                          });
+                        }
+                      }}
+                    >
+                      <CheckCircleIcon size="1.25rem" />
+                    </Button>
+                  </Tooltip>
+
+                  {/* Delete Button */}
+                  <Tooltip
+                    title={
+                      disableDeleteBtn
+                        ? "Please update consumption status to 0 before removing this recipe from today's meal plan"
+                        : "Remove from today's meal plan"
+                    }
+                    arrow
+                  >
+                    <Box>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={disableDeleteBtn}
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              "Are you sure you want to remove this recipe from today's meal plan?"
+                            )
+                          ) {
+                            removeRecipe(
+                              {
+                                userId: loggedInUser._id,
+                                recipeUri: item.uri,
+                              },
+                              {
+                                onSuccess: () =>
+                                  toast.success("Recipe removed successfully."),
+                              }
+                            );
+                          }
+                        }}
+                      >
+                        <TrashIcon size="1.25rem" />
+                      </Button>
+                    </Box>
+                  </Tooltip>
+                </Stack>
+              }
+            />
+          );
+        })}
+
+        {/* Add Other Food Items */}
+        <AddOtherFoodItem todaysMealPlan={todaysMealPlan} />
       </Stack>
 
       {/* Loading Overlay */}
@@ -321,3 +341,103 @@ const TodaysMealPlanBase: React.FC<TodaysMealPlanBaseProps> = ({
     </>
   );
 };
+
+// <Stack
+//   direction={{ xs: "column", lg: "row" }}
+//   gap="2rem"
+//   height="100%"
+//   mt="0.5rem"
+// >
+//   {/* Recipe Search Form */}
+//   <Box minWidth="40%">
+//     <RecipeSearchForm
+//       notAsCard
+//       onSubmit={(d) => searchForRecipes(d)}
+//       isLoading={isSearchingForRecipes}
+//     />
+//   </Box>
+
+//   {/* Divider */}
+
+//   <Divider
+//     orientation={isLargeScreen ? "vertical" : "horizontal"}
+//   />
+
+//   {/* Recipe Search Results */}
+//   <Stack
+//     direction="row"
+//     flexWrap="wrap"
+//     flexGrow={1}
+//     gap="2rem"
+//     overflow={{ xs: "initial", lg: "auto" }}
+//     maxHeight={{ xs: undefined, lg: "60vh" }}
+//     width={{ xs: "100%", lg: "auto" }}
+//   >
+//     {/* Start search for recipes */}
+//     {!recipes && (
+//       <Stack
+//         alignItems="center"
+//         justifyContent="center"
+//         width="100%"
+//       >
+//         <Typography className="text-muted-foreground">
+//           Start search for a recipes
+//         </Typography>
+//       </Stack>
+//     )}
+
+//     {/* No Recipes Found */}
+//     {recipes && recipes.length === 0 && (
+//       <Stack
+//         alignItems="center"
+//         justifyContent="center"
+//         width="100%"
+//       >
+//         <Typography className="text-muted-foreground">
+//           No recipes found. please search again.
+//         </Typography>
+//       </Stack>
+//     )}
+
+//     {recipes?.map?.((r, idx) => (
+//       <RecipeCard
+//         key={r.url + idx.toString()}
+//         recipeItem={r}
+//         actions={
+//           <Tooltip arrow title="Swap with this recipe">
+//             <Button
+//               size="sm"
+//               onClick={() => {
+//                 if (
+//                   window.confirm(
+//                     "Are you sure you want to swap the current recipe with this recipe?"
+//                   )
+//                 ) {
+//                   updateUserActivity(
+//                     {
+//                       mealTime: card.key,
+//                       consumption: "0",
+//                       userId: loggedInUser._id,
+//                       recipe: r,
+//                     },
+//                     {
+//                       onSuccess: () => {
+//                         toast.success(
+//                           "Recipe swapped successfully."
+//                         );
+
+//                         // setIsSwapRecipeDialogOpen(false);
+//                       },
+//                     }
+//                   );
+//                 }
+//               }}
+//             >
+//               <CheckIcon />
+//             </Button>
+//           </Tooltip>
+//         }
+//       />
+//     ))}
+//   </Stack>
+// </Stack>

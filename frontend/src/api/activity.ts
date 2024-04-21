@@ -81,3 +81,49 @@ export const useUpdateUserWeightService = () => {
     onSuccess: () => queryClient.invalidateQueries(),
   });
 };
+
+/**
+ * Add other food item to meal plan
+ */
+export type AddNewRecipeToMealPlanServiceDataType = {
+  userId?: string;
+  recipe: MealPlanRecordItemType;
+};
+const addNewRecipeToMealPlanService = async (
+  data: AddNewRecipeToMealPlanServiceDataType
+) => {
+  const res = await http.post<string>(
+    `/activity/add-other-recipe/${data.userId}`,
+    data.recipe
+  );
+  return res.data;
+};
+export const useAddNewRecipeToMealPlanService = () => {
+  return useMutation({
+    mutationFn: addNewRecipeToMealPlanService,
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+};
+
+/**
+ * Add other food item to meal plan
+ */
+export type RemoveUserAddedRecipeServiceDataType = {
+  userId?: string;
+  recipeUri: string;
+};
+const removeUserAddedRecipeService = async (
+  data: RemoveUserAddedRecipeServiceDataType
+) => {
+  const res = await http.delete<string>(
+    `/activity/remove-other-recipe/${data.userId}`,
+    { params: { recipeUri: data.recipeUri } }
+  );
+  return res.data;
+};
+export const useRemoveUserAddedRecipeService = () => {
+  return useMutation({
+    mutationFn: removeUserAddedRecipeService,
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+};

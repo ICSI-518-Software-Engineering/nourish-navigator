@@ -46,6 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -75,9 +84,23 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
                 }
                 newMealPlan = (_a = user.mealPlan) === null || _a === void 0 ? void 0 : _a.map(function (item) {
                     var _a;
-                    var _b;
+                    var _b, _c, _d;
                     if ((0, moment_1.default)(item.date, constants_1.DEFAULTS.dateFormat).isSame((0, moment_1.default)(), "day")) {
-                        var itemClone = __assign(__assign({}, item), (_a = {}, _a[mealTime_1] = (_b = req.body.recipe) !== null && _b !== void 0 ? _b : __assign(__assign({}, item[mealTime_1]), { noOfServingsConsumed: Number(req.body.consumption) }), _a));
+                        var itemClone = __assign({}, item);
+                        if (mealTime_1 === "other") {
+                            var otherRecipeIdx = (_b = item === null || item === void 0 ? void 0 : item.other) === null || _b === void 0 ? void 0 : _b.findIndex(function (i) {
+                                var _a;
+                                return i.uri ===
+                                    ((_a = req.body.recipe) === null || _a === void 0 ? void 0 : _a.uri);
+                            });
+                            var otherRecipe = (_c = item === null || item === void 0 ? void 0 : item.other) === null || _c === void 0 ? void 0 : _c[otherRecipeIdx];
+                            var updatedOtherRecipes = __spreadArray([], item === null || item === void 0 ? void 0 : item.other, true);
+                            updatedOtherRecipes[otherRecipeIdx] = __assign(__assign({}, otherRecipe), { noOfServingsConsumed: Number(req.body.consumption) });
+                            itemClone = __assign(__assign({}, item), { other: updatedOtherRecipes });
+                        }
+                        else {
+                            itemClone = __assign(__assign({}, item), (_a = {}, _a[mealTime_1] = (_d = req.body.recipe) !== null && _d !== void 0 ? _d : __assign(__assign({}, item[mealTime_1]), { noOfServingsConsumed: Number(req.body.consumption) }), _a));
+                        }
                         todaysMealPlan_1 = __assign({}, itemClone);
                         return itemClone;
                     }
@@ -133,6 +156,9 @@ userActivityRoutes.post("/:userId?", function (req, res) { return __awaiter(void
         }
     });
 }); });
+/**
+ * Get User Activity API
+ */
 userActivityRoutes.get("/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userId, activity, error_2;
     return __generator(this, function (_a) {
@@ -156,6 +182,9 @@ userActivityRoutes.get("/:userId", function (req, res) { return __awaiter(void 0
         }
     });
 }); });
+/**
+ * Current Weight API
+ */
 userActivityRoutes.post("/current-weight/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userId, today, activity, error_3;
     return __generator(this, function (_a) {
@@ -193,6 +222,100 @@ userActivityRoutes.post("/current-weight/:userId", function (req, res) { return 
         }
     });
 }); });
+/**
+ * Add Recipe API
+ */
+userActivityRoutes.post("/add-other-recipe/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, user, todaysMealPlanIdx, todaysMealPlan, error_4;
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 3, , 4]);
+                userId = req.params.userId;
+                if (!userId)
+                    return [2 /*return*/, res.status(400).send("User ID is required")];
+                return [4 /*yield*/, userModel_1.default.findById(userId)];
+            case 1:
+                user = _e.sent();
+                if (!user) {
+                    return [2 /*return*/, res.status(404).send("No user found!!!")];
+                }
+                todaysMealPlanIdx = (_b = (_a = user.mealPlan) === null || _a === void 0 ? void 0 : _a.findIndex) === null || _b === void 0 ? void 0 : _b.call(_a, function (t) {
+                    return (0, moment_1.default)(t.date, constants_1.DEFAULTS.dateFormat).isSame((0, moment_1.default)(), "day");
+                });
+                if (todaysMealPlanIdx === -1) {
+                    return [2 /*return*/, res.status(400).send("No meal plan found...")];
+                }
+                todaysMealPlan = user.mealPlan[todaysMealPlanIdx];
+                if (todaysMealPlan.other instanceof Array) {
+                    (_d = (_c = todaysMealPlan.other).push) === null || _d === void 0 ? void 0 : _d.call(_c, req.body);
+                }
+                else {
+                    todaysMealPlan.other = [req.body];
+                }
+                user.mealPlan[todaysMealPlanIdx] = __assign({}, todaysMealPlan);
+                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(userId, user)];
+            case 2:
+                _e.sent();
+                return [2 /*return*/, res.send("Addition of recipe to today's meal plan is successful.")];
+            case 3:
+                error_4 = _e.sent();
+                console.log(error_4);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+/**
+ * Remove recipe API
+ */
+userActivityRoutes.delete("/remove-other-recipe/:userId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, recipeUri_1, user, todaysMealPlanIdx, todaysMealPlan, error_5;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 3, , 4]);
+                userId = req.params.userId;
+                recipeUri_1 = req.query.recipeUri;
+                if (!userId)
+                    return [2 /*return*/, res.status(400).send("User ID is required")];
+                if (!recipeUri_1)
+                    return [2 /*return*/, res.status(400).send("Recipe URI is required")];
+                return [4 /*yield*/, userModel_1.default.findById(userId)];
+            case 1:
+                user = _c.sent();
+                if (!user) {
+                    return [2 /*return*/, res.status(404).send("No user found!!!")];
+                }
+                todaysMealPlanIdx = (_b = (_a = user.mealPlan) === null || _a === void 0 ? void 0 : _a.findIndex) === null || _b === void 0 ? void 0 : _b.call(_a, function (t) {
+                    return (0, moment_1.default)(t.date, constants_1.DEFAULTS.dateFormat).isSame((0, moment_1.default)(), "day");
+                });
+                if (todaysMealPlanIdx === -1) {
+                    return [2 /*return*/, res.status(400).send("No meal plan found...")];
+                }
+                todaysMealPlan = user.mealPlan[todaysMealPlanIdx];
+                if (todaysMealPlan.other instanceof Array) {
+                    todaysMealPlan.other = todaysMealPlan.other.filter(function (i) { return i.uri !== recipeUri_1; });
+                }
+                else {
+                    todaysMealPlan.other = [];
+                }
+                console.log(todaysMealPlan.other);
+                user.mealPlan[todaysMealPlanIdx] = __assign({}, todaysMealPlan);
+                return [4 /*yield*/, userModel_1.default.findByIdAndUpdate(userId, user)];
+            case 2:
+                _c.sent();
+                return [2 /*return*/, res.send("Removal of recipe from today's meal plan is successful.")];
+            case 3:
+                error_5 = _c.sent();
+                console.log(error_5);
+                return [2 /*return*/, res.status(500).send("Unknown error occured.")];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = userActivityRoutes;
 /**
  * ============ Compute nutrient info ==============
@@ -208,18 +331,31 @@ var computeNutrientInfo = function (mealPlanItem) {
     var breakfast = mealPlanItem.breakfast;
     var lunch = mealPlanItem.lunch;
     var dinner = mealPlanItem.dinner;
+    var others = mealPlanItem.other;
     res.totalCalories =
         getCalories(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getCalories(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
-            getCalories(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
+            getCalories(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
+            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+                total += getCalories(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
+                return total;
+            }, 0));
     res.totalFat =
         getFat(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getFat(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
-            getFat(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
+            getFat(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
+            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+                total += getFat(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
+                return total;
+            }, 0));
     res.totalProtein =
         getProtein(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getProtein(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
-            getProtein(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed);
+            getProtein(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
+            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+                total += getProtein(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
+                return total;
+            }, 0));
     return res;
 };
 var getCalories = function (recipeItem, consumption) {

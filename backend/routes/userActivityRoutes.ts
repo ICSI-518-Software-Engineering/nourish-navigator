@@ -7,6 +7,10 @@ import User from "../models/userModel";
 
 const userActivityRoutes = Router();
 
+/**
+ * Update / Create User Activity API
+ */
+
 type UserActivityReqType = {
   body: {
     mealTime: string;
@@ -40,13 +44,41 @@ userActivityRoutes.post(
             "day"
           )
         ) {
-          const itemClone = {
-            ...item,
-            [mealTime]: req.body.recipe ?? {
-              ...(item[mealTime] as object),
+          let itemClone = { ...item };
+
+          if (mealTime === "other") {
+            const otherRecipeIdx = (
+              item?.other as Array<{ uri: string }>
+            )?.findIndex(
+              (i) =>
+                i.uri ===
+                (req.body.recipe as unknown as Record<string, string>)?.uri
+            );
+
+            const otherRecipe = (item?.other as Array<JSON>)?.[otherRecipeIdx];
+
+            const updatedOtherRecipes = [
+              ...(item?.other as Array<Record<string, unknown>>),
+            ];
+            updatedOtherRecipes[otherRecipeIdx] = {
+              ...otherRecipe,
               noOfServingsConsumed: Number(req.body.consumption),
-            },
-          };
+            };
+
+            itemClone = {
+              ...item,
+              other: updatedOtherRecipes,
+            };
+          } else {
+            itemClone = {
+              ...item,
+              [mealTime]: req.body.recipe ?? {
+                ...(item[mealTime] as object),
+                noOfServingsConsumed: Number(req.body.consumption),
+              },
+            };
+          }
+
           todaysMealPlan = { ...itemClone };
           return itemClone;
         }
@@ -106,6 +138,10 @@ userActivityRoutes.post(
   }
 );
 
+/**
+ * Get User Activity API
+ */
+
 userActivityRoutes.get("/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -122,6 +158,10 @@ userActivityRoutes.get("/:userId", async (req, res) => {
     return res.status(500).send("Unknown error occured.");
   }
 });
+
+/**
+ * Current Weight API
+ */
 
 userActivityRoutes.post("/current-weight/:userId", async (req, res) => {
   try {
@@ -151,6 +191,99 @@ userActivityRoutes.post("/current-weight/:userId", async (req, res) => {
   }
 });
 
+/**
+ * Add Recipe API
+ */
+
+userActivityRoutes.post("/add-other-recipe/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    if (!userId) return res.status(400).send("User ID is required");
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("No user found!!!");
+    }
+
+    const todaysMealPlanIdx = user.mealPlan?.findIndex?.((t) =>
+      moment(t.date as string, DEFAULTS.dateFormat).isSame(moment(), "day")
+    );
+
+    if (todaysMealPlanIdx === -1) {
+      return res.status(400).send("No meal plan found...");
+    }
+
+    const todaysMealPlan = user.mealPlan[todaysMealPlanIdx];
+
+    if (todaysMealPlan.other instanceof Array) {
+      (todaysMealPlan.other as Array<JSON>).push?.(req.body);
+    } else {
+      todaysMealPlan.other = [req.body];
+    }
+
+    user.mealPlan[todaysMealPlanIdx] = { ...todaysMealPlan };
+
+    await User.findByIdAndUpdate(userId, user);
+
+    return res.send("Addition of recipe to today's meal plan is successful.");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
+/**
+ * Remove recipe API
+ */
+
+userActivityRoutes.delete("/remove-other-recipe/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const recipeUri = req.query.recipeUri;
+
+    if (!userId) return res.status(400).send("User ID is required");
+
+    if (!recipeUri) return res.status(400).send("Recipe URI is required");
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("No user found!!!");
+    }
+
+    const todaysMealPlanIdx = user.mealPlan?.findIndex?.((t) =>
+      moment(t.date as string, DEFAULTS.dateFormat).isSame(moment(), "day")
+    );
+
+    if (todaysMealPlanIdx === -1) {
+      return res.status(400).send("No meal plan found...");
+    }
+
+    const todaysMealPlan = user.mealPlan[todaysMealPlanIdx];
+
+    if (todaysMealPlan.other instanceof Array) {
+      todaysMealPlan.other = todaysMealPlan.other.filter(
+        (i) => i.uri !== recipeUri
+      );
+    } else {
+      todaysMealPlan.other = [];
+    }
+
+    console.log(todaysMealPlan.other);
+
+    user.mealPlan[todaysMealPlanIdx] = { ...todaysMealPlan };
+
+    await User.findByIdAndUpdate(userId, user);
+
+    return res.send("Removal of recipe from today's meal plan is successful.");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Unknown error occured.");
+  }
+});
+
 export default userActivityRoutes;
 
 /**
@@ -168,21 +301,34 @@ const computeNutrientInfo = (mealPlanItem?: Record<string, unknown>) => {
   const breakfast = mealPlanItem.breakfast as Record<string, any>;
   const lunch = mealPlanItem.lunch as Record<string, any>;
   const dinner = mealPlanItem.dinner as Record<string, any>;
+  const others = mealPlanItem.other as Record<string, any>[];
 
   res.totalCalories =
     getCalories(breakfast, breakfast?.noOfServingsConsumed) +
     getCalories(lunch, lunch?.noOfServingsConsumed) +
-    getCalories(dinner, dinner?.noOfServingsConsumed);
+    getCalories(dinner, dinner?.noOfServingsConsumed) +
+    others?.reduce((total, recipe) => {
+      total += getCalories(recipe, recipe?.noOfServingsConsumed);
+      return total;
+    }, 0);
 
   res.totalFat =
     getFat(breakfast, breakfast?.noOfServingsConsumed) +
     getFat(lunch, lunch?.noOfServingsConsumed) +
-    getFat(dinner, dinner?.noOfServingsConsumed);
+    getFat(dinner, dinner?.noOfServingsConsumed) +
+    others?.reduce((total, recipe) => {
+      total += getFat(recipe, recipe?.noOfServingsConsumed);
+      return total;
+    }, 0);
 
   res.totalProtein =
     getProtein(breakfast, breakfast?.noOfServingsConsumed) +
     getProtein(lunch, lunch?.noOfServingsConsumed) +
-    getProtein(dinner, dinner?.noOfServingsConsumed);
+    getProtein(dinner, dinner?.noOfServingsConsumed) +
+    others?.reduce((total, recipe) => {
+      total += getProtein(recipe, recipe?.noOfServingsConsumed);
+      return total;
+    }, 0);
 
   return res;
 };

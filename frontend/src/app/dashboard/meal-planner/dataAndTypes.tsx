@@ -6,7 +6,7 @@
 
 import { SelectOptionType } from "@/components/CustomSelect";
 import { Tooltip } from "@mui/material";
-import { MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
+import { ListPlusIcon, MoonIcon, SunIcon, UtensilsIcon } from "lucide-react";
 import { z } from "zod";
 
 export const mealsTimingsOptions: InputOptionsType[] = [
@@ -149,6 +149,7 @@ export type MealPlanRecordType = {
   breakfast?: MealPlanRecordItemType;
   lunch?: MealPlanRecordItemType;
   dinner?: MealPlanRecordItemType;
+  other?: MealPlanRecordItemType[];
   day: number;
   date: string;
 };
@@ -172,6 +173,7 @@ export type MealPlanRecordItemType = {
   healthLabels: string[];
   cuisineType: string[];
   url: string;
+  uri: string;
 };
 
 type MealPlanIngredientsType = {
@@ -206,6 +208,12 @@ export const breakfastIcon = (
 export const dinnerIcon = (
   <Tooltip title="Dinner" arrow>
     <MoonIcon size="1.25rem" />
+  </Tooltip>
+);
+
+export const customRecipeIcon = (
+  <Tooltip title="User added recipe" arrow>
+    <ListPlusIcon size="1.25rem" />
   </Tooltip>
 );
 

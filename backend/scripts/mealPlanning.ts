@@ -7,6 +7,7 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
     //console.log(user.userProfile.dietaryPreference.concat(user.userProfile.allergies))
     try {
         var params = parameterSetter(user, partition, "Dinner")
+        console.log(params)
         const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params,
             paramsSerializer: {
@@ -17,7 +18,6 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
         const dinner = mealParser(response);
 
         params = parameterSetter(user, partition, "Breakfast")
-        console.log(params)
         const response2 = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params,
             paramsSerializer: {
@@ -28,7 +28,6 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
         const breakfast = mealParser(response2);
 
         params = parameterSetter(user, partition, "Lunch")
-        console.log(params)
         const response3 = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params,
             paramsSerializer: {
@@ -73,7 +72,14 @@ function mealParser(response: any){
 }
 
 function parameterSetter(user: any, partition: number, type: any){
-
+    const dietaryPreference: string[] = []
+    if (user.userProfile.dietaryPreference != "" && user.userProfile.dietaryPreference != "DASH"){
+        dietaryPreference.push(user.userProfile.dietaryPreference)
+    }
+    const medical = user.userProfile.allergies
+    for (let i=0; i<medical.length; i++){
+        dietaryPreference.push(medical[i]);
+    }
     var params = {
         type: 'public',
         dishType: ['main course', 'sandwich'],
@@ -83,13 +89,7 @@ function parameterSetter(user: any, partition: number, type: any){
         calories: `${partition-150}-${partition+150}`,
         cuisineType: user.userProfile.cuisinePreferences,
         random: 'true',
-        health: [],
-    }
-    const dietaryPreference = []
-    dietaryPreference.push(user.userProfile.dietaryPreference)
-    const medical = user.userProfile.allergies.concat(dietaryPreference)
-    if (medical[0] != ''){
-        params.health = medical
+        health: dietaryPreference,
     }
 
     return params

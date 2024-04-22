@@ -50,6 +50,7 @@ function dayMealPlan(user, partition, varDate) {
                 case 0:
                     _a.trys.push([0, 4, , 5]);
                     params = parameterSetter(user, partition, "Dinner");
+                    console.log(params);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -60,7 +61,6 @@ function dayMealPlan(user, partition, varDate) {
                     response = _a.sent();
                     dinner = mealParser(response);
                     params = parameterSetter(user, partition, "Breakfast");
-                    console.log(params);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -71,7 +71,6 @@ function dayMealPlan(user, partition, varDate) {
                     response2 = _a.sent();
                     breakfast = mealParser(response2);
                     params = parameterSetter(user, partition, "Lunch");
-                    console.log(params);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -117,6 +116,14 @@ function mealParser(response) {
     return meals;
 }
 function parameterSetter(user, partition, type) {
+    var dietaryPreference = [];
+    if (user.userProfile.dietaryPreference != "" && user.userProfile.dietaryPreference != "DASH") {
+        dietaryPreference.push(user.userProfile.dietaryPreference);
+    }
+    var medical = user.userProfile.allergies;
+    for (var i = 0; i < medical.length; i++) {
+        dietaryPreference.push(medical[i]);
+    }
     var params = {
         type: 'public',
         dishType: ['main course', 'sandwich'],
@@ -126,14 +133,8 @@ function parameterSetter(user, partition, type) {
         calories: "".concat(partition - 150, "-").concat(partition + 150),
         cuisineType: user.userProfile.cuisinePreferences,
         random: 'true',
-        health: [],
+        health: dietaryPreference,
     };
-    var dietaryPreference = [];
-    dietaryPreference.push(user.userProfile.dietaryPreference);
-    var medical = user.userProfile.allergies.concat(dietaryPreference);
-    if (medical[0] != '') {
-        params.health = medical;
-    }
     return params;
 }
 function caloriePerMeal(totalCalories) {

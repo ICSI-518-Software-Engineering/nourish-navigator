@@ -4,9 +4,17 @@ import mongoose, { CallbackError } from "mongoose";
 import { z } from "zod";
 import UserActivity from "./userActivity";
 import {
+  MongooseUserMealSelectionSchema,
+  UserMealSelectionDataType,
+} from "./userDailyMealPlanModel";
+import {
   MongooseUserMealPlanSchema,
   UserMealPlanType,
 } from "./userMealPlanModel";
+import {
+  MongooseUserNutritionSchema,
+  UserNutritionRequestDataType,
+} from "./userNutritionModel";
 import {
   MongooseUserProfileSchema,
   UserProfileRequestDataType,
@@ -34,6 +42,8 @@ export const MongooseUserSchema = new mongoose.Schema(
     userProfile: MongooseUserProfileSchema,
     mealPlanProfile: MongooseUserMealPlanSchema,
     mealPlan: JSON,
+    mealPlanNew: [MongooseUserMealSelectionSchema],
+    userNutrition: MongooseUserNutritionSchema,
     activity: {
       type: mongoose.Types.ObjectId,
       ref: UserActivity,
@@ -136,8 +146,10 @@ type UserModelType = {
 
 export type UserProfileUpdateRequestBodyType = {
   userProfile: UserProfileRequestDataType;
+  userNutrition: UserNutritionRequestDataType;
   mealPlanProfile: UserMealPlanType;
   mealPlan: Record<string, unknown>[];
+  mealPlanNew: [UserMealSelectionDataType];
 };
 
 const User = mongoose.model<UserModelType & UserProfileUpdateRequestBodyType>(

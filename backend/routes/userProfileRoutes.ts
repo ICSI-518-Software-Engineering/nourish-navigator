@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { validateNewUserMealPlanRequest } from "../models/userMealPlanModel";
 import User, { UserProfileUpdateRequestBodyType } from "../models/userModel";
 import { validateNewUserProfileRequest } from "../models/userProfileModel";
+import { nutritionCalculator } from "../scripts/nutritionCalculation";
 import { generateMealPlan } from "../utils/mealPlannerApiUtils";
 
 const userProfileRoutes = Router();
@@ -31,7 +32,9 @@ userProfileRoutes.post(
 
       if (userProfile) {
         userProfile = validateNewUserProfileRequest(userProfile);
+        const nutrBody = nutritionCalculator(req.body.userProfile);
         updateReq.userProfile = userProfile;
+        updateReq.userNutrition = nutrBody;
       }
 
       if (mealPlanProfile) {

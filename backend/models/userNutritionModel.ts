@@ -13,7 +13,7 @@ export const MongooseUserNutritionSchema = new mongoose.Schema({
   },
   carbTarget: {
     type: String,
-  }
+  },
 });
 
 export const userNutritionZodSchema = z.object({
@@ -23,7 +23,9 @@ export const userNutritionZodSchema = z.object({
   carbTarget: z.string(),
 });
 
-export type UserNutritionRequestDataType = z.infer<typeof userNutritionZodSchema>;
+export type UserNutritionRequestDataType = z.infer<
+  typeof userNutritionZodSchema
+>;
 
 // Custom Validator
 //export const validateNewUserProfileRequest = (

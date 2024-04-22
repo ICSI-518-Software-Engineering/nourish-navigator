@@ -146,12 +146,12 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             control={control}
             options={[
               {
-                label: "Veg",
-                value: "veg",
+                label: "Vegetarian",
+                value: "vegetarian",
               },
               {
-                label: "Non Veg",
-                value: "non_veg",
+                label: "Non Vegetarian",
+                value: "DASH",
               },
             ]}
             description="Veg or Non-veg"
@@ -166,11 +166,23 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             options={[
               {
                 label: "American",
-                value: "american",
+                value: "American",
               },
               {
                 label: "Indian",
-                value: "indian",
+                value: "Indian",
+              },
+              {
+                label: "Asian",
+                value: "Asian",
+              },
+              {
+                label: "Mexican",
+                value: "Mexican",
+              },
+              {
+                label: "Italian",
+                value: "Italian",
               },
             ]}
             description="To customise meal plan based on selected cuisines"
@@ -216,19 +228,23 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ params }) => {
             options={[
               {
                 label: "Dairy",
-                value: "dairy",
+                value: "dairy-free",
               },
               {
                 label: "Nuts",
-                value: "nuts",
+                value: "tree-nut-free",
               },
               {
                 label: "Fish",
-                value: "fish",
+                value: "fish-free",
               },
               {
                 label: "Soy",
-                value: "soy",
+                value: "soy-free",
+              },
+              {
+                label: "Gluten",
+                value: "gluten-free",
               },
             ]}
             description="To customise meal plan based on food allergies"

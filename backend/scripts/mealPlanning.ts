@@ -3,39 +3,24 @@ import User from "../models/userModel";
 import { UserMealSelectionDataType, UserPreferenceMealDataType} from '../models/userDailyMealPlanModel';
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
-
-    //console.log(user.userProfile.dietaryPreference.concat(user.userProfile.allergies))
     try {
+        //Get dinner meal list
         var params = parameterSetter(user, partition, "Dinner")
-        console.log(params)
-        const response = await axios.get('https://api.edamam.com/api/recipes/v2', {
+        var response = await axios.get('https://api.edamam.com/api/recipes/v2', {
             params,
             paramsSerializer: {
                 indexes: null // by default: false
               }
         });
 
-        const dinner = mealParser(response);
+        // get dinner meal list
+        const dinner = await mealParser(user, partition, "Dinner");
 
-        params = parameterSetter(user, partition, "Breakfast")
-        const response2 = await axios.get('https://api.edamam.com/api/recipes/v2', {
-            params,
-            paramsSerializer: {
-                indexes: null // by default: false
-              }
-        });
+        //get breakfast meal list
+        const breakfast = await mealParser(user, partition, "Breakfast");
 
-        const breakfast = mealParser(response2);
-
-        params = parameterSetter(user, partition, "Lunch")
-        const response3 = await axios.get('https://api.edamam.com/api/recipes/v2', {
-            params,
-            paramsSerializer: {
-                indexes: null // by default: false
-              }
-        });
-
-        const lunch = mealParser(response3);
+        //get lunch meal list
+        const lunch = await mealParser(user, partition, "Lunch");
         
         const totalCalories = user.userNutrition.calorieTarget
         const totalProtein = user.userNutrition.proteinTarget
@@ -43,7 +28,6 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
         const totalCarbs = user.userNutrition.carbTarget
         var today: string = varDate
         const bestCombo: UserPreferenceMealDataType[] | null = findBestMealCombo(breakfast, lunch, dinner, totalCalories, totalProtein, totalFat, totalCarbs);
-
         if (bestCombo != null){
             var mealPlan: UserMealSelectionDataType = {
                 date: today,
@@ -58,7 +42,15 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
     }
 }
 
-function mealParser(response: any){
+async function mealParser(user: any, partition: any, mealType: String){
+    var params = parameterSetter(user, partition, mealType)
+    var response = await axios.get('https://api.edamam.com/api/recipes/v2', {
+        params,
+        paramsSerializer: {
+            indexes: null // by default: false
+          }
+    });
+
     const meals = response.data.hits.map((hit: any) => ({
         mealName: hit.recipe.label,
         calories: hit.recipe.calories / hit.recipe.yield,
@@ -68,6 +60,7 @@ function mealParser(response: any){
         fat: hit.recipe.totalNutrients.FAT.quantity / hit.recipe.yield,
         carbs: hit.recipe.totalNutrients.CHOCDF.quantity / hit.recipe.yield,
     }));
+    
     return meals 
 }
 
@@ -127,7 +120,7 @@ function findBestMealCombo(breakfast: any, lunch: any, dinner: any, targetCalori
   }
 
 export async function mealPlanService(user: any, id: any, days: number){
-    var currentMeals = []
+    const currentMeals = []
     const userNutrition = user.userNutrition
     const totalCalories = userNutrition.calorieTarget
     const partition = caloriePerMeal(totalCalories)

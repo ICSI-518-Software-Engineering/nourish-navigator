@@ -44,13 +44,12 @@ var axios_1 = __importDefault(require("axios"));
 var userModel_1 = __importDefault(require("../models/userModel"));
 function dayMealPlan(user, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var params, response, dinner, response2, breakfast, response3, lunch, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
+        var params, response, dinner, breakfast, lunch, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 4, , 5]);
+                    _a.trys.push([0, 5, , 6]);
                     params = parameterSetter(user, partition, "Dinner");
-                    console.log(params);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -59,27 +58,15 @@ function dayMealPlan(user, partition, varDate) {
                         })];
                 case 1:
                     response = _a.sent();
-                    dinner = mealParser(response);
-                    params = parameterSetter(user, partition, "Breakfast");
-                    return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
-                            params: params,
-                            paramsSerializer: {
-                                indexes: null // by default: false
-                            }
-                        })];
+                    return [4 /*yield*/, mealParser(user, partition, "Dinner")];
                 case 2:
-                    response2 = _a.sent();
-                    breakfast = mealParser(response2);
-                    params = parameterSetter(user, partition, "Lunch");
-                    return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
-                            params: params,
-                            paramsSerializer: {
-                                indexes: null // by default: false
-                            }
-                        })];
+                    dinner = _a.sent();
+                    return [4 /*yield*/, mealParser(user, partition, "Breakfast")];
                 case 3:
-                    response3 = _a.sent();
-                    lunch = mealParser(response3);
+                    breakfast = _a.sent();
+                    return [4 /*yield*/, mealParser(user, partition, "Lunch")];
+                case 4:
+                    lunch = _a.sent();
                     totalCalories = user.userNutrition.calorieTarget;
                     totalProtein = user.userNutrition.proteinTarget;
                     totalFat = user.userNutrition.fatTarget;
@@ -93,27 +80,44 @@ function dayMealPlan(user, partition, varDate) {
                         };
                         return [2 /*return*/, mealPlan];
                     }
-                    return [3 /*break*/, 5];
-                case 4:
+                    return [3 /*break*/, 6];
+                case 5:
                     error_1 = _a.sent();
                     console.log(error_1);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
 }
-function mealParser(response) {
-    var meals = response.data.hits.map(function (hit) { return ({
-        mealName: hit.recipe.label,
-        calories: hit.recipe.calories / hit.recipe.yield,
-        image: hit.recipe.image,
-        instructions: hit.recipe.url,
-        protein: hit.recipe.totalNutrients.PROCNT.quantity / hit.recipe.yield,
-        fat: hit.recipe.totalNutrients.FAT.quantity / hit.recipe.yield,
-        carbs: hit.recipe.totalNutrients.CHOCDF.quantity / hit.recipe.yield,
-    }); });
-    return meals;
+function mealParser(user, partition, mealType) {
+    return __awaiter(this, void 0, void 0, function () {
+        var params, response, meals;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    params = parameterSetter(user, partition, mealType);
+                    return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
+                            params: params,
+                            paramsSerializer: {
+                                indexes: null // by default: false
+                            }
+                        })];
+                case 1:
+                    response = _a.sent();
+                    meals = response.data.hits.map(function (hit) { return ({
+                        mealName: hit.recipe.label,
+                        calories: hit.recipe.calories / hit.recipe.yield,
+                        image: hit.recipe.image,
+                        instructions: hit.recipe.url,
+                        protein: hit.recipe.totalNutrients.PROCNT.quantity / hit.recipe.yield,
+                        fat: hit.recipe.totalNutrients.FAT.quantity / hit.recipe.yield,
+                        carbs: hit.recipe.totalNutrients.CHOCDF.quantity / hit.recipe.yield,
+                    }); });
+                    return [2 /*return*/, meals];
+            }
+        });
+    });
 }
 function parameterSetter(user, partition, type) {
     var dietaryPreference = [];

@@ -47,6 +47,7 @@ function calorieCalculation(user: UserProfileRequestDataType){
 
     var target = weightOffset*parseFloat(user.weight) + 30.48*heightOffset*parseFloat(user.height)
      - ageOffset*parseFloat(user.age) + genderOffset;
+    target = target*1.2 - 500;
     if (target < minCals){
         target = minCals;
     }

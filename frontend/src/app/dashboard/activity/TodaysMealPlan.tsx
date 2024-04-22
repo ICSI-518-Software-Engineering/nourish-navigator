@@ -38,7 +38,7 @@ const TodaysMealPlan: React.FC = () => {
   const { data: userProfile, isLoading } = useGetUserProfileService();
 
   const todaysMealPlan = useMemo(() => {
-    if (!userProfile) return undefined;
+    if (!userProfile || !userProfile.mealPlan) return undefined;
 
     return userProfile.mealPlan.find((item) =>
       moment().isSame(moment(item.date, DEFAULTS.dateFormat), "day")

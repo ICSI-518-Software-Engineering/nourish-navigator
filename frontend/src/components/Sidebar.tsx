@@ -98,9 +98,9 @@ const sidebarLinks = [
     label: "Recipes",
     url: "/dashboard/recipes",
   },
-  {
+  /* {
     icon: <UtensilsCrossedIcon />,
     label: "Meal Plans",
     url: "/dashboard/meal-plans",
-  },
+  }, */
 ];

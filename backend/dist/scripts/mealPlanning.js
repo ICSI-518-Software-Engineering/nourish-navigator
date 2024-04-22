@@ -44,29 +44,36 @@ var axios_1 = __importDefault(require("axios"));
 var userModel_1 = __importDefault(require("../models/userModel"));
 function dayMealPlan(user, partition, varDate) {
     return __awaiter(this, void 0, void 0, function () {
-        var params, response, dinner, breakfast, lunch, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
+        var dinner, breakfast, lunch, totalCalories, totalProtein, totalFat, totalCarbs, today, bestCombo, mealPlan, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 5, , 6]);
-                    params = parameterSetter(user, partition, "Dinner");
-                    return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
-                            params: params,
-                            paramsSerializer: {
-                                indexes: null // by default: false
-                            }
-                        })];
+                    _a.trys.push([0, 10, , 11]);
+                    return [4 /*yield*/, mealParser(user, partition, "Dinner", false)];
                 case 1:
-                    response = _a.sent();
-                    return [4 /*yield*/, mealParser(user, partition, "Dinner")];
+                    dinner = _a.sent();
+                    if (!(dinner.length == 0)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, mealParser(user, partition, "Dinner", true)];
                 case 2:
                     dinner = _a.sent();
-                    return [4 /*yield*/, mealParser(user, partition, "Breakfast")];
-                case 3:
-                    breakfast = _a.sent();
-                    return [4 /*yield*/, mealParser(user, partition, "Lunch")];
+                    _a.label = 3;
+                case 3: return [4 /*yield*/, mealParser(user, partition, "Breakfast", false)];
                 case 4:
+                    breakfast = _a.sent();
+                    if (!(breakfast.length == 0)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, mealParser(user, partition, "Breakfast", true)];
+                case 5:
+                    breakfast = _a.sent();
+                    _a.label = 6;
+                case 6: return [4 /*yield*/, mealParser(user, partition, "Lunch", false)];
+                case 7:
                     lunch = _a.sent();
+                    if (!(lunch.length == 0)) return [3 /*break*/, 9];
+                    return [4 /*yield*/, mealParser(user, partition, "Lunch", true)];
+                case 8:
+                    lunch = _a.sent();
+                    _a.label = 9;
+                case 9:
                     totalCalories = user.userNutrition.calorieTarget;
                     totalProtein = user.userNutrition.proteinTarget;
                     totalFat = user.userNutrition.fatTarget;
@@ -80,23 +87,23 @@ function dayMealPlan(user, partition, varDate) {
                         };
                         return [2 /*return*/, mealPlan];
                     }
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 11];
+                case 10:
                     error_1 = _a.sent();
                     console.log(error_1);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 11];
+                case 11: return [2 /*return*/];
             }
         });
     });
 }
-function mealParser(user, partition, mealType) {
+function mealParser(user, partition, mealType, retry) {
     return __awaiter(this, void 0, void 0, function () {
         var params, response, meals;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    params = parameterSetter(user, partition, mealType);
+                    params = parameterSetter(user, partition, mealType, retry);
                     return [4 /*yield*/, axios_1.default.get('https://api.edamam.com/api/recipes/v2', {
                             params: params,
                             paramsSerializer: {
@@ -119,7 +126,7 @@ function mealParser(user, partition, mealType) {
         });
     });
 }
-function parameterSetter(user, partition, type) {
+function parameterSetter(user, partition, type, retry) {
     var dietaryPreference = [];
     if (user.userProfile.dietaryPreference != "" && user.userProfile.dietaryPreference != "DASH") {
         dietaryPreference.push(user.userProfile.dietaryPreference);
@@ -128,6 +135,10 @@ function parameterSetter(user, partition, type) {
     for (var i = 0; i < medical.length; i++) {
         dietaryPreference.push(medical[i]);
     }
+    var cuisine = [];
+    if (!retry) {
+        cuisine = user.userProfile.cuisinePreferences;
+    }
     var params = {
         type: 'public',
         dishType: ['main course', 'sandwich'],
@@ -135,7 +146,7 @@ function parameterSetter(user, partition, type) {
         app_key: process.env.EDAMAME_KEY,
         mealType: type,
         calories: "".concat(partition - 150, "-").concat(partition + 150),
-        cuisineType: user.userProfile.cuisinePreferences,
+        cuisineType: cuisine,
         random: 'true',
         health: dietaryPreference,
     };
@@ -152,9 +163,9 @@ function findBestMealCombo(breakfast, lunch, dinner, targetCalories, targetProte
     var targetC = parseFloat(targetCarbs);
     var bestCombo = null;
     var closestDiff = Infinity;
-    for (var i = 0; i < breakfast.length - 13; i++) {
-        for (var j = 0; j < lunch.length - 13; j++) {
-            for (var k = 0; k < dinner.length - 13; k++) {
+    for (var i = 0; i < breakfast.length; i++) {
+        for (var j = 0; j < lunch.length; j++) {
+            for (var k = 0; k < dinner.length; k++) {
                 var comboCalories = breakfast[i].calories + lunch[j].calories + dinner[k].calories;
                 var comboProtein = breakfast[i].protein + lunch[j].protein + dinner[k].protein;
                 var comboFat = breakfast[i].fat + lunch[j].fat + dinner[k].fat;

@@ -4,23 +4,27 @@ import { UserMealSelectionDataType, UserPreferenceMealDataType} from '../models/
 
 async function dayMealPlan(user: any, partition: number, varDate: string){
     try {
-        //Get dinner meal list
-        var params = parameterSetter(user, partition, "Dinner")
-        var response = await axios.get('https://api.edamam.com/api/recipes/v2', {
-            params,
-            paramsSerializer: {
-                indexes: null // by default: false
-              }
-        });
 
         // get dinner meal list
-        const dinner = await mealParser(user, partition, "Dinner");
+        var dinner = await mealParser(user, partition, "Dinner", false);
+        //console.log(dinner.length)
+        if (dinner.length == 0){
+            dinner = await mealParser(user, partition, "Dinner", true);
+        }
 
         //get breakfast meal list
-        const breakfast = await mealParser(user, partition, "Breakfast");
+        var breakfast = await mealParser(user, partition, "Breakfast", false);
+        //console.log(breakfast.length)
+        if (breakfast.length == 0){
+            breakfast = await mealParser(user, partition, "Breakfast", true);
+        }
 
         //get lunch meal list
-        const lunch = await mealParser(user, partition, "Lunch");
+        var lunch = await mealParser(user, partition, "Lunch", false);
+        //console.log(lunch.length)
+        if (lunch.length == 0){
+            lunch = await mealParser(user, partition, "Lunch", true);
+        }
         
         const totalCalories = user.userNutrition.calorieTarget
         const totalProtein = user.userNutrition.proteinTarget
@@ -34,7 +38,6 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
                 meal: bestCombo
             }
             return mealPlan
-            
         }
     }
     catch (error) {
@@ -42,8 +45,8 @@ async function dayMealPlan(user: any, partition: number, varDate: string){
     }
 }
 
-async function mealParser(user: any, partition: any, mealType: String){
-    var params = parameterSetter(user, partition, mealType)
+async function mealParser(user: any, partition: any, mealType: String, retry: Boolean){
+    var params = parameterSetter(user, partition, mealType, retry)
     var response = await axios.get('https://api.edamam.com/api/recipes/v2', {
         params,
         paramsSerializer: {
@@ -64,7 +67,7 @@ async function mealParser(user: any, partition: any, mealType: String){
     return meals 
 }
 
-function parameterSetter(user: any, partition: number, type: any){
+function parameterSetter(user: any, partition: number, type: any, retry: Boolean){
     const dietaryPreference: string[] = []
     if (user.userProfile.dietaryPreference != "" && user.userProfile.dietaryPreference != "DASH"){
         dietaryPreference.push(user.userProfile.dietaryPreference)
@@ -73,6 +76,11 @@ function parameterSetter(user: any, partition: number, type: any){
     for (let i=0; i<medical.length; i++){
         dietaryPreference.push(medical[i]);
     }
+    var cuisine = [];
+    if(!retry){
+        cuisine = user.userProfile.cuisinePreferences
+    }
+
     var params = {
         type: 'public',
         dishType: ['main course', 'sandwich'],
@@ -80,7 +88,7 @@ function parameterSetter(user: any, partition: number, type: any){
         app_key: process.env.EDAMAME_KEY,
         mealType: type,
         calories: `${partition-150}-${partition+150}`,
-        cuisineType: user.userProfile.cuisinePreferences,
+        cuisineType: cuisine,
         random: 'true',
         health: dietaryPreference,
     }
@@ -100,10 +108,10 @@ function findBestMealCombo(breakfast: any, lunch: any, dinner: any, targetCalori
     let targetC = parseFloat(targetCarbs)
     let bestCombo = null;
     let closestDiff = Infinity;
-  
-    for (let i = 0; i < breakfast.length-13; i++) {
-        for (let j = 0;  j < lunch.length-13; j++) {
-            for (let k = 0 ; k < dinner.length-13; k++) {
+
+    for (let i = 0; i < breakfast.length; i++) {
+        for (let j = 0;  j < lunch.length; j++) {
+            for (let k = 0 ; k < dinner.length; k++) {
                 const comboCalories = breakfast[i].calories + lunch[j].calories + dinner[k].calories;
                 const comboProtein = breakfast[i].protein + lunch[j].protein + dinner[k].protein;
                 const comboFat = breakfast[i].fat + lunch[j].fat + dinner[k].fat;

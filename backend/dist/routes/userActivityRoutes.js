@@ -321,6 +321,7 @@ exports.default = userActivityRoutes;
  * ============ Compute nutrient info ==============
  */
 var computeNutrientInfo = function (mealPlanItem) {
+    var _a, _b, _c;
     var res = {
         totalCalories: 0,
         totalFat: 0,
@@ -336,26 +337,26 @@ var computeNutrientInfo = function (mealPlanItem) {
         getCalories(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getCalories(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
             getCalories(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
-            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+            ((_a = others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
                 total += getCalories(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
                 return total;
-            }, 0));
+            }, 0)) !== null && _a !== void 0 ? _a : 0);
     res.totalFat =
         getFat(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getFat(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
             getFat(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
-            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+            ((_b = others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
                 total += getFat(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
                 return total;
-            }, 0));
+            }, 0)) !== null && _b !== void 0 ? _b : 0);
     res.totalProtein =
         getProtein(breakfast, breakfast === null || breakfast === void 0 ? void 0 : breakfast.noOfServingsConsumed) +
             getProtein(lunch, lunch === null || lunch === void 0 ? void 0 : lunch.noOfServingsConsumed) +
             getProtein(dinner, dinner === null || dinner === void 0 ? void 0 : dinner.noOfServingsConsumed) +
-            (others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
+            ((_c = others === null || others === void 0 ? void 0 : others.reduce(function (total, recipe) {
                 total += getProtein(recipe, recipe === null || recipe === void 0 ? void 0 : recipe.noOfServingsConsumed);
                 return total;
-            }, 0));
+            }, 0)) !== null && _c !== void 0 ? _c : 0);
     return res;
 };
 var getCalories = function (recipeItem, consumption) {

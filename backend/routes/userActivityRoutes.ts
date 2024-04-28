@@ -307,28 +307,28 @@ const computeNutrientInfo = (mealPlanItem?: Record<string, unknown>) => {
     getCalories(breakfast, breakfast?.noOfServingsConsumed) +
     getCalories(lunch, lunch?.noOfServingsConsumed) +
     getCalories(dinner, dinner?.noOfServingsConsumed) +
-    others?.reduce((total, recipe) => {
+    (others?.reduce((total, recipe) => {
       total += getCalories(recipe, recipe?.noOfServingsConsumed);
       return total;
-    }, 0);
+    }, 0) ?? 0);
 
   res.totalFat =
     getFat(breakfast, breakfast?.noOfServingsConsumed) +
     getFat(lunch, lunch?.noOfServingsConsumed) +
     getFat(dinner, dinner?.noOfServingsConsumed) +
-    others?.reduce((total, recipe) => {
+    (others?.reduce((total, recipe) => {
       total += getFat(recipe, recipe?.noOfServingsConsumed);
       return total;
-    }, 0);
+    }, 0) ?? 0);
 
   res.totalProtein =
     getProtein(breakfast, breakfast?.noOfServingsConsumed) +
     getProtein(lunch, lunch?.noOfServingsConsumed) +
     getProtein(dinner, dinner?.noOfServingsConsumed) +
-    others?.reduce((total, recipe) => {
+    (others?.reduce((total, recipe) => {
       total += getProtein(recipe, recipe?.noOfServingsConsumed);
       return total;
-    }, 0);
+    }, 0) ?? 0);
 
   return res;
 };

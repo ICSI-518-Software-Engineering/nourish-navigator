@@ -45,7 +45,9 @@ var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
 var userActivity_1 = __importDefault(require("./userActivity"));
+var userDailyMealPlanModel_1 = require("./userDailyMealPlanModel");
 var userMealPlanModel_1 = require("./userMealPlanModel");
+var userNutritionModel_1 = require("./userNutritionModel");
 var userProfileModel_1 = require("./userProfileModel");
 exports.MongooseUserSchema = new mongoose_1.default.Schema({
     name: {
@@ -68,6 +70,8 @@ exports.MongooseUserSchema = new mongoose_1.default.Schema({
     userProfile: userProfileModel_1.MongooseUserProfileSchema,
     mealPlanProfile: userMealPlanModel_1.MongooseUserMealPlanSchema,
     mealPlan: JSON,
+    mealPlanNew: [userDailyMealPlanModel_1.MongooseUserMealSelectionSchema],
+    userNutrition: userNutritionModel_1.MongooseUserNutritionSchema,
     activity: {
         type: mongoose_1.default.Types.ObjectId,
         ref: userActivity_1.default,

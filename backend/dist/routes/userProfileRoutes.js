@@ -55,10 +55,11 @@ var zod_1 = require("zod");
 var userMealPlanModel_1 = require("../models/userMealPlanModel");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var userProfileModel_1 = require("../models/userProfileModel");
+var nutritionCalculation_1 = require("../scripts/nutritionCalculation");
 var mealPlannerApiUtils_1 = require("../utils/mealPlannerApiUtils");
 var userProfileRoutes = (0, express_1.Router)();
 userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, _a, userProfile, mealPlanProfile, updateReq, _b, updatedUser, ex_1;
+    var user, _a, userProfile, mealPlanProfile, updateReq, nutrBody, _b, updatedUser, ex_1;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -73,7 +74,9 @@ userProfileRoutes.post("/profile/:userid", function (req, res) { return __awaite
                 updateReq = {};
                 if (userProfile) {
                     userProfile = (0, userProfileModel_1.validateNewUserProfileRequest)(userProfile);
+                    nutrBody = (0, nutritionCalculation_1.nutritionCalculator)(req.body.userProfile);
                     updateReq.userProfile = userProfile;
+                    updateReq.userNutrition = nutrBody;
                 }
                 if (!mealPlanProfile) return [3 /*break*/, 3];
                 mealPlanProfile = (0, userMealPlanModel_1.validateNewUserMealPlanRequest)(mealPlanProfile);

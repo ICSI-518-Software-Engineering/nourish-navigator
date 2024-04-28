@@ -8,31 +8,33 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var zod_1 = require("zod");
 exports.MongooseUserMealSelectionSchema = new mongoose_1.default.Schema({
     date: {
-        type: String
+        type: String,
     },
-    meal: [{
+    meal: [
+        {
             mealName: {
-                type: String
+                type: String,
             },
             calories: {
-                type: String
+                type: String,
             },
             image: {
-                type: String
+                type: String,
             },
             instructions: {
-                type: String
+                type: String,
             },
             protein: {
-                type: String
+                type: String,
             },
             fat: {
-                type: String
+                type: String,
             },
             carbs: {
-                type: String
-            }
-        }]
+                type: String,
+            },
+        },
+    ],
 });
 var mealZodSchema = zod_1.z.object({
     mealName: zod_1.z.string(),
@@ -41,9 +43,9 @@ var mealZodSchema = zod_1.z.object({
     instruction: zod_1.z.string(),
     protein: zod_1.z.string(),
     fat: zod_1.z.string(),
-    carbs: zod_1.z.string()
+    carbs: zod_1.z.string(),
 });
 exports.userMealSelectionZodSchema = zod_1.z.object({
     date: zod_1.z.string(),
-    meal: mealZodSchema.array()
+    meal: mealZodSchema.array(),
 });

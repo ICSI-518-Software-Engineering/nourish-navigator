@@ -18,7 +18,7 @@ exports.MongooseUserNutritionSchema = new mongoose_1.default.Schema({
     },
     carbTarget: {
         type: String,
-    }
+    },
 });
 exports.userNutritionZodSchema = zod_1.z.object({
     calorieTarget: zod_1.z.string(),

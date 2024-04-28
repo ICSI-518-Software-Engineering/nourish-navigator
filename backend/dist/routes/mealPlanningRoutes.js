@@ -42,7 +42,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var userModel_1 = __importDefault(require("../models/userModel"));
 var mealPlanning_1 = require("../scripts/mealPlanning");
-//import { UserMealPlanDataType } from "../models/userDailyMealPlanModel";
 var mealPlanningRoutes = (0, express_1.Router)();
 // get profile api
 mealPlanningRoutes.get("/mealselection/:userid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {

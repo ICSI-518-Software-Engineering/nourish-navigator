@@ -5,6 +5,7 @@ import { getLoggedInUserDetails } from "@/app/(auth)/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import Notifications from "./Notifications";
 import { buttonVariants } from "./ui/button";
 import { SheetClose } from "./ui/sheet";
 
@@ -18,29 +19,37 @@ const NavItems: React.FC<NavItemsProps> = (props) => {
 
   if (!user) return null;
 
-  return navItems?.map((item) => {
-    if (item.displayAccessor && !item.displayAccessor?.(user)) return;
-    if (props.mobile) {
-      return (
-        <SheetClose key={item.url} asChild>
-          <Link href={item.url} className="-m-2 p-2 block font-medium">
+  return (
+    <>
+      {/* Notifications */}
+      <Notifications />
+
+      {/* Nav Items */}
+      {navItems?.map((item) => {
+        if (item.displayAccessor && !item.displayAccessor?.(user)) return;
+        if (props.mobile) {
+          return (
+            <SheetClose key={item.url} asChild>
+              <Link href={item.url} className="-m-2 p-2 block font-medium">
+                {item.label}
+              </Link>
+            </SheetClose>
+          );
+        }
+        return (
+          <Link
+            key={item.url}
+            className={buttonVariants({
+              variant: pathname.startsWith(item.url) ? "secondary" : "ghost",
+            })}
+            href={item.url}
+          >
             {item.label}
           </Link>
-        </SheetClose>
-      );
-    }
-    return (
-      <Link
-        key={item.url}
-        className={buttonVariants({
-          variant: pathname.startsWith(item.url) ? "secondary" : "ghost",
-        })}
-        href={item.url}
-      >
-        {item.label}
-      </Link>
-    );
-  });
+        );
+      })}
+    </>
+  );
 };
 
 export default NavItems;

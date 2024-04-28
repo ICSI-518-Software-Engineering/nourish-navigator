@@ -9,12 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import {
-  ActivitySquareIcon,
-  CherryIcon,
-  SaladIcon,
-  UtensilsCrossedIcon,
-} from "lucide-react";
+import { ActivitySquareIcon, CherryIcon, SaladIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -98,9 +93,9 @@ const sidebarLinks = [
     label: "Recipes",
     url: "/dashboard/recipes",
   },
-  /* {
-    icon: <UtensilsCrossedIcon />,
-    label: "Meal Plans",
-    url: "/dashboard/meal-plans",
-  }, */
+  // {
+  //   icon: <UtensilsCrossedIcon />,
+  //   label: "Meal Plans",
+  //   url: "/dashboard/meal-plans",
+  // },
 ];
